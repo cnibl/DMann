@@ -170,6 +170,8 @@ int main(int argc, char* argv[]) {
   BinLogX(ePos);
   BinLogX(ePbar);
   BinLogX(eNumu);      
+  double me = 0.000511 # electron mass
+  double mp = 0.938 # proton mass
   
   // Histogram particle spectra.
 //  Hist eGamma("energy spectrum of photons",        100, 0., 100.);
@@ -195,10 +197,10 @@ int main(int argc, char* argv[]) {
         int id = pythia.event[i].id();
         int idAbs = pythia.event[i].idAbs();      
         double eI = pythia.event[i].e();
-        // Fill histograms with weight 1/nEvent to get dN/dx
+        // Fill histograms with (E-m)/mX (E_kin/mX) with weight 1/nEvent to get dN/dx
         if (id == 22) eGamma->Fill(eI/mX,1./nEvent); 
-        else if (id == -11) ePos->Fill(eI/mX,1./nEvent); 
-        else if (id == -2212) ePbar->Fill(eI/mX,1./nEvent); 
+        else if (id == -11) ePos->Fill((eI-me)/mX,1./nEvent); 
+        else if (id == -2212) ePbar->Fill((eI-mp)/mX,1./nEvent); 
         else if (idAbs == 14) eNumu->Fill(eI/mX,1./nEvent); 
 //      else {
 //        eRest.fill(eI);

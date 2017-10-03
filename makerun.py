@@ -92,7 +92,7 @@ subprocess.call(["mkdir","-p","runs-todo"], stdout=subprocess.PIPE) # create run
 m = 200.     # mass of DM particle in GeV
 #c = 91        
 p = 22      # the secondary particle of interest (e+, pbar, nu_l, gamma etc.)
-n = 1000  # number of events to simulate
+n = 1000000  # number of events to simulate
 anncodes = [5,24,15,6] # the DM annihilation channel (b bbar, W+W- etc.)
 #yieldcodes = [22,-11,-2212,14] # the yield particle code (gamma,e+, pbar, nu_mu/nu_mubar,  etc.)
 for c in anncodes:
