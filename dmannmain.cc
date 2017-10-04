@@ -170,8 +170,8 @@ int main(int argc, char* argv[]) {
   BinLogX(ePos);
   BinLogX(ePbar);
   BinLogX(eNumu);      
-  double me = 0.000511 # electron mass
-  double mp = 0.938 # proton mass
+  double me = 0.000511; // electron mass
+  double mp = 0.938; // proton mass
   
   // Histogram particle spectra.
 //  Hist eGamma("energy spectrum of photons",        100, 0., 100.);
