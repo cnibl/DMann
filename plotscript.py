@@ -41,12 +41,12 @@ for i in range(4):
       plt.legend(loc = "best")
       plt.xlabel("$E_{{\\rm kin}}/m_\chi=(E-m)/m_\chi$")
       plt.ylabel("$dN/dE$")
-      plt.gca().set_xscale("log") #change filename if removing log scale
+#      plt.gca().set_xscale("log") #change filename if removing log scale
       plt.gca().set_yscale("log")  
       datafile.close()
       j += 1
     plotfiles = ["tautau","WW","bbbar","ttbar"]
-    plotfiles = ["plots/da-m200-n1e6-ann-{0}.pdf".format(f) for f in plotfiles] #change filename if removing log scale
+    plotfiles = ["plots/da-m200-n1e6-ann-{0}-lin.pdf".format(f) for f in plotfiles] #change filename if removing log scale
     plt.savefig(plotfiles[i])
   elif plotmode == "yield":
     plt.title(yieldch[i])
@@ -57,11 +57,11 @@ for i in range(4):
       plt.legend(loc = "best")
       plt.xlabel("$E_{{\\rm kin}}/m_\chi=(E-m)/m_\chi$")
       plt.ylabel("$dN/dE$")
-      plt.gca().set_xscale("log") #change filename if removing log scale 
+#      plt.gca().set_xscale("log") #change filename if removing log scale 
       plt.gca().set_yscale("log")  
       datafile.close()
     plotfiles = ["e+","pbar","numu","gamma"]
-    plotfiles = ["plots/da-m200-n1e6-yield-{0}.pdf".format(f) for f in plotfiles] #change filename if removing log scale  
+    plotfiles = ["plots/da-m200-n1e6-yield-{0}-lin.pdf".format(f) for f in plotfiles] #change filename if removing log scale  
     plt.savefig(plotfiles[i])
 
 
