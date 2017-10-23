@@ -24,7 +24,7 @@ filelist = ["pythia8data/{0}".format(f) for f in filelist]
 subprocess.call(["mkdir","-p","plots"])  
 
 annch = ["$\\tau^+ \\tau^-$","$W^+W^-$","$b\\bar{b}$","$t\\bar{t}$"]
-yieldch = ["$e^+$","$\\bar{p}$","$\\nu_{\mu}/\\bar{\\nu}_{\mu}$","$\gamma$"]
+yieldch = ["$e^+$","$\\bar{p}$","$\\nu_{\mu}+ \\bar{\\nu}_{\mu}$","$\gamma$"]
 """
 plotmode = "ann": plot with same annihilation channel, different yield particles in one plot  
 plotmode = "yield": plot with same yield particle, different annihilation channel in one plot  
@@ -41,12 +41,14 @@ for i in range(4):
       plt.legend(loc = "best")
       plt.xlabel("$E_{{\\rm kin}}/m_\chi=(E-m)/m_\chi$")
       plt.ylabel("$dN/dE$")
-#      plt.gca().set_xscale("log") #change filename if removing log scale
+      plt.gca().set_xscale("log") #change filename if removing log scale
       plt.gca().set_yscale("log")  
+      plt.xlim(2e-8,2)
+      plt.ylim(1e-5,1e3)            
       datafile.close()
       j += 1
     plotfiles = ["tautau","WW","bbbar","ttbar"]
-    plotfiles = ["plots/da-m200-n1e6-ann-{0}-lin.pdf".format(f) for f in plotfiles] #change filename if removing log scale
+    plotfiles = ["plots/da-m200-n1e6-ann-{0}.pdf".format(f) for f in plotfiles] #change filename if removing log scale
     plt.savefig(plotfiles[i])
   elif plotmode == "yield":
     plt.title(yieldch[i])
@@ -57,11 +59,14 @@ for i in range(4):
       plt.legend(loc = "best")
       plt.xlabel("$E_{{\\rm kin}}/m_\chi=(E-m)/m_\chi$")
       plt.ylabel("$dN/dE$")
-#      plt.gca().set_xscale("log") #change filename if removing log scale 
-      plt.gca().set_yscale("log")  
+      plt.gca().set_xscale("log") #change filename if removing log scale 
+#      plt.gca().set_yscale("log")  
+#      plt.xlim(2e-8,2)
+#      plt.ylim(1e-5,1e3)      
+      plt.ylim(0,1.1)
       datafile.close()
     plotfiles = ["e+","pbar","numu","gamma"]
-    plotfiles = ["plots/da-m200-n1e6-yield-{0}-lin.pdf".format(f) for f in plotfiles] #change filename if removing log scale  
+    plotfiles = ["plots/da-m200-n1e6-yield-{0}.pdf".format(f) for f in plotfiles] #change filename if removing log scale  
     plt.savefig(plotfiles[i])
 
 
