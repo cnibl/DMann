@@ -27,9 +27,13 @@ nEvt:
 Number of simulated events
 """
 
-def makerunfile(mX,annPdg,yieldPdg,nEvt):
-  filename = "da-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
-  runfile = open("runs-todo/"+filename,'w') 
+def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
+  if not test:
+    filename = "da-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
+    runfile = open("runs-todo/"+filename,'w') 
+  else:
+    filename = "TEST-runs/TEST-da-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
+    runfile = open(filename,'w')
   """ 
   Write all PYTHIA commands and parameters for a run into the runfile
   """
@@ -78,6 +82,9 @@ def makerunfile(mX,annPdg,yieldPdg,nEvt):
   runfile.write("130:mayDecay  = true                 ! K0_L\n")
   runfile.write("2112:mayDecay = true                 ! n\n")
   
+  #CN: TEMPORARY STUFF, REMOVE LATER
+#  runfile.write("24:mayDecay = false                 ! n\n") # prevent W decays
+  
   runfile.close()
 
 
@@ -92,9 +99,9 @@ subprocess.call(["mkdir","-p","runs-todo"], stdout=subprocess.PIPE) # create run
 m = 200.     # mass of DM particle in GeV
 #c = 91        
 p = 22      # the secondary particle of interest (e+, pbar, nu_l, gamma etc.)
-n = 1000000  # number of events to simulate
+n = 100000  # number of events to simulate
 anncodes = [5,24,15,6] # the DM annihilation channel (b bbar, W+W- etc.)
 #yieldcodes = [22,-11,-2212,14] # the yield particle code (gamma,e+, pbar, nu_mu/nu_mubar,  etc.)
 for c in anncodes:
-  makerunfile(m,c,p,n)
+  makerunfile(m,c,p,n,True) 
 

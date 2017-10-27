@@ -19,6 +19,9 @@
 // Stdlib header file for input and output.
 #include <iostream>
 
+// Date and time (for headers in output files)
+#include <time.h>
+
 // Header file to access Pythia 8 program elements.
 #include "Pythia8/Pythia.h"
 #include "Pythia8/ParticleDecays.h"
@@ -65,14 +68,31 @@ public:
 
 // A macro to make txt-files from ROOT TH1 histograms, modified from example 
 // at https://root-forum.cern.ch/t/histogram-to-ascii/14080/5
-void h12ascii (TH1* h, string filename) {
+void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent) {
   ofstream outputfile;
+//  string filename = "pythia8data/da-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
+//  string filename = "TEST-pythia8/da-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
+  string filename = "histdata-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";        
   outputfile.open (filename);
+  // Header of file
+//  outputfile << "# DMann data file with dN/dE_kin as function of x=E_kin/mX=(E-m)/mX\n";
+  outputfile << "# DMann data file with counts/nAnn as function of E_kin\n";  
+  time_t rawtime;
+  time(&rawtime);
+  outputfile << "# Created: " << ctime(&rawtime);
+  outputfile << "# Number of simulated events: " << std::to_string(nEvent) << "\n";
+  outputfile << "# WIMP mass: " << std::to_string((int)mX) << " GeV\n";
+  outputfile << "# PDG code of annihilation channel: " << std::to_string(ch) << "\n";
+  outputfile << "# PDG code of yield particle: " << std::to_string(yieldpdg) << "\n";   
+  outputfile << "# \n";
+//  outputfile << "# x\tdN/dE\n";
+  outputfile << "# E\tcounts/nAnn\n";  
+  // Print histogram data to file
   Int_t n = h->GetNbinsX();
   for (Int_t i=1; i<=n; i++) {
       outputfile << h->GetBinLowEdge(i)+h->GetBinWidth(i)/2;
       outputfile << "\t";
-      outputfile << h->GetBinContent(i);
+      outputfile << h->GetBinContent(i)/nEvent; //CN divide by Nevent here ??
       outputfile << "\n";
   }
   outputfile.close();
@@ -162,10 +182,16 @@ int main(int argc, char* argv[]) {
   
   // Create file where histogram can be saved and book histogram itself
 //  TFile* outFile = new TFile("plot/eGa.root", "RECREATE");
-  TH1F *eGamma = new TH1F("eGamma","Photon energy divided by WIMP mass", 250, -10, 0);
-  TH1F *ePos = new TH1F("ePos","Positron energy divided by WIMP mass", 250, -10, 0);
-  TH1F *ePbar = new TH1F("ePbar","Antiproton energy divided by WIMP mass", 250, -10, 0);
-  TH1F *eNumu = new TH1F("eNumu","Muon neutrino energy divided by WIMP mass", 250, -10, 0);      
+  // Create ROOT histograms with 250 log bins from 10^-10 to 10^0
+//  TH1F *eGamma = new TH1F("eGamma","Photon energy divided by WIMP mass", 250, -10, 0);
+//  TH1F *ePos = new TH1F("ePos","Positron energy divided by WIMP mass", 250, -10, 0);
+//  TH1F *ePbar = new TH1F("ePbar","Antiproton energy divided by WIMP mass", 250, -10, 0);
+//  TH1F *eNumu = new TH1F("eNumu","Muon neutrino energy divided by WIMP mass", 250, -10, 0);      
+  TH1F *eGamma = new TH1F("eGamma","Photon energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
+  TH1F *ePos = new TH1F("ePos","Positron energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
+  TH1F *ePbar = new TH1F("ePbar","Antiproton energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
+  TH1F *eNumu = new TH1F("eNumu","Muon neutrino energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
+  
   BinLogX(eGamma);
   BinLogX(ePos);
   BinLogX(ePbar);
@@ -197,15 +223,11 @@ int main(int argc, char* argv[]) {
         int id = pythia.event[i].id();
         int idAbs = pythia.event[i].idAbs();      
         double eI = pythia.event[i].e();
-        // Fill histograms with (E-m)/mX (E_kin/mX) with weight 1/nEvent to get dN/dx
-        if (id == 22) eGamma->Fill(eI/mX,1./nEvent); 
-        else if (id == -11) ePos->Fill((eI-me)/mX,1./nEvent); 
-        else if (id == -2212) ePbar->Fill((eI-mp)/mX,1./nEvent); 
-        else if (idAbs == 14) eNumu->Fill(eI/mX,1./nEvent); 
-//      else {
-//        eRest.fill(eI);
-//        cout << " Error: stable id = " << pythia.event[i].id() << endl;
-//      }
+        // Fill histograms with (E-m)/mX (E_kin/mX). CN With weight 1/nEvent to get dN/dx??
+        if (id == 22) eGamma->Fill(eI); //,1./nEvent); 
+        else if (id == -11) ePos->Fill((eI-me)); //,1./nEvent); 
+        else if (id == -2212) ePbar->Fill((eI-mp)); //,1./nEvent); 
+        else if (idAbs == 14) eNumu->Fill(eI); //,1./nEvent); 
       }
     }
 
@@ -226,20 +248,11 @@ int main(int argc, char* argv[]) {
   int length = sizeof(yieldcodes)/sizeof(yieldcodes[0]); //The length of the yieldcodes array
   for (int i = 0; i < length; ++i) {
     yieldpdg = yieldcodes[i];
-    string filename = "pythia8data/da-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";
-    if (i == 0) h12ascii(eGamma,filename);
-    else if (i == 1) h12ascii(ePos,filename);
-    else if (i == 2) h12ascii(ePbar,filename);
-    else if (i == 3) h12ascii(eNumu,filename);        
+    if (i == 0) h12ascii(eGamma,mX,ch,yieldpdg,nEvent);
+    else if (i == 1) h12ascii(ePos,mX,ch,yieldpdg,nEvent);
+    else if (i == 2) h12ascii(ePbar,mX,ch,yieldpdg,nEvent);
+    else if (i == 3) h12ascii(eNumu,mX,ch,yieldpdg,nEvent);        
   }
-//  for (int i = 91; i < 95; ++i) {
-//    string filename = "pythia8data/da-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(i)+".dat";
-//    if (i == 91) h12ascii(eGamma,filename);
-//    else if (i == 92) h12ascii(ePos,filename);
-//    else if (i == 93) h12ascii(ePbar,filename);
-//    else if (i == 94) h12ascii(eNumu,filename);        
-//  }  
-  
   
 //  // Save histograms to two column data files
 //  eGamma.table("plot/eGamma.dat");
