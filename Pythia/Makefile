@@ -1,12 +1,20 @@
 # Makefile for the DMann part with PYTHIA8.
 # dmannmain.cc needs to be compiled with ROOT as well
 
+#PYTDIR=/Users/carlniblaeus/pythia8226/ #on mac
+#PYTDIR=/home/carlniblaeus/pythia8230/ #on ubuntu desktop
 
 # Install directory prefixes.
-PREFIX_BIN=/Users/carlniblaeus/pythia8226/bin
-PREFIX_INCLUDE=/Users/carlniblaeus/pythia8226/include
-PREFIX_LIB=/Users/carlniblaeus/pythia8226/lib
-PREFIX_SHARE=/Users/carlniblaeus/pythia8226/share/Pythia8
+#PREFIX_BIN=$(PYTDIR)bin
+#PREFIX_INCLUDE=$(PYTDIR)include
+#PREFIX_LIB=$(PYTDIR)lib
+#PREFIX_SHARE=$(PYTDIR)share/Pythia8
+
+# Install directory prefixes. Ubuntu desktop.
+PREFIX_BIN=/home/carlniblaeus/pythia8230/bin
+PREFIX_INCLUDE=/home/carlniblaeus/pythia8230/include
+PREFIX_LIB=/home/carlniblaeus/pythia8230/lib
+PREFIX_SHARE=/home/carlniblaeus/pythia8230/share/Pythia8
 
 # Compilation flags (see ./configure --help for further documentation).
 ENABLE_SHARED=false
@@ -16,11 +24,17 @@ CXX_SHARED=-dynamiclib
 CXX_SONAME=-Wl,-dylib_install_name,@rpath/
 LIB_SUFFIX=.dylib
 
-# ROOT configuration.
+# ROOT configuration on mac.
+#ROOT_USE=true
+#ROOT_BIN=/usr/local/Cellar/root/6.10.04/bin//
+#ROOT_INCLUDE=/usr/local/Cellar/root/6.10.04/include/root/
+#ROOT_LIB=/usr/local/Cellar/root/6.10.04/lib/root/
+
+# ROOT configuration on ubuntu desktop.
 ROOT_USE=true
-ROOT_BIN=/usr/local/Cellar/root/6.10.04/bin//
-ROOT_INCLUDE=/usr/local/Cellar/root/6.10.04/include/root/
-ROOT_LIB=/usr/local/Cellar/root/6.10.04/lib/root/
+ROOT_BIN=../ROOT6.10.08/bin/
+ROOT_INCLUDE=../ROOT6.10.08/include
+ROOT_LIB=../ROOT6.10.08/lib
 
 CXX_COMMON:=-I$(PREFIX_INCLUDE) $(CXX_COMMON)
 CXX_COMMON+= -L$(PREFIX_LIB) -Wl,-rpath,$(PREFIX_LIB) -lpythia8 -ldl 

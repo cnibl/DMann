@@ -1,8 +1,8 @@
-#!/bin/sh 
+#!/bin/bash 
 
 set -e # The -e flag causes the script to abort if any command exits with non-handled error code 
 
-test=1
+test=0
 
 if [ $test -ne 1 ]; then
 
