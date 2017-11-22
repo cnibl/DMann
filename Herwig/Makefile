@@ -21,7 +21,7 @@ CXXFLAGS = -g -W -Wall -O2
 CPPFLAGS = -I/home/carlniblaeus/Downloads/../Herwig7/include
 
 # add additional libraries here
-LDFLAGS = -I../Herwig7/src/Herwig-7.1.1/Analysis/ -I../Herwig7/src/Herwig-7.1.1/Utilities/ -I/home/carlniblaeus/Herwig7/lib/Herwig/
+LDFLAGS = -I../Herwig7/src/Herwig-7.1.1/Analysis/ -I../Herwig7/src/Herwig-7.1.1/Utilities/ -I/home/carlniblaeus/Herwig7/lib/Herwig/ -I../Herwig7/include/ -I../Herwig7/
 
 ROOTCFLAGS := $(shell root-config --cflags)
 ROOTGLIBS := $(shell root-config --glibs)

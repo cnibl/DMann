@@ -18,8 +18,8 @@
 //#include "TCanvas.h"
 
 using namespace DMann;
-
-DMannYields::DMannYields()  : histo(0.,200.,100)  {}
+//histo(2.e-10.,200.,250)
+DMannYields::DMannYields()  :  histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))) {}
 
 DMannYields::~DMannYields() {}
 
