@@ -9,11 +9,6 @@
 //#include "TCanvas.h"
 
 #include "ThePEG/Handlers/AnalysisHandler.h"
-#include "ThePEG/EventRecord/Event.h"
-#include "ThePEG/EventRecord/Particle.h"
-#include "ThePEG/Repository/Repository.h"
-#include "ThePEG/PDT/ParticleData.h"
-#include "ThePEG/EventRecord/StandardSelectors.h"
 
 #include "Herwig/Utilities/Histogram.h"
 
@@ -109,6 +104,22 @@ protected:
 
 public:
 
+  /** @name Functions used by the persistent I/O system. */
+  //@{
+  /**
+   * Function used to write out object persistently.
+   * @param os the persistent output stream written to.
+   */
+  void persistentOutput(PersistentOStream & os) const;
+
+  /**
+   * Function used to read in object persistently.
+   * @param is the persistent input stream read from.
+   * @param version the version number of the object when written.
+   */
+  void persistentInput(PersistentIStream & is, int version);
+  //@}
+  
   /**
    * The standard Init function used to initialize the interfaces.
    * Called exactly once for each class by the class description system
@@ -144,7 +155,8 @@ protected:
 //*/
 //  TH1F* histo;
 
-
+public:
+  static string library();
 
 private:
   /**
@@ -161,59 +173,28 @@ private:
 
 private:
 
+  /**
+   *  The histograms of dN/dE
+   *  (the int is the PDG id)
+   */
+  map<int,Herwig::Histogram> _histograms;
+
   Herwig::Histogram histo;
 
   /**
-   *  The PDG codes of the particles
+   *  The PDG code of the yield particle
    */
-  vector<long> _particlecodes;
+  int _yieldpdg;
 
   /**
-   * The multiplcity
+   *  The WIMP mass
    */
-  vector<double> _multiplicity;
+  double _massdm;
 
-  /**
-   * The error
-   */
-  vector<double> _error;
-
-  /**
-   * Species of particle
-   */
-  vector<unsigned int> _species;
-
-
- /// Histograms for cluster mass dependence
- map<long,Herwig::Histogram> _histograms;
-
- /**
-  *  Histograms of the clusters after cluster splitting
-  */
- map<int,Herwig::Histogram> _clusters;
-
- /**
-  *  Histograms of the primary clusters
-  */
- map<int,Herwig::Histogram> _primary;
-
-  /**
-   *  Map of number of final-state particles to PDG code
-   */
-  map<long,long> _finalstatecount;
-
-  /**
-   *  Particles in hard process
-   */
-  map<long,long> _collisioncount;
-
-  /// Make histograms of cluster mass dependence
-  bool _makeHistograms;
-
+  vector<int> _pdgvec;
 
 };
 
 }
-
 
 #endif /* DMann_DMannYields_H */

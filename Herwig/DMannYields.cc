@@ -6,20 +6,26 @@
 
 #include "DMannYields.h"
 #include "ThePEG/Interface/ClassDocumentation.h"
+#include "ThePEG/Interface/ParVector.h"
+#include "ThePEG/Interface/Parameter.h"
 #include "ThePEG/EventRecord/Particle.h"
 #include "ThePEG/Repository/UseRandom.h"
 #include "ThePEG/Repository/EventGenerator.h"
 #include "ThePEG/Utilities/DescribeClass.h"
-#include <iostream>
-#include <sstream>
-#include <fstream>
+
+#include "ThePEG/Persistency/PersistentOStream.h"
+#include "ThePEG/Persistency/PersistentIStream.h"
 
 //#include "TH1F.h"
 //#include "TCanvas.h"
 
 using namespace DMann;
 //histo(2.e-10.,200.,250)
-DMannYields::DMannYields()  :  histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))) {}
+DMannYields::DMannYields() : 
+histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))), 
+_yieldpdg(0),
+_massdm(0.0)
+{}
 
 DMannYields::~DMannYields() {}
 
@@ -44,13 +50,33 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
   /** loop over all particles */
 //  for (tPVector::const_iterator pit = particles.begin();
 //    pit != particles.end(); ++pit){
+  
+  /*
+  cout << "Mass DM " << _massdm << "\n";
+  cout << "Yield PDG " << _yieldpdg << "\n\n";
+  for (std::vector<int>::iterator it = _pdgvec.begin(); it != _pdgvec.end(); ++it) {
+    cout << "PDGvec = " << (*it) << "\n";
+  }
+  cout << "\n";
+  */
+
   for(set<tcPPtr>::const_iterator it = particles.begin(); 
     it != particles.end(); ++it) {
+    /** Check if particle id ((*it)->id()) equals any of yield particle IDs and fill histograms */
+    for (std::vector<int>::iterator idPtr = _pdgvec.begin(); 
+          idPtr != _pdgvec.end(); ++idPtr) {
+      if ((*it)->id()==(*idPtr)) { 
+        p = (*it)->momentum();
+        _histograms[(*idPtr)] += (p.e()-p.mass())/GeV; // Fill histogram corresponding to yield ID
+        //histo += p.e()/GeV;
+      }
+    } 
     /** Select only the gammas  */
-    if((*it)->id()==ParticleID::gamma) {
+    /*if((*it)->id()==ParticleID::gamma) {
       p = (*it)->momentum();
+      //histograms[(*it)->id()] += p.e()/GeV;
       histo += p.e()/GeV;
-    }
+    }*/
   }
 
 }
@@ -69,22 +95,30 @@ void DMannYields::analyze(tPPtr, double weight) {}
 
 void DMannYields::dofinish() {
   // *** ATTENTION *** Normalize and post-process histograms here.
-  useMe();
-  string filename = generator()->filename() + ".mult";
-  ofstream outfile(filename.c_str());
-  //using namespace Herwig::HistogramOptions;
-  //histo.topdrawOutput(outfile,Frame|Ylog,"BLACK","title","",
-  //         "N (200 bins)","","Photon energy [GeV]");
-  histo.simpleOutput(outfile, false, false);
-  outfile.close();
-  AnalysisHandler::dofinish();
+  for (std::vector<int>::iterator idPtr = _pdgvec.begin(); 
+        idPtr != _pdgvec.end(); ++idPtr) {
+    useMe();
+    string filename = generator()->filename() + "-" + std::to_string((*idPtr)) +".mult";
+    ofstream outfile(filename.c_str());
+    //using namespace Herwig::HistogramOptions;
+    //histo.topdrawOutput(outfile,Frame|Ylog,"BLACK","title","",
+    //         "N (200 bins)","","Photon energy [GeV]");
+    //histo.simpleOutput(outfile, false, false);
+    _histograms[(*idPtr)].simpleOutput(outfile, false, false);
+    outfile.close();
+    AnalysisHandler::dofinish();
+  }
 }
 
 void DMannYields::doinitrun() {
   AnalysisHandler::doinitrun();
   // *** ATTENTION *** histogramFactory().registerClient(this); // Initialize histograms.
   // *** ATTENTION *** histogramFactory().mkdirs("/SomeDir"); // Put histograms in specal directory.
-  //Herwig::Histogram histo = Herwig::Histogram(0.,200., 100);
+  for (std::vector<int>::iterator idPtr = _pdgvec.begin(); 
+        idPtr != _pdgvec.end(); ++idPtr) {
+    _histograms.insert(make_pair((*idPtr),
+      Herwig::Histogram(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04)))));
+  }
 }
 
 
@@ -100,17 +134,50 @@ IBPtr DMannYields::fullclone() const {
 // If needed, insert default implementations of virtual function defined
 // in the InterfacedBase class here (using ThePEG-interfaced-impl in Emacs).
 
-//static string library() { return "DMannYields.so"; }
+
+void DMannYields::persistentOutput(PersistentOStream & os) const {
+  // *** ATTENTION *** os << ; // Add all member variable which should be written persistently here.
+  os << _yieldpdg << _massdm << _pdgvec;
+}
+
+void DMannYields::persistentInput(PersistentIStream & is, int) {
+  // *** ATTENTION *** os << ; // Add all member variable which should be read persistently here.
+  is >> _yieldpdg >> _massdm >> _pdgvec;
+}
+
+string library() { return "DMannYields.so"; }
 
 // *** Attention *** The following static variable is needed for the type
 // description system in ThePEG. Please check that the template arguments
 // are correct (the class and its base class), and that the constructor
 // arguments are correct (the class name and the name of the dynamically
 // loadable library where the class implementation can be found).
-DescribeNoPIOClass<DMannYields,AnalysisHandler>
+DescribeClass<DMannYields,AnalysisHandler>
   describeDMannDMannYields("DMann::DMannYields", "DMannYields.so");
 
+// Definition of the static class description member.
+ClassDescription<DMannYields> DMannYields::initDMannYields;
+
 void DMannYields::Init() {
+
+  static Parameter<DMannYields,double> interfacemassdm
+    ("MassDM",
+     "The mass of the DM particle",
+     &DMannYields::_massdm, 0, 0., 0., 100000.0, 
+     false, false, Interface::limited);
+
+  static Parameter<DMannYields,int> interfaceyieldpdg
+    ("YieldPDG",
+     "PDG code of the yield particle of interest (gamma, e+ etc.)",
+     &DMannYields::_yieldpdg, 0, 0, 0, 100000, 
+     false, false, Interface::limited);    
+
+  static ParVector<DMannYields,int> interfacepdgvec
+    ("ParticleCodes",
+     "The PDG code for the particles",
+     &DMannYields::_pdgvec,-1, 0, -10000000, 10000000,
+     false, false, Interface::limited);
+     //0, 0, 0, -10000000, 10000000, false, false, Interface::nolimits);
 
   static ClassDocumentation<DMannYields> documentation
     ("There is no documentation for the DMannYields class");

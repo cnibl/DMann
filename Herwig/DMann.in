@@ -177,7 +177,19 @@ set /Herwig/Particles/mu+:Stable Unstable
 cd /Herwig/Analysis
 create DMann::DMannYields DMannYields DMannYields.so
 insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 DMannYields
+describe DMannYields
+set DMannYields:MassDM 200.0
+#set DMannYields:YieldPDG 22
+insert DMannYields:ParticleCodes[0] 22 		# gamma
+insert DMannYields:ParticleCodes[1] -2212	# pbar
+insert DMannYields:ParticleCodes[2] -11		# e+
+insert DMannYields:ParticleCodes[3] 14		# numu
+insert DMannYields:ParticleCodes[4] -14		# numubar	
 
+#cd /Herwig/Analysis
+#create Herwig::LEPMultiplicityCount mult LEPMultiplicityCount.so
+#insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 mult
+#set mult:ParticleCodes 0 22
 
 #cd /Herwig/Analysis
 #insert Rivet:Analyses 0 MC_GENERIC
