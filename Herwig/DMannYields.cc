@@ -24,7 +24,8 @@ using namespace DMann;
 DMannYields::DMannYields() : 
 histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))), 
 _yieldpdg(0),
-_massdm(0.0)
+_massdm(0.0),
+nEvt(0)
 {}
 
 DMannYields::~DMannYields() {}
@@ -42,7 +43,8 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
   Lorentz5Momentum p;
   set<tcPPtr> particles;
   event->selectFinalState(inserter(particles));
-
+  nEvt = (int)event->N();
+  // ann = (int)event->outgoing(); ???
   //map <long,long> eventcount;
 //  if ( loop > 0 || state != 0 || !event ) return
   //tPVector particles = event->getFinalState();
@@ -100,6 +102,17 @@ void DMannYields::dofinish() {
     useMe();
     string filename = generator()->filename() + "-" + std::to_string((*idPtr)) +".mult";
     ofstream outfile(filename.c_str());
+    outfile << "# DMann Herwig7 data file with counts/nAnn as function of E_kin\n";  
+    time_t rawtime;
+    time(&rawtime);
+    outfile << "# Created: " << ctime(&rawtime);
+    outfile << "# Number of simulated events: " << std::to_string(nEvt) << "\n";
+    outfile << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV\n";
+    //outfile << "# PDG code of annihilation channel: " << std::to_string(??) << "\n"; ???
+    outfile << "# PDG code of yield particle: " << std::to_string((*idPtr)) << "\n";   
+    outfile << "# \n";
+    outfile << "# E_low\tE_high\tnorm\tcounts\n";  
+    
     //using namespace Herwig::HistogramOptions;
     //histo.topdrawOutput(outfile,Frame|Ylog,"BLACK","title","",
     //         "N (200 bins)","","Photon energy [GeV]");

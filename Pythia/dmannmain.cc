@@ -76,7 +76,7 @@ void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent) {
   outputfile.open (filename);
   // Header of file
 //  outputfile << "# DMann data file with dN/dE_kin as function of x=E_kin/mX=(E-m)/mX\n";
-  outputfile << "# DMann data file with counts/nAnn as function of E_kin\n";  
+  outputfile << "# DMann Pythia8 data file with counts/nAnn as function of E_kin\n";  
   time_t rawtime;
   time(&rawtime);
   outputfile << "# Created: " << ctime(&rawtime);

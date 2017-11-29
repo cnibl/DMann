@@ -191,8 +191,15 @@ private:
    */
   double _massdm;
 
+  /**
+   *  The PDG codes of the yield particles
+   */
   vector<int> _pdgvec;
 
+  /**
+   *  Number of events
+   */
+  int nEvt;
 };
 
 }
