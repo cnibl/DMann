@@ -25,7 +25,7 @@ DMannYields::DMannYields() :
 histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))), 
 _yieldpdg(0),
 _massdm(0.0),
-nEvt(0)
+_annpdg(0)
 {}
 
 DMannYields::~DMannYields() {}
@@ -43,29 +43,16 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
   Lorentz5Momentum p;
   set<tcPPtr> particles;
   event->selectFinalState(inserter(particles));
-  nEvt = (int)event->N();
-  // ann = (int)event->outgoing(); ???
-  //map <long,long> eventcount;
 //  if ( loop > 0 || state != 0 || !event ) return
-  //tPVector particles = event->getFinalState();
  
-  /** loop over all particles */
-//  for (tPVector::const_iterator pit = particles.begin();
-//    pit != particles.end(); ++pit){
-  
-  /*
-  cout << "Mass DM " << _massdm << "\n";
-  cout << "Yield PDG " << _yieldpdg << "\n\n";
-  for (std::vector<int>::iterator it = _pdgvec.begin(); it != _pdgvec.end(); ++it) {
-    cout << "PDGvec = " << (*it) << "\n";
-  }
-  cout << "\n";
-  */
+  tSubProPtr sub = event->primarySubProcess();
+  ParticleVector outPtr = sub->outgoing(); 
+  _annpdg = abs((*(outPtr[0])).id());
 
   for(set<tcPPtr>::const_iterator it = particles.begin(); 
     it != particles.end(); ++it) {
-    /** Check if particle id ((*it)->id()) equals any of yield particle IDs and fill histograms */
-    for (std::vector<int>::iterator idPtr = _pdgvec.begin(); 
+    /** Check if particle id in list (i.e. (*it)->id()) equals any of yield particle IDs and fill histograms */
+    for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
           idPtr != _pdgvec.end(); ++idPtr) {
       if ((*it)->id()==(*idPtr)) { 
         p = (*it)->momentum();
@@ -97,27 +84,27 @@ void DMannYields::analyze(tPPtr, double weight) {}
 
 void DMannYields::dofinish() {
   // *** ATTENTION *** Normalize and post-process histograms here.
-  for (std::vector<int>::iterator idPtr = _pdgvec.begin(); 
+  long nEvt = generator()->currentEventNumber() - 1;  
+  for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
     useMe();
-    string filename = generator()->filename() + "-" + std::to_string((*idPtr)) +".mult";
+    string filename = "herwig7data/da-her7-mx"+std::to_string((int)_massdm)+"-ch"+std::to_string(_annpdg)+"-int"+std::to_string(*idPtr)+".dat";
+    //string filename = generator()->filename() + "-" + std::to_string((*idPtr)) +".mult";
     ofstream outfile(filename.c_str());
-    outfile << "# DMann Herwig7 data file with counts/nAnn as function of E_kin\n";  
+    outfile << "# DMann Herwig7 data file with counts/nAnn as function of E_kin\n";  // not divided by nAnn right now
     time_t rawtime;
     time(&rawtime);
     outfile << "# Created: " << ctime(&rawtime);
     outfile << "# Number of simulated events: " << std::to_string(nEvt) << "\n";
     outfile << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV\n";
-    //outfile << "# PDG code of annihilation channel: " << std::to_string(??) << "\n"; ???
+    outfile << "# PDG code of annihilation channel: " << std::to_string(_annpdg) << "\n"; 
     outfile << "# PDG code of yield particle: " << std::to_string((*idPtr)) << "\n";   
     outfile << "# \n";
     outfile << "# E_low\tE_high\tnorm\tcounts\n";  
     
-    //using namespace Herwig::HistogramOptions;
-    //histo.topdrawOutput(outfile,Frame|Ylog,"BLACK","title","",
-    //         "N (200 bins)","","Photon energy [GeV]");
-    //histo.simpleOutput(outfile, false, false);
+    
     _histograms[(*idPtr)].simpleOutput(outfile, false, false);
+    //_histograms[(*idPtr)].rivetOutput(outfile, "Multiplicity", "DMann", "Multiplicity", "E_{\\rm kin}", "dN/dE", false, 1./nEvt); //???
     outfile.close();
     AnalysisHandler::dofinish();
   }
@@ -127,10 +114,10 @@ void DMannYields::doinitrun() {
   AnalysisHandler::doinitrun();
   // *** ATTENTION *** histogramFactory().registerClient(this); // Initialize histograms.
   // *** ATTENTION *** histogramFactory().mkdirs("/SomeDir"); // Put histograms in specal directory.
-  for (std::vector<int>::iterator idPtr = _pdgvec.begin(); 
+  for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
     _histograms.insert(make_pair((*idPtr),
-      Herwig::Histogram(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04)))));
+      Herwig::Histogram(Herwig::Histogram::LogBins(1.e-10*_massdm,250,pow(10,0.04)))));    
   }
 }
 
@@ -179,16 +166,16 @@ void DMannYields::Init() {
      &DMannYields::_massdm, 0, 0., 0., 100000.0, 
      false, false, Interface::limited);
 
-  static Parameter<DMannYields,int> interfaceyieldpdg
+  static Parameter<DMannYields,long> interfaceyieldpdg //OBSOLETE
     ("YieldPDG",
      "PDG code of the yield particle of interest (gamma, e+ etc.)",
      &DMannYields::_yieldpdg, 0, 0, 0, 100000, 
      false, false, Interface::limited);    
 
-  static ParVector<DMannYields,int> interfacepdgvec
+  static ParVector<DMannYields,long> interfacepdgvec
     ("ParticleCodes",
      "The PDG code for the particles",
-     &DMannYields::_pdgvec,-1, 0, -10000000, 10000000,
+     &DMannYields::_pdgvec,-1, 0l, -10000000l, 10000000l,
      false, false, Interface::limited);
      //0, 0, 0, -10000000, 10000000, false, false, Interface::nolimits);
 
