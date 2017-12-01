@@ -177,14 +177,14 @@ private:
    *  The histograms of dN/dE
    *  (the int is the PDG id)
    */
-  map<int,Herwig::Histogram> _histograms;
+  map<long,Herwig::Histogram> _histograms;
 
   Herwig::Histogram histo;
 
   /**
    *  The PDG code of the yield particle
    */
-  int _yieldpdg;
+  long _yieldpdg;
 
   /**
    *  The WIMP mass
@@ -194,12 +194,13 @@ private:
   /**
    *  The PDG codes of the yield particles
    */
-  vector<int> _pdgvec;
-
+  vector<long> _pdgvec;
+  
   /**
-   *  Number of events
+   *  Absolute value of PDG code of the 
+   *  final state (i.e. DM ann. channel)
    */
-  int nEvt;
+  long _annpdg;
 };
 
 }
