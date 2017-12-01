@@ -49,11 +49,17 @@ set Factory:OrderInAlphaEW 2
 ############################################################
 cd /Herwig/MatrixElements
 
+insert SubProcess:MatrixElements 0 MEee2gZ2qq
+set MEee2gZ2qq:MinimumFlavour 6
+set MEee2gZ2qq:MaximumFlavour 6
+set MEee2gZ2qq:AlphaQCD /Herwig/Shower/AlphaQCD
+set MEee2gZ2qq:AlphaQED /Herwig/Shower/AlphaQED
+
 # e+e- > q qbar
 #create Herwig::MEee2gZ2qq MEqq
 #insert SubProcess:MatrixElements[0] MEqq
-#set MEqq:MinimumFlavour 1
-#set MEqq:MaximumFlavour 5
+#set MEqq:MinimumFlavour 6
+#set MEqq:MaximumFlavour 6
 #set MEqq:AlphaQCD /Herwig/Shower/AlphaQCD
 #set MEqq:AlphaQED /Herwig/Shower/AlphaQED
 
@@ -64,9 +70,9 @@ cd /Herwig/MatrixElements
 #set MEll:AlphaQED /Herwig/Shower/AlphaQED
 
 # e+e- -> W+W- ZZ
-create Herwig::MEee2VV MEVV
-insert SubProcess:MatrixElements[0] MEVV
-set MEVV:Process WW 	# options: WW, WZ (W+ or W-), ZZ, WpZ, WmZ 
+#create Herwig::MEee2VV MEVV
+#insert SubProcess:MatrixElements[0] MEVV
+#set MEVV:Process WW 	# options: WW, WZ (W+ or W-), ZZ, WpZ, WmZ 
 
 # e+e- -> ZH
 #create Herwig::MEee2ZH MEZH
@@ -219,7 +225,7 @@ set /Herwig/DipoleShower/DipoleShowerHandler:HardScaleProfile NULL
 do /Herwig/MatrixElements/Matchbox/Factory:ProductionMode
 
 cd /Herwig/Generators
-saverun DMann EventGenerator
+#saverun DMann EventGenerator
 
-#set EventGenerator:NumberOfEvents 100
-#run DMann EventGenerator
+set EventGenerator:NumberOfEvents 100
+run DMann EventGenerator 

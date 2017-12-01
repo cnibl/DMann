@@ -18,10 +18,10 @@ CXX = g++ -std=c++11
 CXXFLAGS = -g -W -Wall -O2
 
 # add additional package header directories here  -I/home/carlniblaeus/ROOT6.10.08/include/
-CPPFLAGS = -I/home/carlniblaeus/Downloads/../Herwig7/include
+CPPFLAGS = -I/home/cniblaeus/Downloads/../Herwig7/include/
 
 # add additional libraries here
-LDFLAGS = -I../Herwig7/src/Herwig-7.1.1/Analysis/ -I../Herwig7/src/Herwig-7.1.1/Utilities/ -I/home/carlniblaeus/Herwig7/lib/Herwig/ -I../Herwig7/include/ -I../Herwig7/
+LDFLAGS = #-I../Herwig7/src/Herwig-7.1.1/Analysis/ -I../Herwig7/src/Herwig-7.1.1/Utilities/ -I/home/carlniblaeus/Herwig7/lib/Herwig/ -I../Herwig7/include/ -I../Herwig7/
 
 ROOTCFLAGS := $(shell root-config --cflags)
 ROOTGLIBS := $(shell root-config --glibs)

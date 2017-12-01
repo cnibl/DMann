@@ -88,10 +88,10 @@ void DMannYields::dofinish() {
   for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
     useMe();
-    string filename = "herwig7data/da-her7-mx"+std::to_string((int)_massdm)+"-ch"+std::to_string(_annpdg)+"-int"+std::to_string(*idPtr)+".dat";
+    string filename = "Herwig7Data/da-her7-mx"+std::to_string((int)_massdm)+"-ch"+std::to_string(_annpdg)+"-int"+std::to_string(*idPtr)+".dat";
     //string filename = generator()->filename() + "-" + std::to_string((*idPtr)) +".mult";
     ofstream outfile(filename.c_str());
-    outfile << "# DMann Herwig7 data file with counts/nAnn as function of E_kin\n";  // not divided by nAnn right now
+    outfile << "# DMann Herwig7 data file with counts/nAnn as function of E_kin\n (not divided by nAnn right now)";
     time_t rawtime;
     time(&rawtime);
     outfile << "# Created: " << ctime(&rawtime);
