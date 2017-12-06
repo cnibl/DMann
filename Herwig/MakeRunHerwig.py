@@ -151,12 +151,12 @@ def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   runfile.write("## Matching and shower selection\n")
   runfile.write("##################################################\n")
   runfile.write("\n")
-  runfile.write("#read Matchbox/MCatNLO-DefaultShower.in\n")
+  runfile.write("read Matchbox/MCatNLO-DefaultShower.in\n")
   runfile.write("#read Matchbox/Powheg-DefaultShower.in\n")
   runfile.write("## use for strict LO/NLO comparisons\n")
   runfile.write("#read Matchbox/MCatLO-DefaultShower.in\n")
   runfile.write("## use for improved LO showering\n")
-  runfile.write("read Matchbox/LO-DefaultShower.in\n")
+  runfile.write("#read Matchbox/LO-DefaultShower.in\n")
   runfile.write("\n")
   runfile.write("#read Matchbox/MCatNLO-DipoleShower.in\n")
   runfile.write("#read Matchbox/Powheg-DipoleShower.in\n")
@@ -180,7 +180,7 @@ def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   runfile.write("set /Herwig/Particles/K+:Stable Unstable\n")
   runfile.write("set /Herwig/Particles/K_L0:Stable Unstable\n")
   runfile.write("set /Herwig/Particles/mu+:Stable Unstable\n")
-  runfile.write("#set /Herwig/Particles/n0:Stable Unstable	# does not seem to work\n") # CN: how to do with this??
+  runfile.write("set /Herwig/Particles/n0:Stable Unstable	\n") # CN: how to do with this??
   runfile.write("\n")
   runfile.write("##################################################\n")
   runfile.write("## Scale uncertainties\n")
@@ -236,7 +236,7 @@ subprocess.call(["mkdir","-p","Runs-todo"], stdout=subprocess.PIPE) # create run
 m = 200.0     # mass of DM particle in GeV
 #c = 91        
 yieldpdgs = [22,-11,-14,14,-2212]      # the secondary particles of interest (e+, pbar, nu_l, gamma etc.)
-n = 100  # number of events to simulate
+n = 10000  # number of events to simulate
 anncodes = [5,24,15,6] # the DM annihilation channel (b bbar, W+W- etc.)
 #yieldcodes = [22,-11,-2212,14] # the yield particle code (gamma,e+, pbar, nu_mu/nu_mubar,  etc.)
 for c in anncodes:

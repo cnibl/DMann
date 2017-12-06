@@ -70,7 +70,7 @@ public:
 // at https://root-forum.cern.ch/t/histogram-to-ascii/14080/5
 void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent) {
   ofstream outputfile;
-  string filename = "pythia8data/da-pyt8-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
+  string filename = "Pythia8Data/da-pyt8-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
 //  string filename = "TEST-pythia8/da-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
 //  string filename = "histdata-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";        
   outputfile.open (filename);

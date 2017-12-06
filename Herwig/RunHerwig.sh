@@ -2,7 +2,7 @@
 
 set -e # The -e flag causes the script to abort if any command exits with non-handled error code 
 
-herwigdir=/home/cniblaeus/Herwig7
+herwigdir=/home/carlniblaeus/Herwig7 # NOTE: this may have to be changed depending on where Herwig is installed
 source $herwigdir/bin/activate # set necessary Herwig environment variables 
 test=0
 if [ $test -ne 1 ]; then
@@ -52,6 +52,7 @@ if [ $test -ne 1 ]; then
         echo "Running DMann with file "$file
         mv "Runs-todo/"$file Runs-running
         Herwig read "Runs-running/"$file
+        echo "Done with file "$file
         mv "Runs-running/"$file Runs-done
         filelist=(`ls Runs-todo`) #reset value of file list
         file=$filelist

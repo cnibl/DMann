@@ -32,9 +32,9 @@ LIB_SUFFIX=.dylib
 
 # ROOT configuration on ubuntu desktop.
 ROOT_USE=true
-ROOT_BIN=../ROOT6.10.08/bin/
-ROOT_INCLUDE=../ROOT6.10.08/include
-ROOT_LIB=../ROOT6.10.08/lib
+ROOT_BIN=../../ROOT6.10.08/bin/
+ROOT_INCLUDE=../../ROOT6.10.08/include
+ROOT_LIB=../../ROOT6.10.08/lib
 
 CXX_COMMON:=-I$(PREFIX_INCLUDE) $(CXX_COMMON)
 CXX_COMMON+= -L$(PREFIX_LIB) -Wl,-rpath,$(PREFIX_LIB) -lpythia8 -ldl 
@@ -49,13 +49,13 @@ CXX_COMMON+= -L$(PREFIX_LIB) -Wl,-rpath,$(PREFIX_LIB) -lpythia8 -ldl
 
 # All targets (no default behavior).
 all:
-	@echo "Usage: make dmannmain"
+	@echo "Usage: make DMannPythia"
 
 # dmann program, with ROOT included.
 # If in the future there are several dmannmainX.cc (X=0,1,...), this rule can
 # still be used by replacing "dmannmain" by "dmannmain%" in the two 
 # occurences in the first line of the rule.
-dmannmain : dmannmain.cc $(PREFIX_LIB)/libpythia8.a
+DMannPythia8 : DMannPythia8.cc $(PREFIX_LIB)/libpythia8.a
 ifeq ($(ROOT_USE),true)
 	$(CXX) $< -o $@ -w -I$(ROOT_INCLUDE) $(CXX_COMMON)\
 	 `$(ROOTBIN)root-config --cflags`\
@@ -66,5 +66,5 @@ endif
 
 # Clean.
 clean:
-	@rm -f dmannmain;
+	@rm -f DMannPythia;
 	rm -f *~; rm -f \#*; rm -f core*; rm -f *Dct.*; rm -f *.so;

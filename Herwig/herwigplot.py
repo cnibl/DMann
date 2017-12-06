@@ -9,7 +9,7 @@ massX = 200.0
 yieldPdgs = [22, -11, -2212, 14]
 labels = [r"$\gamma$",r"$e^+$",r"$\bar{p}$",r"$\nu_\mu$"]
 nEvt = 10000
-colors = ["green","red","black","blue"]
+colors = ["green","red","black","teal"]
 
 for i, p in zip(range(len(yieldPdgs)),yieldPdgs):
 	fName = "DMann-" + str(p) + ".mult"

@@ -1,5 +1,5 @@
 """
-makerun.py
+MakeRunPythia.py
 Constructs .cmnd-files intended to be read by PYTHIA8 for the generation of
 production fluxes of secondary particles from DM annihilation. First defines
 function that creates one runfile, then loops over parameter values to
@@ -29,10 +29,10 @@ Number of simulated events
 
 def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   if not test:
-    filename = "da-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
-    runfile = open("runs-todo/"+filename,'w') 
+    filename = "da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
+    runfile = open("Runs-todo/"+filename,'w') 
   else:
-    filename = "TEST-runs/TEST-da-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
+    filename = "TEST-runs/TEST-da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
     runfile = open(filename,'w')
   """ 
   Write all PYTHIA commands and parameters for a run into the runfile
@@ -66,14 +66,15 @@ def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   runfile.write("! id:oneChannel = onMode bRatio meMode product1 product2 ...\n ")
   runfile.write("! Note: oneChannel sets all other BR:s to zero except the specified one")  
   runfile.write("! Note: sum of branching ratios automatically rescaled to 1.\n")
-  if annPdg == 5: # oneChannel sets all other BR:s to zero 
-    runfile.write("999999:oneChannel = 1 1. 101 5 -5   !  -> b bbar\n") 
-  elif annPdg == 24:
-    runfile.write("999999:oneChannel = 1 1. 101 24 -24 !  -> W+ W-\n")
-  elif annPdg == 15:                          
-    runfile.write("999999:oneChannel = 1 1. 101 15 -15 !  -> tau- tau+\n")
-  elif annPdg == 6:                          
-    runfile.write("999999:oneChannel = 1 1. 101 6 -6   !  -> t tbar\n")
+  runfile.write("999999:oneChannel = 1 1. 101 "+str(annPdg)+" "+str(-annPdg)+"   !  -> annPdg -annPdg\n") 
+#  if annPdg == 5: # oneChannel sets all other BR:s to zero 
+#    runfile.write("999999:oneChannel = 1 1. 101 5 -5   !  -> b bbar\n") 
+#  elif annPdg == 24:
+#    runfile.write("999999:oneChannel = 1 1. 101 24 -24 !  -> W+ W-\n")
+#  elif annPdg == 15:                          
+#    runfile.write("999999:oneChannel = 1 1. 101 15 -15 !  -> tau- tau+\n")
+#  elif annPdg == 6:                          
+#    runfile.write("999999:oneChannel = 1 1. 101 6 -6   !  -> t tbar\n")
   runfile.write("\n")
   runfile.write("! 5) Tell that also long-lived should decay.\n")
   runfile.write("13:mayDecay   = true                 ! mu+-\n")
@@ -95,7 +96,7 @@ change in the future).
 """
 import subprocess
 
-subprocess.call(["mkdir","-p","runs-todo"], stdout=subprocess.PIPE) # create runs-todo if not already existing
+subprocess.call(["mkdir","-p","Runs-todo"], stdout=subprocess.PIPE) # create Runs-todo if not already existing
 m = 200.     # mass of DM particle in GeV
 #c = 91        
 p = 22      # the secondary particle of interest (e+, pbar, nu_l, gamma etc.)
