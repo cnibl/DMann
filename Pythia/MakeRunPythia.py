@@ -29,7 +29,8 @@ Number of simulated events
 
 def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   if not test:
-    filename = "da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
+#    filename = "da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
+    filename = "da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+".cmnd"
     runfile = open("Runs-todo/"+filename,'w') 
   else:
     filename = "TEST-runs/TEST-da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
@@ -103,6 +104,6 @@ p = 22      # the secondary particle of interest (e+, pbar, nu_l, gamma etc.)
 n = 1000000  # number of events to simulate
 anncodes = [5,24,15,6] # the DM annihilation channel (b bbar, W+W- etc.)
 #yieldcodes = [22,-11,-2212,14] # the yield particle code (gamma,e+, pbar, nu_mu/nu_mubar,  etc.)
-for c in anncodes:
-  makerunfile(m,c,p,n,False) 
+for a in anncodes:
+  makerunfile(m,a,p,n,False) 
 

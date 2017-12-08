@@ -72,7 +72,7 @@ void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent) {
   ofstream outputfile;
   string filename = "Pythia8Data/da-pyt8-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
 //  string filename = "TEST-pythia8/da-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
-//  string filename = "histdata-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";        
+
   outputfile.open (filename);
   // Header of file
 //  outputfile << "# DMann data file with dN/dE_kin as function of x=E_kin/mX=(E-m)/mX\n";
@@ -86,12 +86,12 @@ void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent) {
   outputfile << "# PDG code of yield particle: " << std::to_string(yieldpdg) << "\n";   
   outputfile << "# \n";
 //  outputfile << "# x\tdN/dE\n";
-  outputfile << "# E\tcounts/nAnn\n";  
+  outputfile << "# E\t\tcounts/nAnn\n";  
   // Print histogram data to file
   Int_t n = h->GetNbinsX();
   for (Int_t i=1; i<=n; i++) {
       outputfile << h->GetBinLowEdge(i)+h->GetBinWidth(i)/2;
-      outputfile << "\t";
+      outputfile << "\t\t";
       outputfile << h->GetBinContent(i)/nEvent; //CN divide by Nevent here ??
       outputfile << "\n";
   }
@@ -149,10 +149,8 @@ int main(int argc, char* argv[]) {
   // Pythia generator.
   Pythia pythia;
   
-  // Read in file from command line argument
+  // Read in file from command line argument (read file name.cmnd with pythia.readFile("name.cmnd"))
   pythia.readFile(argv[1]);
-//  pythia.readFile("dmannmain1.cmnd");
-//  pythia.readFile("eg-m250-ch91-int91.cmnd");  
   
   // Create the ROOT application environment.
   TApplication theApp("hist", &argc, argv);
@@ -170,23 +168,31 @@ int main(int argc, char* argv[]) {
   //The following is a method to find the particle ID of the first decay product
   const DecayChannel& channel = pythia.particleData.particleDataEntryPtr(999999)->channel(0);
   int ch = channel.product(0); // ID of decay product;
-//  int dcode = channel.product(0); // ID of decay product
-//  if ( dcode == 5 || dcode == -5 )  ch = 91;  // b bbar
-//  else if ( dcode == 24 || dcode == -24 )  ch = 92; // W+W-
-//  else if ( dcode == 15 || dcode == -15 )  ch = 93; // tau-tau+
-//  else if ( dcode == 6 || dcode == -6 )  ch = 94; // t tbar
-//  else {
-//    cout << "Error: Could not find decay product in prescribed list.";
-//    return 1;
-//  }
+
+  // Define the PDG codes of the final state particles to be histogrammed (yield particles)
+  // NOTE: ADD/REMOVE HERE IF YOU WANT TO INCLUDE MORE/FEWER FINAL STATE PARTICLES
+  vector<long> yieldpdgs;
+  yieldpdgs.push_back(-11l);  // e+
+  yieldpdgs.push_back(22l);   // gamma
+  yieldpdgs.push_back(-2212l);// pbar
+  yieldpdgs.push_back(-14l);  // numubar
+  yieldpdgs.push_back(14l);   // numu
+  
+  // Construct ROOT TH1F histogram for each yield particle with 250 logarithmic bins from mX*10^-10 to mX (25 bins per decade)
+  map<long,TH1F*> histograms;
+  for (std::vector<long>::iterator idPtr = yieldpdgs.begin(); 
+        idPtr != yieldpdgs.end(); ++idPtr) {
+      string histoname = std::to_string(*idPtr);
+      string histotitle = "Kinetic energy for yield PDG "+std::to_string(*idPtr);
+      TH1F * histo = new TH1F(histoname.c_str(),
+                      histotitle.c_str(), 
+                      250, -10+log10(mX), 0+log10(mX));
+      
+      histograms.insert(make_pair((*idPtr), histo));    
+      BinLogX(histograms[*idPtr]); 
+  }
   
   // Create file where histogram can be saved and book histogram itself
-//  TFile* outFile = new TFile("plot/eGa.root", "RECREATE");
-  // Create ROOT histograms with 250 log bins from 10^-10 to 10^0
-//  TH1F *eGamma = new TH1F("eGamma","Photon energy divided by WIMP mass", 250, -10, 0);
-//  TH1F *ePos = new TH1F("ePos","Positron energy divided by WIMP mass", 250, -10, 0);
-//  TH1F *ePbar = new TH1F("ePbar","Antiproton energy divided by WIMP mass", 250, -10, 0);
-//  TH1F *eNumu = new TH1F("eNumu","Muon neutrino energy divided by WIMP mass", 250, -10, 0);      
   TH1F *eGamma = new TH1F("eGamma","Photon energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
   TH1F *ePos = new TH1F("ePos","Positron energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
   TH1F *ePbar = new TH1F("ePbar","Antiproton energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
@@ -199,13 +205,6 @@ int main(int argc, char* argv[]) {
   double me = 0.000511; // electron mass
   double mp = 0.938; // proton mass
   
-  // Histogram particle spectra.
-//  Hist eGamma("energy spectrum of photons",        100, 0., 100.);
-//  Hist eE(    "energy spectrum of e+ and e-",      100, 0., 100.);
-//  Hist eP(    "energy spectrum of p and pbar",     100, 0., 100.);
-//  Hist eNu(   "energy spectrum of neutrinos",      100, 0., 100.);
-//  Hist eRest( "energy spectrum of rest particles", 100, 0., 100.);
-
   // Begin event loop.
   int iAbort = 0;
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
@@ -222,12 +221,13 @@ int main(int argc, char* argv[]) {
       if (pythia.event[i].isFinal()) {
         int id = pythia.event[i].id();
         int idAbs = pythia.event[i].idAbs();      
-        double eI = pythia.event[i].e();
-        // Fill histograms with (E-m)/mX (E_kin/mX). CN With weight 1/nEvent to get dN/dx??
-        if (id == 22) eGamma->Fill(eI); //,1./nEvent); 
-        else if (id == -11) ePos->Fill((eI-me)); //,1./nEvent); 
-        else if (id == -2212) ePbar->Fill((eI-mp)); //,1./nEvent); 
-        else if (idAbs == 14) eNumu->Fill(eI); //,1./nEvent); 
+        double eID = pythia.event[i].e(); // total energy of particle 
+        double mID = pythia.event[i].m0(); // particle mass       
+        // Fill histograms with E_kin = E - m. CN With weight 1/nEvent to get dN/dx??
+        for (std::vector<long>::iterator idPtr = yieldpdgs.begin(); 
+              idPtr != yieldpdgs.end(); ++idPtr) {
+          if ( (*idPtr)==pythia.event[i].id() ) histograms[*idPtr]->Fill(eID-mID);
+        }
       }
     }
 
@@ -238,33 +238,19 @@ int main(int argc, char* argv[]) {
 //  std::cout << "\nDouble click on the histogram window to quit.\n";
 //  gPad->WaitPrimitive();
 
-  // Save histogram on file and close file.
-//  eGam->Write();
-//  delete outFile;
-  
-  // Dump TH1 data in a text file with function h12ascii (from above)
-  int yieldcodes [] = {22, -11, -2212, 14};
-  int yieldpdg;
-  int length = sizeof(yieldcodes)/sizeof(yieldcodes[0]); //The length of the yieldcodes array
-  for (int i = 0; i < length; ++i) {
-    yieldpdg = yieldcodes[i];
-    if (i == 0) h12ascii(eGamma,mX,ch,yieldpdg,nEvent);
-    else if (i == 1) h12ascii(ePos,mX,ch,yieldpdg,nEvent);
-    else if (i == 2) h12ascii(ePbar,mX,ch,yieldpdg,nEvent);
-    else if (i == 3) h12ascii(eNumu,mX,ch,yieldpdg,nEvent);        
+  // Save histograms on files and close files.
+  for (std::vector<long>::iterator idPtr = yieldpdgs.begin(); 
+        idPtr != yieldpdgs.end(); ++idPtr) {
+    string fName = "yieldpdg_"+std::to_string(*idPtr)+".root";
+    TFile* outFile = new TFile(fName.c_str(), "RECREATE");
+    histograms[(*idPtr)]->Write();
+    delete outFile;    
+    h12ascii(histograms[(*idPtr)],mX,ch,(*idPtr),nEvent);
   }
   
-//  // Save histograms to two column data files
-//  eGamma.table("plot/eGamma.dat");
-//  eE.table("plot/eE.dat");  
-//  eP.table("plot/eP.dat");
-//  eNu.table("plot/eNu.dat");
-//  eRest.table("plot/eRest.dat");    
-    
   // Final statistics and histograms.
   pythia.stat();
-//  cout << eGamma << eE << eP << eNu << eRest;
-
+  
   // Done.
   delete sigma1GenRes;
   return 0;
