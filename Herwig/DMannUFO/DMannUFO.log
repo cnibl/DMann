@@ -1,6 +1,6 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Tue 6 Mar 2018 21:45:40
+# Date: Wed 4 Apr 2018 14:10:03
 
 
 # 
@@ -40,8 +40,8 @@
 
 # Vertices
    * Calling FeynmanRules for 1 Lagrangians.
-   * Number of classes vertices: 172
-   * Number of flavored vertices: 192
+   * Number of classes vertices: 102
+   * Number of flavored vertices: 172
    * Saved vertices in InterfaceRun[ 1 ].
    * Checked QNumber conservation.
       - Quantum number GhostNumber conserved in all vertices.
@@ -60,13 +60,13 @@
 # Lorentz structure definitions
 #
 
-   * 43 lorentz structures written.
+   * 23 lorentz structures written.
    * lorentz.py written.
 #
 # Coupling definitions
 #
 
-   * 140 couplings written.
+   * 133 couplings written.
    * couplings.py written.
 #
 # Coupling order definitions
@@ -84,11 +84,5 @@
 # CTCoupling definitions
 #
 
-   * 371 CTcouplings written.
+   * 0 CTcouplings written.
    * CT_couplings.py written.
-#
-# CTVertex definitions
-#
-
-   * 143 CTvertices written.
-   * CT_vertices.py written.

@@ -1,6 +1,6 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Tue 6 Mar 2018 21:49:46
+# Date: Wed 4 Apr 2018 14:10:44
 
 
 
@@ -15,15 +15,6 @@ ZERO = Parameter(name = 'ZERO',
                  type = 'real',
                  value = '0.0',
                  texname = '0')
-
-# This is a default parameter object representing the renormalization scale (MU_R).
-MU_R = Parameter(name = 'MU_R',
-                 nature = 'external',
-                 type = 'real',
-                 value = 91.188,
-                 texname = '\\text{\\mu_r}',
-                 lhablock = 'LOOP',
-                 lhacode = [1])
 
 # User-defined parameters.
 cabi = Parameter(name = 'cabi',
@@ -298,18 +289,6 @@ WGR = Parameter(name = 'WGR',
                 lhablock = 'DECAY',
                 lhacode = [ 999 ])
 
-aEW = Parameter(name = 'aEW',
-                nature = 'internal',
-                type = 'real',
-                value = '1/aEWM1',
-                texname = '\\alpha _{\\text{EW}}')
-
-G = Parameter(name = 'G',
-              nature = 'internal',
-              type = 'real',
-              value = '2*cmath.sqrt(aS)*cmath.sqrt(cmath.pi)',
-              texname = 'G')
-
 CKM1x1 = Parameter(name = 'CKM1x1',
                    nature = 'internal',
                    type = 'complex',
@@ -363,6 +342,18 @@ CKM3x3 = Parameter(name = 'CKM3x3',
                    type = 'complex',
                    value = '1',
                    texname = '\\text{CKM3x3}')
+
+aEW = Parameter(name = 'aEW',
+                nature = 'internal',
+                type = 'real',
+                value = '1/aEWM1',
+                texname = '\\alpha _{\\text{EW}}')
+
+G = Parameter(name = 'G',
+              nature = 'internal',
+              type = 'real',
+              value = '2*cmath.sqrt(aS)*cmath.sqrt(cmath.pi)',
+              texname = 'G')
 
 MW = Parameter(name = 'MW',
                nature = 'internal',
