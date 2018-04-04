@@ -1,6 +1,6 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Wed 4 Apr 2018 14:10:44
+# Date: Wed 4 Apr 2018 14:41:39
 
 
 
@@ -289,6 +289,18 @@ WGR = Parameter(name = 'WGR',
                 lhablock = 'DECAY',
                 lhacode = [ 999 ])
 
+aEW = Parameter(name = 'aEW',
+                nature = 'internal',
+                type = 'real',
+                value = '1/aEWM1',
+                texname = '\\alpha _{\\text{EW}}')
+
+G = Parameter(name = 'G',
+              nature = 'internal',
+              type = 'real',
+              value = '2*cmath.sqrt(aS)*cmath.sqrt(cmath.pi)',
+              texname = 'G')
+
 CKM1x1 = Parameter(name = 'CKM1x1',
                    nature = 'internal',
                    type = 'complex',
@@ -342,18 +354,6 @@ CKM3x3 = Parameter(name = 'CKM3x3',
                    type = 'complex',
                    value = '1',
                    texname = '\\text{CKM3x3}')
-
-aEW = Parameter(name = 'aEW',
-                nature = 'internal',
-                type = 'real',
-                value = '1/aEWM1',
-                texname = '\\alpha _{\\text{EW}}')
-
-G = Parameter(name = 'G',
-              nature = 'internal',
-              type = 'real',
-              value = '2*cmath.sqrt(aS)*cmath.sqrt(cmath.pi)',
-              texname = 'G')
 
 MW = Parameter(name = 'MW',
                nature = 'internal',
