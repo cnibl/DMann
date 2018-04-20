@@ -48,17 +48,58 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
   ParticleVector outPtr = sub->outgoing(); 
   _annpdg = abs((*(outPtr[0])).id());
   //sub->printMe(cout); // print out hard process
+  
+  ParticleVector intmPtr = sub->intermediates();
+  if (intmPtr[0]->id() != 23) { 
+    cout << "NOT Z0 MEDIATOR!\n";
+    intmPtr[0]->print(cout);
+  }
+ 
+  //if ((*outPtr[0]).parents()[0]->id() == 23) {
+  
+  //cout << "\n" << "------------------------------------------------" << "\n";
 
   for(set<tcPPtr>::const_iterator it = particles.begin(); 
     it != particles.end(); ++it) {
+    
+    //(*it)->print(cout);
+    
     /** Check if particle id in list (i.e. (*it)->id()) equals any of yield particle IDs and fill histograms */
     for (std::vector<long>::const_iterator idPtr = _pdgvec.begin(); 
           idPtr != _pdgvec.end(); ++idPtr) {
+      //if (abs((*it)->parents()[0]->id()) == 24 ) { cout << (*it)->PDGName() << "\t" << (*it)->parents()[0]->PDGName() << "\t" << (*it)->parents()[0]->momentum().e()/GeV << "\n";}
       if ((*it)->id()==(*idPtr)) { 
         p = (*it)->momentum(); //the four-momentum
-        _histograms[(*idPtr)].addWeighted( (p.e()-p.mass())/GeV, 1.0/(double)_nevt ); // Fill histogram corresponding to yield ID, divided by number of events
+        //_histograms[(*idPtr)] += (p.e()-p.mass())/GeV;// Fill histogram corresponding to yield ID divided by no of events
+        _histograms[(*idPtr)].addWeighted((p.e()-p.mass())/GeV, 1.0/(double)_nevt);// Fill histogram corresponding to yield ID divided by no of events
+        
+        //cout << (*it)->id() << "\n";
+        /*
+        
+        //cout << p.e()/GeV << "\n";
+        //cout << "***";
+        //(((((*it)->parents()[0])->parents()[0])->parents()[0])->parents()[0])->parents()[0]->print(cout);
+        int mothermothermotherID = (((*it)->parents()[0])->parents()[0])->parents()[0]->id();
+        int mothermotherID = ((*it)->parents()[0])->parents()[0]->id();
+        int motherID = (*it)->parents()[0]->id();
+        //if ( abs(mothermothermotherID)==24 && abs(mothermotherID)==14 && abs(motherID)==14 ) {
+          if (p.e()/GeV > 140.0 && p.e()/GeV < 150.0) {            //sub->printMe(cout);
+          event->printGraphviz();
+          cout << "-----------------------------------------------------------------" << "\n";
+          (*it)->print(cout);
+          cout << (((*it)->parents()[0])->parents()[0])->parents()[0]->PDGName() << " --> " << ((*it)->parents()[0])->parents()[0]->PDGName() << " --> " << (*it)->parents()[0]->PDGName()  <<  " --> " << (*it)->PDGName() << " E = " << p.e()/GeV << "\n";
+          }
+        if (p.mass()/GeV != 0.0 ) { cout << p.mass()/GeV << "\n"; }
+          //Fill only for W neutrinos
+          //cout << p.e()/GeV << "\n";
+        
+        */
       }
+       
+    }
+     
   }
+  //} //end of Z0 if statement 
 
 }
 
@@ -77,18 +118,19 @@ void DMannYields::analyze(tPPtr, double weight) {}
 void DMannYields::dofinish() {
   // *** ATTENTION *** Normalize and post-process histograms here.
   long nEvt = generator()->currentEventNumber() - 1;  
+  long e_CM = _massdm*2.0;
   for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
     useMe();
-    string filename = "Herwig7Data/da-her7-mx"+std::to_string((int)_massdm)+"-ch"+std::to_string(_annpdg)+"-int"+std::to_string(*idPtr)+".dat";
+    string filename = "Herwig7DataPromptNu/pnu-her7-e"+std::to_string((int)e_CM)+"-p"+std::to_string((int)(*idPtr))+".dat";
     //string filename = generator()->filename() + "-" + std::to_string((*idPtr)) +".mult";
     ofstream outfile(filename.c_str());
-    outfile << "# DMann Herwig7 data file with counts/nAnn as function of E_kin (not divided by nAnn right now)\n";
+    outfile << "# Herwig7 data file for prompt nu from W decay with counts/nAnn as function of E_kin (not divided by nAnn right now)\n";
     time_t rawtime;
     time(&rawtime);
     outfile << "# Created: " << ctime(&rawtime);
     outfile << "# Number of simulated events: " << std::to_string(nEvt) << "\n";
-    outfile << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV\n";
+    outfile << "# CM energy: " << std::to_string((int)_massdm*2.0) << " GeV\n";
     outfile << "# PDG code of annihilation channel: " << std::to_string(_annpdg) << "\n"; 
     outfile << "# PDG code of yield particle: " << std::to_string((*idPtr)) << "\n";   
     outfile << "# \n";
@@ -107,7 +149,8 @@ void DMannYields::doinitrun() {
   for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
     _histograms.insert(make_pair((*idPtr),
-      Herwig::Histogram(Herwig::Histogram::LogBins(1.e-10*_massdm,250,pow(10,0.04)))));    
+      Herwig::Histogram(Herwig::Histogram::LogBins(1.e-10*_massdm,250,pow(10,0.04)))));  
+    cout << "Number of events: " << _nevt << "\n";
   }
 }
 

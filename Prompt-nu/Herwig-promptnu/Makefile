@@ -21,7 +21,7 @@ CXX = g++ -std=c++11
 CXXFLAGS = -g -W -Wall -O2
 
 # add additional package header directories here  -I/home/carlniblaeus/ROOT6.10.08/include/
-CPPFLAGS = -I../../Herwig7/include/
+CPPFLAGS = -I../../../Herwig7/include/
 
 # add additional libraries here
 #LDFLAGS = -I../Herwig7/include/ -I../Herwig7/
