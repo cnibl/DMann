@@ -1,6 +1,6 @@
-# This file was automatically created by FeynRules 2.3.31
-# Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Wed 4 Apr 2018 14:41:39
+# This file was automatically created by FeynRules 2.3.32
+# Mathematica version: 11.3.0 for Linux x86 (64-bit) (March 7, 2018)
+# Date: Mon 9 Apr 2018 15:13:45
 
 
 from object_library import all_decays, Decay
@@ -31,15 +31,17 @@ Decay_e__minus__ = Decay(name = 'Decay_e__minus__',
 
 Decay_GR = Decay(name = 'Decay_GR',
                  particle = P.GR,
-                 partial_widths = {(P.b,P.b__tilde__):'((-12*gSf**2*MB**2 + 3*gSf**2*MGR**2)*cmath.sqrt(-4*MB**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.c,P.c__tilde__):'((-12*gSf**2*MC**2 + 3*gSf**2*MGR**2)*cmath.sqrt(-4*MC**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.d,P.d__tilde__):'((-12*gSf**2*MD**2 + 3*gSf**2*MGR**2)*cmath.sqrt(-4*MD**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.e__minus__,P.e__plus__):'((-4*gSf**2*Me**2 + gSf**2*MGR**2)*cmath.sqrt(-4*Me**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.mu__minus__,P.mu__plus__):'((gSf**2*MGR**2 - 4*gSf**2*MMU**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MMU**2))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.s,P.s__tilde__):'((3*gSf**2*MGR**2 - 12*gSf**2*MS**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MS**2))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.t,P.t__tilde__):'((3*gSf**2*MGR**2 - 12*gSf**2*MT**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MT**2))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.ta__minus__,P.ta__plus__):'((gSf**2*MGR**2 - 4*gSf**2*MTA**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MTA**2))/(16.*cmath.pi*abs(MGR)**3)',
-                                   (P.u,P.u__tilde__):'((3*gSf**2*MGR**2 - 12*gSf**2*MU**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MU**2))/(16.*cmath.pi*abs(MGR)**3)'})
+                 partial_widths = {(P.b,P.b__tilde__):'((-24*gSf**2*MB**2 + 6*gSf**2*MGR**2)*cmath.sqrt(-4*MB**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.c,P.c__tilde__):'((-24*gSf**2*MC**2 + 6*gSf**2*MGR**2)*cmath.sqrt(-4*MC**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.d,P.d__tilde__):'((-24*gSf**2*MD**2 + 6*gSf**2*MGR**2)*cmath.sqrt(-4*MD**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.e__minus__,P.e__plus__):'((-8*gSf**2*Me**2 + 2*gSf**2*MGR**2)*cmath.sqrt(-4*Me**2*MGR**2 + MGR**4))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.mu__minus__,P.mu__plus__):'((2*gSf**2*MGR**2 - 8*gSf**2*MMU**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MMU**2))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.s,P.s__tilde__):'((6*gSf**2*MGR**2 - 24*gSf**2*MS**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MS**2))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.t,P.t__tilde__):'((6*gSf**2*MGR**2 - 24*gSf**2*MT**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MT**2))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.ta__minus__,P.ta__plus__):'((2*gSf**2*MGR**2 - 8*gSf**2*MTA**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MTA**2))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.u,P.u__tilde__):'((6*gSf**2*MGR**2 - 24*gSf**2*MU**2)*cmath.sqrt(MGR**4 - 4*MGR**2*MU**2))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.W__minus__,P.W__plus__):'(((3*gSEW**2)/Lambda**2 + (gSEW**2*MGR**4)/(4.*Lambda**2*MW**4) - (gSEW**2*MGR**2)/(Lambda**2*MW**2))*cmath.sqrt(MGR**4 - 4*MGR**2*MW**2))/(16.*cmath.pi*abs(MGR)**3)',
+                                   (P.Z,P.Z):'(((12*gSEW**2)/Lambda**2 + (gSEW**2*MGR**4)/(Lambda**2*MZ**4) - (4*gSEW**2*MGR**2)/(Lambda**2*MZ**2))*cmath.sqrt(MGR**4 - 4*MGR**2*MZ**2))/(32.*cmath.pi*abs(MGR)**3)'})
 
 Decay_H = Decay(name = 'Decay_H',
                 particle = P.H,

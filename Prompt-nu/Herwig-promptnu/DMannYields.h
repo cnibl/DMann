@@ -202,7 +202,7 @@ private:
    */
   long _annpdg;
 
-  /**
+    /**
    *  Number of simulated events
    */
   long _nevt;
