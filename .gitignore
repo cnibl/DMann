@@ -1,0 +1,23 @@
+# ignore plots
+plots/
+*.pdf
+*/*.pdf
+plot/
+
+# ignore generated data files (for now..)
+Herwig/Herwig7Data
+Pythia/Pythia8Data
+
+# ignore test directories
+TEST-*/
+
+# ignore ROOT files
+Pythia/*.root
+
+# ignore all run files
+Pythia/Runs-*
+Herwig/Runs-*
+
+# ignore temporary files
+tmp*
+*/tmp*

@@ -36,9 +36,9 @@ annPdgs = [5, 6, 15, 24]
 labels 	= [[r"$"+pdg2name(p)+"$"+", H", r"$"+pdg2name(p)+"$"+", P8", r"$"+pdg2name(p)+"$"+", P6"] for p in annPdgs]
 colors 	= ["red","blue","black","green"]
 
-Pyt6 = False
+Pyt6 = True
 Pyt8 = True
-Her = True
+Her = False
 
 for y in yieldPdgs:
   for i, a in zip(range(len(annPdgs)),annPdgs): 
@@ -52,6 +52,7 @@ for y in yieldPdgs:
       logBinWidths = np.diff(np.log10(dataHer[:,0]))[0]
       xaxis = (dataHer[:,0]+dataHer[:,1])/2.
       yaxis = dataHer[:,3]/nEvtHer/logBinWidths
+      yaxis = np.divide(dataHer[:,3],np.log(10)*(dataHer[:,0]+dataHer[:,1])/2.)/nEvtHer/logBinWidths
       plt.plot(xaxis,yaxis,linestyle="dashdot",color=colors[i],label=labels[i][0])
       yaxis_h = yaxis
     
@@ -64,7 +65,8 @@ for y in yieldPdgs:
         dataPyt8[:,1] += np.genfromtxt(open(fName,"r"),skip_header=8)[:,1] # E_kin, yield
       logBinWidths = np.diff(np.log10(dataPyt8[:,0]))[0]
       xaxis = dataPyt8[:,0]
-      yaxis = dataPyt8[:,1]/logBinWidths
+#      yaxis = dataPyt8[:,1]/logBinWidths
+      yaxis = np.divide(dataPyt8[:,1],np.log(10)*dataPyt8[:,0])/logBinWidths
       plt.plot(xaxis,yaxis,color=colors[i],label=labels[i][1])
       yaxis_p8 = yaxis
     
@@ -73,7 +75,8 @@ for y in yieldPdgs:
       fName = pyt6Dir+"da-pyt6-mx"+str(int(massX))+"-ch"+str(a)+"-int"+str(y)+".dat"
       dataPyt6 = np.genfromtxt(open(fName,"r"),skip_header=1) # i, E_kin, yield
       xaxis = dataPyt6[:,1]
-      yaxis = np.multiply(dataPyt6[:,2],np.log(10)*dataPyt6[:,1])
+#      yaxis = np.multiply(dataPyt6[:,2],np.log(10)*dataPyt6[:,1])
+      yaxis = dataPyt6[:,2]
       plt.plot(xaxis,yaxis,linestyle="dashed",color=colors[i],label=labels[i][2])	
       yaxis_p6 = yaxis
         
@@ -88,19 +91,22 @@ for y in yieldPdgs:
     """Plot settings"""
     plt.title(r"$"+pdg2name(y)+"$")
     plt.xlabel(r"$E_{\rm kin}$")
-    plt.ylabel(r"$dN/d(\log E)$")
-    plt.gca().set_xscale("log")
-    plt.gca().set_yscale("log")
+#    plt.ylabel(r"$dN/d(\log E)$")
+    plt.ylabel(r"$dN/dE$")    
+#    plt.gca().set_xscale("log")
+#    plt.gca().set_yscale("log")
     plt.xlim(massX*1e-10,massX)
     plt.ylim(1e-2,1e2)
+    plt.ylim(0,.03)    
+    plt.xlim(0,200)
     plt.legend(loc="best")
   
   if Pyt6 and Pyt8:
-    plt.savefig(plotdir+"dNdlogE_P6vsP8_yieldPdg"+str(y)+".pdf")
+    plt.savefig(plotdir+"dNdE_P6vsP8_yieldPdg"+str(y)+".pdf")
   elif Pyt6 and Her:
-    plt.savefig(plotdir+"dNdlogE_P6vsH_yieldPdg"+str(y)+".pdf")
+    plt.savefig(plotdir+"dNdE_P6vsH_yieldPdg"+str(y)+".pdf")
   elif Her and Pyt8:
-    plt.savefig(plotdir+"dNdlogE_HvsP8_yieldPdg"+str(y)+".pdf")
+    plt.savefig(plotdir+"dNdE_HvsP8_yieldPdg"+str(y)+".pdf")
   else:
-    plt.savefig(plotdir+"dNdlogE_yieldPdg"+str(y)+".pdf")
+    plt.savefig(plotdir+"dNdE_yieldPdg"+str(y)+".pdf")
   plt.close()

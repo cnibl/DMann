@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 
 noEW = False
 if noEW:
-  fName = open("PPPC4DMID/AtProductionNoEW_all/AtProductionNoEW_antiprotons.dat","r")
+  fName = open("PPPC4DMID/AtProductionNoEW_all/AtProductionNoEW_gammas.dat","r")
 else:
-  fName = open("PPPC4DMID/AtProduction_all/AtProduction_antiprotons.dat","r")  
+  fName = open("PPPC4DMID/AtProduction_all/AtProduction_gammas.dat","r")  
 data = np.genfromtxt(fName,skip_header=1) # data matrix
 
 xaxis = np.array([ 10.**exp for exp in np.unique(data[:,1]) ])
