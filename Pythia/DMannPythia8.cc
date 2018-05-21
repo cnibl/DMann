@@ -71,8 +71,6 @@ public:
 void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent) {
   ofstream outputfile;
   string filename = "Pythia8Data/da-pyt8-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
-//  string filename = "TEST-pythia8/da-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(yieldpdg)+".dat";  
-
   outputfile.open (filename);
   // Header of file
 //  outputfile << "# DMann data file with dN/dE_kin as function of x=E_kin/mX=(E-m)/mX\n";
@@ -191,17 +189,7 @@ int main(int argc, char* argv[]) {
       histograms.insert(make_pair((*idPtr), histo));    
       BinLogX(histograms[*idPtr]); 
   }
-  
-  // Create file where histogram can be saved and book histogram itself
-  TH1F *eGamma = new TH1F("eGamma","Photon energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
-  TH1F *ePos = new TH1F("ePos","Positron energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
-  TH1F *ePbar = new TH1F("ePbar","Antiproton energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
-  TH1F *eNumu = new TH1F("eNumu","Muon neutrino energy divided by WIMP mass", 250, -10+log10(mX), 0+log10(mX));
-  
-  BinLogX(eGamma);
-  BinLogX(ePos);
-  BinLogX(ePbar);
-  BinLogX(eNumu);      
+   
   double me = 0.000511; // electron mass
   double mp = 0.938; // proton mass
   

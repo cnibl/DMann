@@ -1,6 +1,6 @@
 """
-makerun.py
-Constructs .cmnd-files intended to be read by PYTHIA8 for the generation of
+MakeRunHerwig.py
+Constructs .in-files intended to be read and run by Herwig7 for the generation of
 production fluxes of secondary particles from DM annihilation. First defines
 function that creates one runfile, then loops over parameter values to
 create all runfiles 
@@ -9,14 +9,14 @@ mX = eCM/2:
 Mass of DM particle
 goes from 10-25000 GeV
 
-annpdg: 
+annPdg: 
 Annihilation channel PDG code (of particle in particle/antiparticle pair)
 =5 - b bbar
 =24 - W+W- (W+ is particle, W- antiparticle)
 =15 - tau-tau+ 
 =6 - t tbar
 
-part:
+yieldPdg:
 Yield particle PDG code 
 =22 - gamma
 =-11 - e+
@@ -31,10 +31,9 @@ import sys
 def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   if not test:
     filename = "da-her7-m"+str(int(mX))+"-ch"+str(annPdg)+".in"
-    runfile = open("Runs-todo/"+filename,'w') 
   else:
     filename = "TEST-da-her7-m"+str(int(mX))+"-ch"+str(annPdg)+".in"
-    runfile = open("Runs-todo/"+filename,'w') 
+  runfile = open("Runs-todo/"+filename,'w') 
   """ 
   Write all Herwig commands and parameters for a run into the runfile
   """
@@ -259,7 +258,7 @@ def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   runfile.write("set /Herwig/Particles/K+:Stable Unstable\n")
   runfile.write("set /Herwig/Particles/K_L0:Stable Unstable\n")
   runfile.write("set /Herwig/Particles/mu+:Stable Unstable\n")
-  runfile.write("set /Herwig/Particles/n0:Stable Unstable	\n") # CN: how to do with this??
+  runfile.write("set /Herwig/Particles/n0:Stable Unstable	\n") 
   runfile.write("\n")
   runfile.write("##################################################\n")
   runfile.write("## Scale uncertainties\n")

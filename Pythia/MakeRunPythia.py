@@ -9,14 +9,14 @@ mX = eCM/2:
 Mass of DM particle
 goes from 10-25000 GeV
 
-annpdg: 
+annPdg: 
 Annihilation channel PDG code (of particle in particle/antiparticle pair)
 =5 - b bbar
 =24 - W+W- (W+ is particle, W- antiparticle)
 =15 - tau-tau+ 
 =6 - t tbar
 
-part:
+yieldPdg:
 Yield particle PDG code 
 =22 - gamma
 =-11 - e+
@@ -29,12 +29,10 @@ Number of simulated events
 
 def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   if not test:
-#    filename = "da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
     filename = "da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+".cmnd"
-    runfile = open("Runs-todo/"+filename,'w') 
   else:
-    filename = "TEST-runs/TEST-da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
-    runfile = open(filename,'w')
+    filename = "TEST-da-pyt8-m"+str(int(mX))+"-ch"+str(annPdg)+"-int"+str(yieldPdg)+".cmnd"
+  runfile = open("Runs-todo/"+filename,'w') 
   """ 
   Write all PYTHIA commands and parameters for a run into the runfile
   """
@@ -100,10 +98,10 @@ import subprocess
 subprocess.call(["mkdir","-p","Runs-todo"], stdout=subprocess.PIPE) # create Runs-todo if not already existing
 m = 200.     # mass of DM particle in GeV
 #c = 91        
-p = 22      # the secondary particle of interest (e+, pbar, nu_l, gamma etc.)
+y = 22      # the secondary particle of interest (e+, pbar, nu_l, gamma etc.)
 n = 1000000  # number of events to simulate
 anncodes = [5,24,15,6] # the DM annihilation channel (b bbar, W+W- etc.)
 #yieldcodes = [22,-11,-2212,14] # the yield particle code (gamma,e+, pbar, nu_mu/nu_mubar,  etc.)
 for a in anncodes:
-  makerunfile(m,a,p,n,False) 
+  makerunfile(m,a,y,n,False) 
 
