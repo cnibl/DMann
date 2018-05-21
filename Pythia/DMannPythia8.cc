@@ -170,9 +170,9 @@ int main(int argc, char* argv[]) {
   // Define the PDG codes of the final state particles to be histogrammed (yield particles)
   // NOTE: ADD/REMOVE HERE IF YOU WANT TO INCLUDE MORE/FEWER FINAL STATE PARTICLES
   vector<long> yieldpdgs;
-  yieldpdgs.push_back(-11l);  // e+
-  yieldpdgs.push_back(22l);   // gamma
-  yieldpdgs.push_back(-2212l);// pbar
+  //yieldpdgs.push_back(-11l);  // e+
+  //yieldpdgs.push_back(22l);   // gamma
+  //yieldpdgs.push_back(-2212l);// pbar
   yieldpdgs.push_back(-14l);  // numubar
   yieldpdgs.push_back(14l);   // numu
   
@@ -193,6 +193,10 @@ int main(int argc, char* argv[]) {
   double me = 0.000511; // electron mass
   double mp = 0.938; // proton mass
   
+  TH1F * histoTheta = new TH1F("histoTheta",
+                      "Cos(theta) distribution of neutrino", 
+                      50, -1.0, 1.0);
+  
   // Begin event loop.
   int iAbort = 0;
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
@@ -211,10 +215,16 @@ int main(int argc, char* argv[]) {
         int idAbs = pythia.event[i].idAbs();      
         double eID = pythia.event[i].e(); // total energy of particle 
         double mID = pythia.event[i].m0(); // particle mass       
+        double cTh = pythia.event[i].pz()/eID; // cos(th) of (massless) particle
         // Fill histograms with E_kin = E - m. CN With weight 1/nEvent to get dN/dx??
         for (std::vector<long>::iterator idPtr = yieldpdgs.begin(); 
               idPtr != yieldpdgs.end(); ++idPtr) {
-          if ( (*idPtr)==pythia.event[i].id() ) histograms[*idPtr]->Fill(eID-mID);
+          if ( id==(*idPtr) ) {
+            histograms[*idPtr]->Fill(eID-mID);
+            if (id == 14) {
+              histoTheta->Fill(cTh);
+            }
+          }
         }
       }
     }
@@ -235,6 +245,33 @@ int main(int argc, char* argv[]) {
     delete outFile;    
     h12ascii(histograms[(*idPtr)],mX,ch,(*idPtr),nEvent);
   }
+  
+  //Save cos theta histogram to file
+  ofstream outputfile;
+  string filename = "da-pyt8-mx"+std::to_string((int)mX)+"-ch"+std::to_string(ch)+"-int"+std::to_string(14)+"-costh.dat";  
+  outputfile.open (filename);
+  // Header of file
+//  outputfile << "# DMann data file with dN/dE_kin as function of x=E_kin/mX=(E-m)/mX\n";
+  outputfile << "# DMann Pythia8 data file with counts/nAnn as function of cos theta for nu_mu\n";  
+  time_t rawtime;
+  time(&rawtime);
+  outputfile << "# Created: " << ctime(&rawtime);
+  outputfile << "# Number of simulated events: " << std::to_string(nEvent) << "\n";
+  outputfile << "# WIMP mass: " << std::to_string((int)mX) << " GeV\n";
+  outputfile << "# PDG code of annihilation channel: " << std::to_string(ch) << "\n";
+  outputfile << "# \n";
+//  outputfile << "# x\tdN/dE\n";
+  outputfile << "# cosTh\t\tcounts/nAnn\n";  
+  // Print histogram data to file
+  Int_t n = histoTheta->GetNbinsX();
+  for (Int_t i=1; i<=n; i++) {
+      outputfile << histoTheta->GetBinLowEdge(i) + histoTheta->GetBinWidth(i)/2;
+      outputfile << "\t\t";
+      outputfile << histoTheta->GetBinContent(i)/nEvent; //CN divide by Nevent here ??
+      outputfile << "\n";
+  }
+  outputfile.close();
+  
   
   // Final statistics and histograms.
   pythia.stat();

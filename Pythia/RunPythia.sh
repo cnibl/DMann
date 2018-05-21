@@ -37,6 +37,9 @@ if [ $test -ne 1 ]; then
     #esac
     make DMannPythia8 # Compiles if not already up-to-date
     
+    # sets up ROOT env variables
+    . /usr/local/bin/thisroot.sh
+    
     # Now create an array containing files in Runs-todo dir (returned by ls) and 
     # first check if this is empty (# returns length of an array). Then run DMannPythia8 
     # until number of entries in the filelist is zero.

@@ -47,7 +47,7 @@ def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   runfile.write("! 2) Settings related to output in init(), next() and stat().\n")
   runfile.write("Init:showChangedSettings = on      ! list changed settings\n")
   runfile.write("Init:showChangedParticleData = on  ! list changed particle data\n")
-  runfile.write("Next:numberCount = 1000            ! print message every n events\n")
+  runfile.write("Next:numberCount = "+str(nEvt/10)+"            ! print message every nEvt/10 events\n")
   runfile.write("Next:numberShowInfo = 1            ! print event information n times\n")
   runfile.write("Next:numberShowProcess = 1         ! print process record n times\n")
   runfile.write("Next:numberShowEvent = 1           ! print event record n times\n")
@@ -66,24 +66,17 @@ def makerunfile(mX,annPdg,yieldPdg,nEvt,test=False):
   runfile.write("! Note: oneChannel sets all other BR:s to zero except the specified one")  
   runfile.write("! Note: sum of branching ratios automatically rescaled to 1.\n")
   runfile.write("999999:oneChannel = 1 1. 101 "+str(annPdg)+" "+str(-annPdg)+"   !  -> annPdg -annPdg\n") 
-#  if annPdg == 5: # oneChannel sets all other BR:s to zero 
-#    runfile.write("999999:oneChannel = 1 1. 101 5 -5   !  -> b bbar\n") 
-#  elif annPdg == 24:
-#    runfile.write("999999:oneChannel = 1 1. 101 24 -24 !  -> W+ W-\n")
-#  elif annPdg == 15:                          
-#    runfile.write("999999:oneChannel = 1 1. 101 15 -15 !  -> tau- tau+\n")
-#  elif annPdg == 6:                          
-#    runfile.write("999999:oneChannel = 1 1. 101 6 -6   !  -> t tbar\n")
+# oneChannel sets all other BR:s to zero 
+  runfile.write("24:oneChannel = 1 1. 101 14 -13   !  W+ -> mu+ nu_mu\n") 
+  runfile.write("-24:oneChannel = 1 1. 101 -14 13   !  W- -> mu- nu_mubar\n") 
+  
   runfile.write("\n")
   runfile.write("! 5) Tell that also long-lived should decay.\n")
-  runfile.write("13:mayDecay   = true                 ! mu+-\n")
+#  runfile.write("13:mayDecay   = true                 ! mu+-\n")
   runfile.write("211:mayDecay  = true                 ! pi+-\n")
   runfile.write("321:mayDecay  = true                 ! K+-\n")
   runfile.write("130:mayDecay  = true                 ! K0_L\n")
   runfile.write("2112:mayDecay = true                 ! n\n")
-  
-  #CN: TEMPORARY STUFF, REMOVE LATER
-#  runfile.write("24:mayDecay = false                 ! n\n") # prevent W decays
   
   runfile.close()
 
@@ -96,11 +89,10 @@ change in the future).
 import subprocess
 
 subprocess.call(["mkdir","-p","Runs-todo"], stdout=subprocess.PIPE) # create Runs-todo if not already existing
-m = 200.     # mass of DM particle in GeV
-#c = 91        
+m = 80.5     # mass of DM particle in GeV
 y = 22      # the secondary particle of interest (e+, pbar, nu_l, gamma etc.)
 n = 1000000  # number of events to simulate
-anncodes = [5,24,15,6] # the DM annihilation channel (b bbar, W+W- etc.)
+anncodes = [24] # the DM annihilation channel (b bbar, W+W- etc.)
 #yieldcodes = [22,-11,-2212,14] # the yield particle code (gamma,e+, pbar, nu_mu/nu_mubar,  etc.)
 for a in anncodes:
   makerunfile(m,a,y,n,False) 
