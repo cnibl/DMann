@@ -1,0 +1,104 @@
+# madgraphtest.in.
+# -*- ThePEG-repository -*-
+
+##################################################
+## Input file for reading of MadGraph events
+##################################################
+library LesHouches.so
+library MadGraphReader.so
+cd /Herwig/EventHandlers
+create ThePEG::MadGraphReader myReader 
+
+
+#set myReader:EBeamA 200.*GeV
+#set myReader:EBeamB 200.*GeV
+set myReader:BeamA /Herwig/Particles/e+
+set myReader:BeamB /Herwig/Particles/e-
+create ThePEG::Cuts NoCuts
+set myReader:Cuts NoCuts
+set myReader:InitPDFs 0
+set myReader:PDFA /Herwig/Partons/NoPDF
+set myReader:PDFB /Herwig/Partons/NoPDF
+set myReader:FileName /home/carlniblaeus/MG5_aMC_v2_6_3_2/ee_h_ww_nodec/Events/run_01/unweighted_events.lhe
+set myReader:CacheFileName cache.tmp
+
+create ThePEG::LesHouchesEventHandler LHHandler 
+set LHHandler:CascadeHandler /Herwig/Shower/ShowerHandler
+set LHHandler:HadronizationHandler /Herwig/Hadronization/ClusterHadHandler
+set LHHandler:DecayHandler /Herwig/Decays/DecayHandler
+#set LHHandler:PartonExtractor /Herwig/Partons/QCDExtractor
+set LHHandler:PartonExtractor /Herwig/Partons/EEExtractor
+set LHHandler:CascadeHandler:MPIHandler NULL
+
+##insert LHHandler:PreCascadeHandlers 0 /Herwig/NewPhysics/DecayHandler
+#insert LHHandler:PreCascadeHandlers 0 /Herwig/Decays/DecayHandler
+#insert LHHandler:PostSubProcessHandlers 0 /Herwig/QEDRadiation/QEDRadiationHandler
+
+insert LHHandler:LesHouchesReaders[0] myReader
+
+
+###################################################
+### Matching and shower selection
+###################################################
+#
+#read Matchbox/MCatNLO-DefaultShower.in
+##read Matchbox/Powheg-DefaultShower.in
+### use for strict LO/NLO comparisons
+##read Matchbox/MCatLO-DefaultShower.in
+### use for improved LO showering
+##read Matchbox/LO-DefaultShower.in
+#
+##read Matchbox/MCatNLO-DipoleShower.in
+##read Matchbox/Powheg-DipoleShower.in
+### use for strict LO/NLO comparisons
+##read Matchbox/MCatLO-DipoleShower.in
+### use for improved LO showering
+##read Matchbox/LO-DipoleShower.in
+#
+##read Matchbox/LO-NoShower.in
+
+##################################################
+## Make usually stable particles decay
+##################################################
+set /Herwig/Particles/pi+:Stable Unstable
+set /Herwig/Particles/K+:Stable Unstable
+set /Herwig/Particles/K_L0:Stable Unstable
+set /Herwig/Particles/mu+:Stable Unstable
+set /Herwig/Particles/n0:Stable Unstable	
+
+###################################################
+### Force leptonic W decay
+###################################################
+#do /Herwig/Particles/W+:SelectDecayModes W+->nu_mu,mu+;
+#do /Herwig/Particles/W-:SelectDecayModes W-->nu_mubar,mu-;
+
+##################################################
+## Analysis of multiplicity
+##################################################
+cd /Herwig/Analysis
+create DMann::DMannYields DMannYields DMannYields.so
+insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 DMannYields
+set DMannYields:MassDM 200
+set DMannYields:NEvent 100000
+insert DMannYields:ParticleCodes[0] -14
+insert DMannYields:ParticleCodes[0] 14
+
+###################################################
+### Do not apply profile scales for LEP as hard
+### scale coincides with kinematic limit
+###################################################
+#
+##set /Herwig/Shower/ShowerHandler:HardScaleProfile NULL
+##set /Herwig/DipoleShower/DipoleShowerHandler:HardScaleProfile NULL
+#
+###################################################
+### Save the generator
+###################################################
+
+cd /Herwig/Generators
+cp EventGenerator myLesHouchesGenerator
+set myLesHouchesGenerator:EventHandler /Herwig/EventHandlers/LHHandler
+set myLesHouchesGenerator:NumberOfEvents 100000
+
+#saverun myLesHouches myLesHouchesGenerator
+run myLesHouches myLesHouchesGenerator
