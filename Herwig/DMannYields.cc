@@ -20,9 +20,10 @@
 //#include "TCanvas.h"
 
 using namespace DMann;
+
 //histo(2.e-10.,200.,250)
 DMannYields::DMannYields() : 
-histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))), 
+ histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))), 
 _yieldpdg(0),
 _massdm(0.0),
 _annpdg(0)
@@ -58,8 +59,8 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
         p = (*it)->momentum(); //the four-momentum
         _histograms[(*idPtr)].addWeighted( (p.e()-p.mass())/GeV, 1.0/(double)_nevt ); // Fill histogram corresponding to yield ID, divided by number of events
       }
+    }
   }
-
 }
 
 LorentzRotation DMannYields::transform(tcEventPtr event) const {
@@ -76,6 +77,7 @@ void DMannYields::analyze(tPPtr, double weight) {}
 
 void DMannYields::dofinish() {
   // *** ATTENTION *** Normalize and post-process histograms here.
+
   long nEvt = generator()->currentEventNumber() - 1;  
   for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
