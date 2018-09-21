@@ -87,7 +87,7 @@ for mwimp in wimpmasses:
 		"""
 		runtag = "".join(("ann",str(int(a)),"_mx",str(int(mwimp))))
 		mescriptpath = write_madeventscript(run_tag=runtag)
-		print "Now running MadEvent with %s annihilations..." % str(nann)
+		print "Now running MadEvent with %d annihilations for WIMP mass %d..." % (nann,mwimp)
 		with open("madevent.log","w") as outfile:
 			subprocess.call(["./bin/madevent","/".join((currentdir,mescriptpath))],cwd=rundir,stdout=outfile)
 		print "Done!"
