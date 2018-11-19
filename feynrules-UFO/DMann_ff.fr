@@ -1,8 +1,8 @@
 (* ****************************************************************** *)
 (* *****                                                        ***** *)
-(* *****  FeynRules model file: Simplified s-channel DM models  ***** *)
-(* *****  Author: A. Martini, K. Mawatari                       ***** *)
-(* *****          J. Wang, C.Zhang                              ***** *)
+(* *****  FeynRules model file: DM annihilation                 ***** *)
+(* *****  Author: C. Niblaeus                                   ***** *)
+(* *****                                                        ***** *)
 (* *****                                                        ***** *)
 (* ****************************************************************** *)
 
@@ -10,25 +10,25 @@
 (* ************************** *)
 (* *****  Information   ***** *)
 (* ************************** *)
-M$ModelName = "DMsimp_s_spin0";
+M$ModelName = "DMann_ff";
 
 M$Information = {
- Authors      -> {"A. Martini, K. Mawatari, J. Wang, C. Zhang"}, 
- Institutions -> {"Universite catholique de Louvain, Vrije Universiteit Brussel, Johnnas Gutenberg University of Mainz, Brookhaven National Laboratory"},
- Emails       -> {"kentarou.mawatari@vub.ac.be","cenzhang@bnl.gov"},
- URLs         -> "http://feynrules.irmp.ucl.ac.be/wiki/DMsimp/",  
+ Authors      -> {"C.Niblaeus"}, 
+ Institutions -> {"Stockholm University"},
+ Emails       -> {"carl.niblaeus@fysik.su.se"},
+ URLs         -> "",  
  References   -> {"O. Mattelaer et al., arXiv:1508.00564",
                   "M. Backovic et al., arXiv:1508.05327",
                   "M. Neubert et al., arXiv:1508.xxxxx"},
  Version      -> "1.0",
- Date         -> "2015.08.24"
+ Date         -> "2018.11.16"
 };
 
 (* ************************** *)
 (* *****  Change  log   ***** *)
 (* ************************** *)
 
-(* 2015.08.24 v1.0 - release version. *) 
+(* 2018.11.16 v1.0 - first version. *) 
 
 
 (***** Setting for interaction order (as e.g. used by MadGraph 5)  ******)
@@ -47,37 +47,14 @@ M$InteractionOrderHierarchy = {
 (* ************************** *)
 M$ClassesDescription = {
 
-S[7] == { ClassName -> Xr,
-	  SelfConjugate -> True,
-	  Mass -> {MXr, 10.},
-          Width -> 0,
-          PDG -> 5000001,
-          TeX -> Subscript[X,r],
-          FullName -> "Real scalar DM" },
-
-S[8] == { ClassName -> Xc,
-  	  SelfConjugate -> False,
-  	  Mass -> {MXc, 10.},
-  	  Width -> 0,
-          PDG -> 51,
-          TeX -> Subscript[X,c],
-          FullName -> "Complex scalar DM" },
-
-F[7] == { ClassName -> Xd,
-          SelfConjugate -> False,
-	  Mass -> {MXd, 10.},
-          Width -> 0,
-          PDG -> 52,
-          TeX -> Subscript[X,d],
-          FullName -> "Dirac DM" },
-
-S[9] == { ClassName -> Y0,
-	  SelfConjugate -> True,
-	  Mass -> {MY0, 1000.},
-          Width -> {WY0, 10.},
-          PDG -> 54,
-          TeX -> Subscript[Y,0],
-          FullName -> "Scalar mediator" }
+S[9] == { 
+     ClassName -> DM0,
+    SelfConjugate -> True,
+    Mass -> {MD0, 1000.},
+     Width -> {WD0, 10.},
+     PDG -> 54,
+     TeX -> Subscript[DM,0],
+     FullName -> "Scalar mediator" }
 
 };
 
@@ -87,37 +64,6 @@ S[9] == { ClassName -> Y0,
 (* ************************** *)  
 M$Parameters = {
 
- gSXr == { 
-      ParameterType -> External,
-      InteractionOrder -> {DMS, 1},
-      BlockName -> DMINPUTS,
-      TeX -> Subscript[g,SXr],
-      Description -> "Xr-Y0 scalar coupling",
-      Value -> 0. },     
-
- gSXc == { 
-      ParameterType -> External,
-      InteractionOrder -> {DMS, 1},
-      BlockName -> DMINPUTS,
-      TeX -> Subscript[g,SXc],
-      Description -> "Xc-Y0 scalar coupling",
-      Value -> 0. },     
-
- gSXd == { 
-      ParameterType -> External,
-      InteractionOrder -> {DMS, 1},
-      BlockName -> DMINPUTS,
-      TeX -> Subscript[g,SXd],
-      Description -> "Xd-Y0 scalar coupling",
-      Value -> 1. },     	  
-
- gPXd == { 
-      ParameterType -> External,
-      InteractionOrder -> {DMS, 1},
-      BlockName -> DMINPUTS,
-      TeX -> Subscript[g,PXd],
-      Description -> "Xd-Y0 pseudoscalar coupling",
-      Value -> 0. },     	  
 
  gSd11 == { 
       ParameterType -> External,
@@ -221,22 +167,6 @@ M$Parameters = {
       TeX -> \[CapitalLambda],
       Description -> "cutoff scale",
       Value -> 10000. }, 
-
- gSg == { 
-      ParameterType -> External,
-      BlockName -> DMINPUTS, 
-      InteractionOrder -> {DMS, 1},
-      TeX -> Subscript[g,Sg],
-      Description -> "g-Y0 scalar coupling",
-      Value -> 0. },     
-
- gPg == { 
-      ParameterType -> External,
-      BlockName -> DMINPUTS, 
-      InteractionOrder -> {DMS, 1},
-      TeX -> Subscript[g,Pg],
-      Description -> "g-Y0 pseudoscalar coupling",
-      Value -> 0. }
 
 };
 
