@@ -1,12 +1,8 @@
-// dmannmain.cc is a modified copy of main07.cc in the PYTHIA8 examples
-// directory. See below for description of that program.
+// DMannPythia8.cc is a Pythia program inspired by main07.cc in the PYTHIA8 examples
+// directory. It simulates DM annihilations.
 
-// main07.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2017 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL version 2, see COPYING for details.
-// Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Illustration how to generate various two-body channels from
+// Taken from main07.cc:
+// "Illustration how to generate various two-body channels from
 // astroparticle processes, e.g. neutralino annihilation or decay.
 // To this end a "blob" of energy is created with unit cross section,
 // from the fictitious collision of two non-radiating incoming e+e-.
@@ -14,7 +10,7 @@
 // blob can be set up. Furthermore, only gamma, e+-, p/pbar and
 // neutrinos are stable, everything else is set to decay.
 // (The "single-particle gun" of main21.cc offers another possible
-// approach to the same problem.)
+// approach to the same problem.)"
 
 // Stdlib header file for input and output.
 #include <iostream>
@@ -176,18 +172,27 @@ int main(int argc, char* argv[]) {
   yieldpdgs.push_back(-14l);  // numubar
   yieldpdgs.push_back(14l);   // numu
   
+  yieldpdgs.push_back(11l);   // e-
+  yieldpdgs.push_back(-12l);  // nuebar
+  yieldpdgs.push_back(12l);   // nue
+  yieldpdgs.push_back(-16l);  // nutaubar
+  yieldpdgs.push_back(16l);   // nutau
+  
   // Construct ROOT TH1F histogram for each yield particle with 250 logarithmic bins from mX*10^-10 to mX (25 bins per decade)
   map<long,TH1F*> histograms;
   for (std::vector<long>::iterator idPtr = yieldpdgs.begin(); 
         idPtr != yieldpdgs.end(); ++idPtr) {
       string histoname = std::to_string(*idPtr);
       string histotitle = "Kinetic energy for yield PDG "+std::to_string(*idPtr);
+      //TH1F * histo = new TH1F(histoname.c_str(),
+      //                histotitle.c_str(), 
+      //                250, -10+log10(mX), 0+log10(mX));
       TH1F * histo = new TH1F(histoname.c_str(),
                       histotitle.c_str(), 
-                      250, -10+log10(mX), 0+log10(mX));
+                      250, 0., mX);
       
       histograms.insert(make_pair((*idPtr), histo));    
-      BinLogX(histograms[*idPtr]); 
+      //BinLogX(histograms[*idPtr]); 
   }
    
   double me = 0.000511; // electron mass

@@ -50,8 +50,8 @@ M$ClassesDescription = {
 S[9] == { 
      ClassName -> DM0,
 	  SelfConjugate -> True,
-	  Mass -> {MD0, 1000.},
-     Width -> {WD0, 10.},
+	  Mass -> {MDM0, 1000.},
+     Width -> {WDM0, 10.},
      PDG -> 54,
      TeX -> Subscript[DM,0],
      FullName -> "Scalar mediator" }
@@ -77,7 +77,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS,
     TeX              -> Subscript[g,Sh1],
-    Description      -> "h-D0 scalar coupling 1",
+    Description      -> "h-DM0 scalar coupling 1",
     Value            -> 0. 
   },      
   gSh2 == { 
@@ -85,7 +85,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS,
     TeX              -> Subscript[g,Sh2],
-    Description      -> "h-D0 scalar coupling 2",
+    Description      -> "h-DM0 scalar coupling 2",
     Value            -> 0. 
   },
   gSWT == { 
@@ -93,7 +93,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,SWT],
-    Description      -> "W-D0 scalar transverse coupling",
+    Description      -> "W-DM0 scalar transverse coupling",
     Value            -> 0. 
   },
   gPWT == {
@@ -101,7 +101,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS,
     TeX              -> Subscript[g,PWT],
-    Description      -> "W-D0 pseudoscalar transverse",
+    Description      -> "W-DM0 pseudoscalar transverse",
     Value            -> 0. 
   },
   gPBT == { 
@@ -109,7 +109,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,PBT],
-    Description      -> "B-D0  transverse coupling",
+    Description      -> "B-DM0  transverse coupling",
     Value            -> 0. 
   },
   gSBT == {
@@ -117,7 +117,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,SBT],
-    Description      -> "B-D0 scalar transverse coupling",
+    Description      -> "B-DM0 scalar transverse coupling",
     Value            -> 0. 
   },
   gSWL == { 
@@ -125,7 +125,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,SWL],
-    Description      -> "W-D0  longitudinal coupling",
+    Description      -> "W-DM0  longitudinal coupling",
     Value            -> 0. 
   },
   gSZL == { 
@@ -133,7 +133,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,SZL],
-    Description      -> "Z-D0  longitudinal coupling",
+    Description      -> "Z-DM0  longitudinal coupling",
     Value            -> 0. 
   },
   gSg == { 
@@ -141,7 +141,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,Sg],
-    Description      -> "g-D0 scalar coupling",
+    Description      -> "g-DM0 scalar coupling",
     Value            -> 0. 
   },
   gPg == { 
@@ -149,7 +149,7 @@ M$Parameters = {
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,Pg],
-    Description      -> "g-D0  coupling",
+    Description      -> "g-DM0  coupling",
     Value            -> 0. 
   }
       
@@ -161,30 +161,30 @@ M$Parameters = {
 (* ************************** *)
 
 L0VT := Module[{ii,jj}, 
-        ExpandIndices[gSh1/Lambda DC[Phibar[ii],mu] DC[Phi[ii],mu] D0 
-        + gSh2/Lambda * MH^2 (Phibar[jj] Phi[jj] - vev^2 / 2) D0,
+        ExpandIndices[gSh1/Lambda DC[Phibar[ii],mu] DC[Phi[ii],mu] DM0 
+        + gSh2/Lambda * MH^2 (Phibar[jj] Phi[jj] - vev^2 / 2) DM0,
         FlavorExpand->{SU2D,SU2W}]] 
         
         + Module[{mu,nu}, 
         ExpandIndices[ 1/Lambda FS[B,mu,nu] 
-        (gSBT FS[B,mu,nu] + gPBT Dual[FS][B,mu,nu]) D0, 
+        (gSBT FS[B,mu,nu] + gPBT Dual[FS][B,mu,nu]) DM0, 
         FlavorExpand->{SU2D,SU2W}]] 
         
         + Module[{mu,nu,ii}, 
         ExpandIndices[ 1/Lambda FS[Wi,mu,nu,ii] 
-        (gSWT FS[Wi,mu,nu,ii] + gPWT Dual[FS][Wi,mu,nu,ii]) D0,
+        (gSWT FS[Wi,mu,nu,ii] + gPWT Dual[FS][Wi,mu,nu,ii]) DM0,
         FlavorExpand->{SU2D,SU2W}]] ;
 
 L0VL := Module[{mu}, 
         ExpandIndices[ 1/Lambda gSBL B[mu] B[mu], 
-        FlavorExpand->{SU2D,SU2W}]] D0
+        FlavorExpand->{SU2D,SU2W}]] DM0
         + Module[{mu,ii}, 
         ExpandIndices[ Lambda gSWL Wi[mu,ii] Wi[mu,ii],
-        FlavorExpand->{SU2D,SU2W}]] D0; 
+        FlavorExpand->{SU2D,SU2W}]] DM0; 
 
-(* L0VL := Lambda * ( gSWL W[mu] W[mu] + gSZL Z[mu] Z[mu]) D0; *)
+(* L0VL := Lambda * ( gSWL W[mu] W[mu] + gSZL Z[mu] Z[mu]) DM0; *)
 
 L0g := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] + 
-                                 gPg Dual[FS][G,mu,nu,a]) D0;
+                                 gPg Dual[FS][G,mu,nu,a]) DM0;
 
 L0DM := L0VT + L0VL + L0g + HC[L0VT] + HC[L0VL] + HC[L0g];

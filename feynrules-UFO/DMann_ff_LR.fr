@@ -1,0 +1,399 @@
+(* ****************************************************************** *)
+(* *****                                                        ***** *)
+(* *****  FeynRules model file: DM annihilation                 ***** *)
+(* *****  Author: C. Niblaeus                                   ***** *)
+(* *****                                                        ***** *)
+(* *****                                                        ***** *)
+(* ****************************************************************** *)
+
+
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+M$ModelName = "DMann_ff_LR";
+
+M$Information = {
+ Authors      -> {"C.Niblaeus"}, 
+ Institutions -> {"Stockholm University"},
+ Emails       -> {"carl.niblaeus@fysik.su.se"},
+ URLs         -> "",  
+ References   -> {"O. Mattelaer et al., arXiv:1508.00564",
+                  "M. Backovic et al., arXiv:1508.05327",
+                  "M. Neubert et al., arXiv:1508.xxxxx"},
+ Version      -> "1.0",
+ Date         -> "2018.11.16"
+};
+
+(* ************************** *)
+(* *****  Change  log   ***** *)
+(* ************************** *)
+
+(* 2018.11.16 v1.0 - first version. *) 
+
+
+(***** Setting for interaction order (as e.g. used by MadGraph 5)  ******)
+
+M$InteractionOrderLimit = {
+ {DMS, 2}
+};
+
+M$InteractionOrderHierarchy = {
+ {QCD, 1}, {DMS, 2}, {QED, 2}
+};
+
+
+(* ************************** *)
+(* *****     Fields     ***** *)
+(* ************************** *)
+M$ClassesDescription = {
+
+S[9] == { 
+    ClassName -> Y0,
+    SelfConjugate -> True,
+    Mass -> {MY0, 1000.},
+    Width -> {WY0, 10.},
+    TeX -> Subscript[Y,0],
+    FullName -> "Scalar annihilation state" },
+
+V[9] == {
+  ClassName -> Y1,
+  SelfConjugate -> True,
+  Mass -> {MY1, 1000.},
+  Width -> {WY1, 10.},
+  TeX -> Subscript[Y,1],
+  FullName -> "Vector annihilation state" }
+
+};
+
+
+(* ************************** *)
+(* *****   Parameters   ***** *)
+(* ************************** *)  
+M$Parameters = {
+
+
+ gL0d == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0d],
+      Description -> "d-Y0 LH coupling",
+      Value -> 1. },     
+
+ gL0u == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0u],
+      Description -> "u-Y0 LH coupling",
+      Value -> 1. },     
+
+ gL0s == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0s],
+      Description -> "s-Y0 LH coupling",
+      Value -> 1. },
+
+ gL0c == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0c],
+      Description -> "c-Y0 LH coupling",
+      Value -> 1. },
+
+ gL0b == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0b],
+      Description -> "b-Y0 LH coupling",
+      Value -> 1. },     
+
+ gL0t == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0t],
+      Description -> "t-Y0 LH coupling",
+      Value -> 1. },     
+
+ gR0d == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0d],
+      Description -> "d-Y0 RH coupling",
+      Value -> 1. },     
+
+ gR0u == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0u],
+      Description -> "u-Y0 RH coupling",
+      Value -> 1. },     
+
+ gR0s == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0s],
+      Description -> "s-Y0 RH coupling",
+      Value -> 1. },
+
+ gR0c == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0c],
+      Description -> "c-Y0 RH coupling",
+      Value -> 1. },
+
+ gR0b == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0b],
+      Description -> "b-Y0 RH coupling",
+      Value -> 1. },     
+
+ gR0t == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0t],
+      Description -> "t-Y0 RH coupling",
+      Value -> 1. },      
+
+ gL0e == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0e],
+      Description -> "e-Y0 LH coupling",
+      Value -> 1. },
+
+ gR0e == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0e],
+      Description -> "e-Y0 RH coupling",
+      Value -> 1. },     
+
+ gL0mu == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0mu],
+      Description -> "muon-Y0 LH coupling",
+      Value -> 1. },   
+
+ gR0mu == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0mu],
+      Description -> "muon-Y0 RH coupling",
+      Value -> 1. },     
+
+ gL0ta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L0ta],
+      Description -> "tau-Y0 LH coupling",
+      Value -> 1. },     
+
+ gR0ta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R0ta],
+      Description -> "tau-Y0 RH coupling",
+      Value -> 1. },     
+
+ gL1d == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1d],
+      Description -> "d-Y1 LH coupling",
+      Value -> 1. },     
+
+ gL1u == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1u],
+      Description -> "u-Y1 LH coupling",
+      Value -> 1. },     
+
+ gL1s == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1s],
+      Description -> "s-Y1 LH coupling",
+      Value -> 1. },
+
+ gL1c == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1c],
+      Description -> "c-Y1 LH coupling",
+      Value -> 1. },
+
+ gL1b == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1b],
+      Description -> "b-Y1 LH coupling",
+      Value -> 1. },     
+
+ gL1t == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1t],
+      Description -> "t-Y1 LH coupling",
+      Value -> 1. },     
+
+ gR1d == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1d],
+      Description -> "d-Y1 RH coupling",
+      Value -> 1. },     
+
+ gR1u == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1u],
+      Description -> "u-Y1 RH coupling",
+      Value -> 1. },     
+
+ gR1s == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1s],
+      Description -> "s-Y1 RH coupling",
+      Value -> 1. },
+
+ gR1c == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1c],
+      Description -> "c-Y1 RH coupling",
+      Value -> 1. },
+
+ gR1b == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1b],
+      Description -> "b-Y1 RH coupling",
+      Value -> 1. },     
+
+ gR1t == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1t],
+      Description -> "t-Y1 RH coupling",
+      Value -> 1. },      
+
+ gL1e == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1e],
+      Description -> "e-Y1 LH coupling",
+      Value -> 1. },
+
+ gR1e == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1e],
+      Description -> "e-Y1 RH coupling",
+      Value -> 1. },     
+
+ gL1mu == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1mu],
+      Description -> "muon-Y1 LH coupling",
+      Value -> 1. },   
+
+ gR1mu == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1mu],
+      Description -> "muon-Y1 RH coupling",
+      Value -> 1. },     
+
+ gL1ta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,L1ta],
+      Description -> "tau-Y1 LH coupling",
+      Value -> 1. },     
+
+ gR1ta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,R1ta],
+      Description -> "tau-Y1 RH coupling",
+      Value -> 1. },     
+
+ Lambda == { 
+      ParameterType -> External,
+      BlockName -> DMINPUTS, 
+      TeX -> \[CapitalLambda],
+      Description -> "cutoff scale",
+      Value -> 1000. }
+
+};
+
+
+(* ************************** *)
+(* *****   Lagrangian   ***** *)
+(* ************************** *)
+
+
+L0DM := gL0d dbar.ProjM.d Y0 + gR0d dbar.ProjP.d Y0 +
+        gL0u ubar.ProjM.u Y0 + gR0u ubar.ProjP.u Y0 +
+        gL0s sbar.ProjM.s Y0 + gR0s sbar.ProjP.s Y0 +
+        gL0c cbar.ProjM.c Y0 + gR0c cbar.ProjP.c Y0 +
+        gL0b bbar.ProjM.b Y0 + gR0b bbar.ProjP.b Y0 +
+        gL0t tbar.ProjM.t Y0 + gR0t tbar.ProjP.t Y0 +
+        gL0e ebar.ProjM.e Y0 + gR0e ebar.ProjP.e Y0 +
+        gL0mu mubar.ProjM.mu Y0 + gR0mu mubar.ProjP.mu Y0 +
+        gL0ta tabar.ProjM.ta Y0 + gR0ta tabar.ProjP.ta Y0;
+
+L1DM := gL1d   dbar.Ga[mu].ProjM.d Y1[mu] +    gR1d dbar.Ga[mu].ProjP.d Y1[mu] +
+        gL1u   ubar.Ga[mu].ProjM.u Y1[mu] +    gR1u ubar.Ga[mu].ProjP.u Y1[mu] +
+        gL1s   sbar.Ga[mu].ProjM.s Y1[mu] +    gR1s sbar.Ga[mu].ProjP.s Y1[mu] +
+        gL1c   cbar.Ga[mu].ProjM.c Y1[mu] +    gR1c cbar.Ga[mu].ProjP.c Y1[mu] +
+        gL1b   bbar.Ga[mu].ProjM.b Y1[mu] +    gR1b bbar.Ga[mu].ProjP.b Y1[mu] +
+        gL1t   tbar.Ga[mu].ProjM.t Y1[mu] +    gR1t tbar.Ga[mu].ProjP.t Y1[mu] +
+        gL1e   ebar.Ga[mu].ProjM.e Y1[mu] +    gR1e ebar.Ga[mu].ProjP.e Y1[mu] +
+        gL1mu mubar.Ga[mu].ProjM.mu Y1[mu] + gR1mu mubar.Ga[mu].ProjP.mu Y1[mu] +
+        gL1ta tabar.Ga[mu].ProjM.ta Y1[mu] + gR1ta tabar.Ga[mu].ProjP.ta Y1[mu]; 
+
+LDM := L0DM + L1DM + HC[L0DM + L1DM]; 
+

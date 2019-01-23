@@ -282,7 +282,7 @@ M$ClassesDescription = {
     FlavorIndex      -> Generation,
     SelfConjugate    -> False,
     Mass             -> {Ml, {Me,5.11*^-4}, {MMU,0.10566}, {MTA,1.777}},
-    Width            -> 0,
+    Width            -> {Wl, {WE,0.}, {WMU, 0.}, {WTA, 2.27*^-12}},
     QuantumNumbers   -> {Q -> -1, LeptonNumber -> 1},
     PropagatorLabel  -> {"l", "e", "mu", "ta"},
     PropagatorType   -> Straight,
@@ -298,8 +298,8 @@ M$ClassesDescription = {
     Indices          -> {Index[Generation], Index[Colour]},
     FlavorIndex      -> Generation,
     SelfConjugate    -> False,
-    Mass             -> {Mu, {MU, 2.55*^-3}, {MC,1.27}, {MT,172}},
-    Width            -> {0, 0, {WT,1.50833649}},
+    Mass             -> {Mu, {MU, 2.55*^-3}, {MC,1.27}, {MT,173}},
+    Width            -> {0, 0, {WT,1.41}},
     QuantumNumbers   -> {Q -> 2/3},
     PropagatorLabel  -> {"uq", "u", "c", "t"},
     PropagatorType   -> Straight,
@@ -315,7 +315,7 @@ M$ClassesDescription = {
     Indices          -> {Index[Generation], Index[Colour]},
     FlavorIndex      -> Generation,
     SelfConjugate    -> False,
-    Mass             -> {Md, {MD,5.04*^-3}, {MS,0.101}, {MB,4.7}},
+    Mass             -> {Md, {MD,5.04*^-3}, {MS,0.095}, {MB,4.78}},
     Width            -> 0,
     QuantumNumbers   -> {Q -> -1/3},
     PropagatorLabel  -> {"dq", "d", "s", "b"},
@@ -380,7 +380,7 @@ M$ClassesDescription = {
   S[1] == {
     ClassName       -> H,
     SelfConjugate   -> True,
-    Mass            -> {MH,125},
+    Mass            -> {MH,125.18},
     Width           -> {WH,0.00407},
     PropagatorLabel -> "H",
     PropagatorType  -> D,
@@ -480,7 +480,7 @@ M$Parameters = {
     ParameterType    -> External,
     BlockName        -> SMINPUTS,
     OrderBlock       -> 3,
-    Value            -> 0.1184, 
+    Value            -> 0.1181, 
     InteractionOrder -> {QCD,2},
     TeX              -> Subscript[\[Alpha],s],
     Description      -> "Strong coupling constant at the Z pole"
@@ -503,7 +503,7 @@ M$Parameters = {
     ParameterType -> External,
     BlockName     -> YUKAWA,
     OrderBlock    -> 3,
-    Value         -> 0.101,
+    Value         -> 0.095,
     Description   -> "Strange Yukawa mass"
   },
   ymc == {
@@ -517,14 +517,14 @@ M$Parameters = {
     ParameterType -> External,
     BlockName     -> YUKAWA,
     OrderBlock    -> 5,
-    Value         -> 4.7,
+    Value         -> 4.78,
     Description   -> "Bottom Yukawa mass"
   },
   ymt == {
     ParameterType -> External,
     BlockName     -> YUKAWA,
     OrderBlock    -> 6,
-    Value         -> 172,
+    Value         -> 173,
     Description   -> "Top Yukawa mass"
   },
   yme == {
