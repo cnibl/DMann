@@ -1,6 +1,6 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Thu 20 Dec 2018 19:05:12
+# Date: Mon 4 Feb 2019 13:55:33
 
 
 from object_library import all_decays, Decay
@@ -86,15 +86,15 @@ Decay_W__plus__ = Decay(name = 'Decay_W__plus__',
 
 Decay_Y0 = Decay(name = 'Decay_Y0',
                  particle = P.Y0,
-                 partial_widths = {(P.b,P.b__tilde__):'((-24*gL0b**2*MB**2 - 48*gL0b*gR0b*MB**2 - 24*gR0b**2*MB**2 + 6*gL0b**2*MY0**2 + 12*gL0b*gR0b*MY0**2 + 6*gR0b**2*MY0**2)*cmath.sqrt(-4*MB**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
-                                   (P.c,P.c__tilde__):'((-24*gL0c**2*MC**2 - 48*gL0c*gR0c*MC**2 - 24*gR0c**2*MC**2 + 6*gL0c**2*MY0**2 + 12*gL0c*gR0c*MY0**2 + 6*gR0c**2*MY0**2)*cmath.sqrt(-4*MC**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
-                                   (P.d,P.d__tilde__):'((-24*gL0d**2*MD**2 - 48*gL0d*gR0d*MD**2 - 24*gR0d**2*MD**2 + 6*gL0d**2*MY0**2 + 12*gL0d*gR0d*MY0**2 + 6*gR0d**2*MY0**2)*cmath.sqrt(-4*MD**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
-                                   (P.e__minus__,P.e__plus__):'((-8*gL0e**2*Me**2 - 16*gL0e*gR0e*Me**2 - 8*gR0e**2*Me**2 + 2*gL0e**2*MY0**2 + 4*gL0e*gR0e*MY0**2 + 2*gR0e**2*MY0**2)*cmath.sqrt(-4*Me**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
+                 partial_widths = {(P.b,P.b__tilde__):'((0. - 24.*gL0b**2*MB**2 - 48.*gL0b*gR0b*MB**2 - 24.*gR0b**2*MB**2 + 6.*gL0b**2*MY0**2 + 12.*gL0b*gR0b*MY0**2 + 6.*gR0b**2*MY0**2)*cmath.sqrt(-4*MB**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
+                                   (P.c,P.c__tilde__):'((0. - 24.*gL0c**2*MC**2 - 48.*gL0c*gR0c*MC**2 - 24.*gR0c**2*MC**2 + 6.*gL0c**2*MY0**2 + 12.*gL0c*gR0c*MY0**2 + 6.*gR0c**2*MY0**2)*cmath.sqrt(-4*MC**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
+                                   (P.d,P.d__tilde__):'((0. - 24.*gL0d**2*MD**2 - 48.*gL0d*gR0d*MD**2 - 24.*gR0d**2*MD**2 + 6.*gL0d**2*MY0**2 + 12.*gL0d*gR0d*MY0**2 + 6.*gR0d**2*MY0**2)*cmath.sqrt(-4*MD**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
+                                   (P.e__minus__,P.e__plus__):'((0. - 8.*gL0e**2*Me**2 - 16.*gL0e*gR0e*Me**2 - 8.*gR0e**2*Me**2 + 2.*gL0e**2*MY0**2 + 4.*gL0e*gR0e*MY0**2 + 2.*gR0e**2*MY0**2)*cmath.sqrt(-4*Me**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
                                    (P.mu__minus__,P.mu__plus__):'((-8*gL0mu**2*MMU**2 - 16*gL0mu*gR0mu*MMU**2 - 8*gR0mu**2*MMU**2 + 2*gL0mu**2*MY0**2 + 4*gL0mu*gR0mu*MY0**2 + 2*gR0mu**2*MY0**2)*cmath.sqrt(-4*MMU**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
-                                   (P.s,P.s__tilde__):'((-24*gL0s**2*MS**2 - 48*gL0s*gR0s*MS**2 - 24*gR0s**2*MS**2 + 6*gL0s**2*MY0**2 + 12*gL0s*gR0s*MY0**2 + 6*gR0s**2*MY0**2)*cmath.sqrt(-4*MS**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
-                                   (P.t,P.t__tilde__):'((-24*gL0t**2*MT**2 - 48*gL0t*gR0t*MT**2 - 24*gR0t**2*MT**2 + 6*gL0t**2*MY0**2 + 12*gL0t*gR0t*MY0**2 + 6*gR0t**2*MY0**2)*cmath.sqrt(-4*MT**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
+                                   (P.s,P.s__tilde__):'((0. - 24.*gL0s**2*MS**2 - 48.*gL0s*gR0s*MS**2 - 24.*gR0s**2*MS**2 + 6.*gL0s**2*MY0**2 + 12.*gL0s*gR0s*MY0**2 + 6.*gR0s**2*MY0**2)*cmath.sqrt(-4*MS**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
+                                   (P.t,P.t__tilde__):'((0. - 24.*gL0t**2*MT**2 - 48.*gL0t*gR0t*MT**2 - 24.*gR0t**2*MT**2 + 6.*gL0t**2*MY0**2 + 12.*gL0t*gR0t*MY0**2 + 6.*gR0t**2*MY0**2)*cmath.sqrt(-4*MT**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
                                    (P.ta__minus__,P.ta__plus__):'((-8*gL0ta**2*MTA**2 - 16*gL0ta*gR0ta*MTA**2 - 8*gR0ta**2*MTA**2 + 2*gL0ta**2*MY0**2 + 4*gL0ta*gR0ta*MY0**2 + 2*gR0ta**2*MY0**2)*cmath.sqrt(-4*MTA**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)',
-                                   (P.u,P.u__tilde__):'((-24*gL0u**2*MU**2 - 48*gL0u*gR0u*MU**2 - 24*gR0u**2*MU**2 + 6*gL0u**2*MY0**2 + 12*gL0u*gR0u*MY0**2 + 6*gR0u**2*MY0**2)*cmath.sqrt(-4*MU**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)'})
+                                   (P.u,P.u__tilde__):'((0. - 24.*gL0u**2*MU**2 - 48.*gL0u*gR0u*MU**2 - 24.*gR0u**2*MU**2 + 6.*gL0u**2*MY0**2 + 12.*gL0u*gR0u*MY0**2 + 6.*gR0u**2*MY0**2)*cmath.sqrt(-4*MU**2*MY0**2 + MY0**4))/(16.*cmath.pi*abs(MY0)**3)'})
 
 Decay_Y1 = Decay(name = 'Decay_Y1',
                  particle = P.Y1,

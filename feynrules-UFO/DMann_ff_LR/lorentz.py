@@ -1,6 +1,6 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Thu 20 Dec 2018 19:05:12
+# Date: Mon 4 Feb 2019 13:55:33
 
 
 from object_library import all_lorentz, Lorentz
@@ -12,99 +12,99 @@ except ImportError:
    pass
 
 
-UUS1 = Lorentz(name = 'UUS1',
+UUS3 = Lorentz(name = 'UUS3',
                spins = [ -1, -1, 1 ],
                structure = '1')
 
-UUV1 = Lorentz(name = 'UUV1',
+UUV3 = Lorentz(name = 'UUV3',
                spins = [ -1, -1, 3 ],
                structure = 'P(3,2) + P(3,3)')
 
-SSS1 = Lorentz(name = 'SSS1',
+SSS3 = Lorentz(name = 'SSS3',
                spins = [ 1, 1, 1 ],
                structure = '1')
 
-FFS1 = Lorentz(name = 'FFS1',
-               spins = [ 2, 2, 1 ],
-               structure = 'Identity(2,1)')
+FFS11 = Lorentz(name = 'FFS11',
+                spins = [ 2, 2, 1 ],
+                structure = 'Identity(2,1)')
 
-FFS2 = Lorentz(name = 'FFS2',
-               spins = [ 2, 2, 1 ],
-               structure = 'ProjM(2,1)')
+FFS12 = Lorentz(name = 'FFS12',
+                spins = [ 2, 2, 1 ],
+                structure = 'ProjM(2,1)')
 
-FFS3 = Lorentz(name = 'FFS3',
-               spins = [ 2, 2, 1 ],
-               structure = 'ProjM(2,1) - ProjP(2,1)')
+FFS13 = Lorentz(name = 'FFS13',
+                spins = [ 2, 2, 1 ],
+                structure = 'ProjM(2,1) - ProjP(2,1)')
 
-FFS4 = Lorentz(name = 'FFS4',
-               spins = [ 2, 2, 1 ],
-               structure = 'ProjP(2,1)')
+FFS14 = Lorentz(name = 'FFS14',
+                spins = [ 2, 2, 1 ],
+                structure = 'ProjP(2,1)')
 
-FFS5 = Lorentz(name = 'FFS5',
-               spins = [ 2, 2, 1 ],
-               structure = 'ProjM(2,1) + ProjP(2,1)')
+FFS15 = Lorentz(name = 'FFS15',
+                spins = [ 2, 2, 1 ],
+                structure = 'ProjM(2,1) + ProjP(2,1)')
 
-FFV1 = Lorentz(name = 'FFV1',
-               spins = [ 2, 2, 3 ],
-               structure = 'Gamma(3,2,1)')
+FFV13 = Lorentz(name = 'FFV13',
+                spins = [ 2, 2, 3 ],
+                structure = 'Gamma(3,2,1)')
 
-FFV2 = Lorentz(name = 'FFV2',
-               spins = [ 2, 2, 3 ],
-               structure = 'Gamma(3,2,-1)*ProjM(-1,1)')
+FFV14 = Lorentz(name = 'FFV14',
+                spins = [ 2, 2, 3 ],
+                structure = 'Gamma(3,2,-1)*ProjM(-1,1)')
 
-FFV3 = Lorentz(name = 'FFV3',
-               spins = [ 2, 2, 3 ],
-               structure = 'Gamma(3,2,-1)*ProjP(-1,1)')
+FFV15 = Lorentz(name = 'FFV15',
+                spins = [ 2, 2, 3 ],
+                structure = 'Gamma(3,2,-1)*ProjP(-1,1)')
 
-FFV4 = Lorentz(name = 'FFV4',
-               spins = [ 2, 2, 3 ],
-               structure = 'Gamma(3,2,-1)*ProjM(-1,1) - 2*Gamma(3,2,-1)*ProjP(-1,1)')
+FFV16 = Lorentz(name = 'FFV16',
+                spins = [ 2, 2, 3 ],
+                structure = 'Gamma(3,2,-1)*ProjM(-1,1) - 2*Gamma(3,2,-1)*ProjP(-1,1)')
 
-FFV5 = Lorentz(name = 'FFV5',
-               spins = [ 2, 2, 3 ],
-               structure = 'Gamma(3,2,-1)*ProjM(-1,1) + 2*Gamma(3,2,-1)*ProjP(-1,1)')
+FFV17 = Lorentz(name = 'FFV17',
+                spins = [ 2, 2, 3 ],
+                structure = 'Gamma(3,2,-1)*ProjM(-1,1) + 2*Gamma(3,2,-1)*ProjP(-1,1)')
 
-FFV6 = Lorentz(name = 'FFV6',
-               spins = [ 2, 2, 3 ],
-               structure = 'Gamma(3,2,-1)*ProjM(-1,1) + 4*Gamma(3,2,-1)*ProjP(-1,1)')
+FFV18 = Lorentz(name = 'FFV18',
+                spins = [ 2, 2, 3 ],
+                structure = 'Gamma(3,2,-1)*ProjM(-1,1) + 4*Gamma(3,2,-1)*ProjP(-1,1)')
 
-VSS1 = Lorentz(name = 'VSS1',
+VSS3 = Lorentz(name = 'VSS3',
                spins = [ 3, 1, 1 ],
                structure = 'P(1,2) - P(1,3)')
 
-VVS1 = Lorentz(name = 'VVS1',
+VVS3 = Lorentz(name = 'VVS3',
                spins = [ 3, 3, 1 ],
                structure = 'Metric(1,2)')
 
-VVV1 = Lorentz(name = 'VVV1',
+VVV3 = Lorentz(name = 'VVV3',
                spins = [ 3, 3, 3 ],
                structure = 'P(3,1)*Metric(1,2) - P(3,2)*Metric(1,2) - P(2,1)*Metric(1,3) + P(2,3)*Metric(1,3) + P(1,2)*Metric(2,3) - P(1,3)*Metric(2,3)')
 
-SSSS1 = Lorentz(name = 'SSSS1',
+SSSS3 = Lorentz(name = 'SSSS3',
                 spins = [ 1, 1, 1, 1 ],
                 structure = '1')
 
-VVSS1 = Lorentz(name = 'VVSS1',
+VVSS3 = Lorentz(name = 'VVSS3',
                 spins = [ 3, 3, 1, 1 ],
                 structure = 'Metric(1,2)')
 
-VVVV1 = Lorentz(name = 'VVVV1',
-                spins = [ 3, 3, 3, 3 ],
-                structure = 'Metric(1,4)*Metric(2,3) - Metric(1,3)*Metric(2,4)')
+VVVV11 = Lorentz(name = 'VVVV11',
+                 spins = [ 3, 3, 3, 3 ],
+                 structure = 'Metric(1,4)*Metric(2,3) - Metric(1,3)*Metric(2,4)')
 
-VVVV2 = Lorentz(name = 'VVVV2',
-                spins = [ 3, 3, 3, 3 ],
-                structure = 'Metric(1,4)*Metric(2,3) + Metric(1,3)*Metric(2,4) - 2*Metric(1,2)*Metric(3,4)')
+VVVV12 = Lorentz(name = 'VVVV12',
+                 spins = [ 3, 3, 3, 3 ],
+                 structure = 'Metric(1,4)*Metric(2,3) + Metric(1,3)*Metric(2,4) - 2*Metric(1,2)*Metric(3,4)')
 
-VVVV3 = Lorentz(name = 'VVVV3',
-                spins = [ 3, 3, 3, 3 ],
-                structure = 'Metric(1,4)*Metric(2,3) - Metric(1,2)*Metric(3,4)')
+VVVV13 = Lorentz(name = 'VVVV13',
+                 spins = [ 3, 3, 3, 3 ],
+                 structure = 'Metric(1,4)*Metric(2,3) - Metric(1,2)*Metric(3,4)')
 
-VVVV4 = Lorentz(name = 'VVVV4',
-                spins = [ 3, 3, 3, 3 ],
-                structure = 'Metric(1,3)*Metric(2,4) - Metric(1,2)*Metric(3,4)')
+VVVV14 = Lorentz(name = 'VVVV14',
+                 spins = [ 3, 3, 3, 3 ],
+                 structure = 'Metric(1,3)*Metric(2,4) - Metric(1,2)*Metric(3,4)')
 
-VVVV5 = Lorentz(name = 'VVVV5',
-                spins = [ 3, 3, 3, 3 ],
-                structure = 'Metric(1,4)*Metric(2,3) - (Metric(1,3)*Metric(2,4))/2. - (Metric(1,2)*Metric(3,4))/2.')
+VVVV15 = Lorentz(name = 'VVVV15',
+                 spins = [ 3, 3, 3, 3 ],
+                 structure = 'Metric(1,4)*Metric(2,3) - (Metric(1,3)*Metric(2,4))/2. - (Metric(1,2)*Metric(3,4))/2.')
 
