@@ -1,0 +1,531 @@
+(* ****************************************************************** *)
+(* *****                                                        ***** *)
+(* *****  FeynRules model file: DM annihilation                 ***** *)
+(* *****  Author: C. Niblaeus                                   ***** *)
+(* *****                                                        ***** *)
+(* *****                                                        ***** *)
+(* ****************************************************************** *)
+
+
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+M$ModelName = "DMann_ff";
+
+M$Information = {
+ Authors      -> {"C.Niblaeus"}, 
+ Institutions -> {"Stockholm University"},
+ Emails       -> {"carl.niblaeus@fysik.su.se"},
+ URLs         -> "",  
+ References   -> {"O. Mattelaer et al., arXiv:1508.00564",
+                  "M. Backovic et al., arXiv:1508.05327",
+                  "M. Neubert et al., arXiv:1508.xxxxx"},
+ Version      -> "1.0",
+ Date         -> "2018.11.16"
+};
+
+(* ************************** *)
+(* *****  Change  log   ***** *)
+(* ************************** *)
+
+(* 2018.11.16 v1.0 - first version. *) 
+
+
+(***** Setting for interaction order (as e.g. used by MadGraph 5)  ******)
+
+M$InteractionOrderLimit = {
+ {DMS, 2}
+};
+
+M$InteractionOrderHierarchy = {
+ {QCD, 1}, {DMS, 2}, {QED, 2}
+};
+
+
+(* ************************** *)
+(* *****     Fields     ***** *)
+(* ************************** *)
+M$ClassesDescription = {
+
+S[9] == { 
+    ClassName -> Y0,
+    SelfConjugate -> True,
+    Mass -> {MD0, 1000.},
+    Width -> {WD0, 10.},
+    TeX -> Subscript[DM,0],
+    FullName -> "Scalar mediator" },
+
+V[9] == {
+  ClassName -> Y1,
+  SelfConjugate -> True,
+  Mass -> {MD1, 1000.},
+  Width -> {WD1, 10.},
+  TeX -> Subscript[DM,1],
+  FullName -> "Vector mediator" }
+
+};
+
+
+(* ************************** *)
+(* *****   Parameters   ***** *)
+(* ************************** *)  
+M$Parameters = {
+
+  gSh1 == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS,
+    TeX              -> Subscript[g,Sh1],
+    Description      -> "h-Y0 scalar coupling 1",
+    Value            -> 0. 
+  },      
+  gSh2 == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS,
+    TeX              -> Subscript[g,Sh2],
+    Description      -> "h-Y0 scalar coupling 2",
+    Value            -> 0. 
+  },
+  gSWT == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,SWT],
+    Description      -> "W-Y0 scalar transverse coupling",
+    Value            -> 0. 
+  },
+  gPWT == {
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS,
+    TeX              -> Subscript[g,PWT],
+    Description      -> "W-Y0 pseudoscalar transverse",
+    Value            -> 0. 
+  },
+  gPBT == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,PBT],
+    Description      -> "B-Y0  transverse coupling",
+    Value            -> 0. 
+  },
+  gSBT == {
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,SBT],
+    Description      -> "B-Y0 scalar transverse coupling",
+    Value            -> 0. 
+  },
+    gSBL == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,SBL],
+    Description      -> "B-Y0 scalar longitudinal coupling",
+    Value            -> 0. 
+  },
+  gSWL == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,SWL],
+    Description      -> "W-Y0  longitudinal coupling",
+    Value            -> 0. 
+  },
+  gSZL == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,SZL],
+    Description      -> "Z-Y0  longitudinal coupling",
+    Value            -> 0. 
+  },
+  gSg == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,Sg],
+    Description      -> "g-Y0 scalar coupling",
+    Value            -> 0. 
+  },
+  gPg == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,Pg],
+    Description      -> "g-Y0  coupling",
+    Value            -> 0. 
+  },
+
+ gSd11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Sd11],
+      Description -> "d-Y0 scalar coupling",
+      Value -> 1. },     
+
+ gSu11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Su11],
+      Description -> "u-Y0 scalar coupling",
+      Value -> 1. },     
+
+ gSd22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Sd22],
+      Description -> "s-Y0 scalar coupling",
+      Value -> 1. },
+
+ gSu22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Su22],
+      Description -> "c-Y0 scalar coupling",
+      Value -> 1. },
+
+ gSd33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Sd33],
+      Description -> "b-Y0 scalar coupling",
+      Value -> 1. },     
+
+ gSu33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Su33],
+      Description -> "t-Y0 scalar coupling",
+      Value -> 1. },     
+
+ gPd11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pd11],
+      Description -> "d-Y0 pseudoscalar coupling",
+      Value -> 1. },     
+
+ gPu11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu11],
+      Description -> "u-Y0 pseudoscalar coupling",
+      Value -> 1. },     
+
+ gPd22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pd22],
+      Description -> "s-Y0 pseudoscalar coupling",
+      Value -> 1. },
+
+ gPu22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu22],
+      Description -> "c-Y0 pseudoscalar coupling",
+      Value -> 1. },
+
+ gPd33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pd33],
+      Description -> "b-Y0 pseudoscalar coupling",
+      Value -> 1. },     
+
+ gPu33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "t-Y0 pseudoscalar coupling",
+      Value -> 1. },      
+
+ gSe == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "e-Y0 scalar coupling",
+      Value -> 1. },
+
+ gPe == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "e-Y0 pseudoscalar coupling",
+      Value -> 1. },     
+
+ gSmm == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "muon-Y0 scalar coupling",
+      Value -> 1. },   
+
+ gPmm == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "muon-Y0 pseudoscalar coupling",
+      Value -> 1. },     
+
+ gSta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "tau-Y0 scalar coupling",
+      Value -> 1. },     
+
+ gPta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "tau-Y0 pseudoscalar coupling",
+      Value -> 1. },     
+
+ gVd11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Sd11],
+      Description -> "d-Y1 vector coupling",
+      Value -> 1. },     
+
+ gVu11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Su11],
+      Description -> "u-Y1 vector coupling",
+      Value -> 1. },     
+
+ gVd22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Sd22],
+      Description -> "s-Y1 vector coupling",
+      Value -> 1. },
+
+ gVu22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Su22],
+      Description -> "c-Y1 vector coupling",
+      Value -> 1. },
+
+ gVd33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Sd33],
+      Description -> "b-Y1 vector coupling",
+      Value -> 1. },     
+
+ gVu33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Su33],
+      Description -> "t-Y1 vector coupling",
+      Value -> 1. },     
+
+ gAd11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pd11],
+      Description -> "d-Y1 axial-vector coupling",
+      Value -> 1. },     
+
+ gAu11 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu11],
+      Description -> "u-Y1 axial-vector coupling",
+      Value -> 1. },     
+
+ gAd22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pd22],
+      Description -> "s-Y1 axial-vector coupling",
+      Value -> 1. },
+
+ gAu22 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu22],
+      Description -> "c-Y1 axial-vector coupling",
+      Value -> 1. },
+
+ gAd33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pd33],
+      Description -> "b-Y1 axial-vector coupling",
+      Value -> 1. },     
+
+ gAu33 == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "t-Y1 axial-vector coupling",
+      Value -> 1. },      
+
+ gVe == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "e-Y1 vector coupling",
+      Value -> 1. },
+
+ gAe == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "e-Y1 axial-vector coupling",
+      Value -> 1. },     
+
+ gVmm == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "muon-Y1 vector coupling",
+      Value -> 1. },   
+
+ gAmm == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "muon-Y1 axial-vector coupling",
+      Value -> 1. },     
+
+ gVta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "tau-Y1 vector coupling",
+      Value -> 1. },     
+
+ gAta == { 
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Pu33],
+      Description -> "tau-Y1 axial-vector coupling",
+      Value -> 1. },     
+
+ Lambda == { 
+      ParameterType -> External,
+      BlockName -> DMINPUTS, 
+      TeX -> \[CapitalLambda],
+      Description -> "cutoff scale",
+      Value -> 10000. }
+
+};
+
+
+(* ************************** *)
+(* *****   Lagrangian   ***** *)
+(* ************************** *)
+
+(* L0X := 1/2 MXr gSXr Xr Xr Y0 +
+       MXc gSXc Xcbar Xc Y0 + 
+       Xdbar.(gSXd + I gPXd Ga[5]).Xd Y0; *)
+
+L0X = 0;
+
+L0f := 1/Sqrt[2] *
+        ( ydo dbar.(gSd11 + gPd11 Ga[5]).d Y0 +
+          yup ubar.(gSu11 + gPu11 Ga[5]).u Y0 +
+          ys  sbar.(gSd22 + gPd22 Ga[5]).s Y0 +
+          yc  cbar.(gSu22 + gPu22 Ga[5]).c Y0 +
+          yb  bbar.(gSd33 + gPd33 Ga[5]).b Y0 +
+          yt  tbar.(gSu33 + gPu33 Ga[5]).t Y0 +
+          ye  ebar.(gSe + gPe Ga[5]).e Y0 +
+          ymm mubar.(gSmm + gPmm Ga[5]).mu Y0 +
+          ytau tabar.(gSta + gPta Ga[5]).ta Y0 +
+
+          dbar.Ga[mu].(gVd11 + gAd11 Ga[5]).d Y1[mu] +
+          ubar.Ga[mu].(gVu11 + gAu11 Ga[5]).u Y1[mu] +
+          sbar.Ga[mu].(gVd22 + gAd22 Ga[5]).s Y1[mu] +
+          cbar.Ga[mu].(gVu22 + gAu22 Ga[5]).c Y1[mu] +
+          bbar.Ga[mu].(gVd33 + gAd33 Ga[5]).b Y1[mu] +
+          tbar.Ga[mu].(gVu33 + gAu33 Ga[5]).t Y1[mu] +
+          ebar.Ga[mu].(gVe + gAe Ga[5]).e Y1[mu] +
+          mubar.Ga[mu].(gVmm + gAmm Ga[5]).mu Y1[mu] +
+          tabar.Ga[mu].(gVta + gAta Ga[5]).ta Y1[mu]);
+
+
+(* L0SM := 1/Sqrt[2] *
+        ( ydo dbar.(gSd11 + I gPd11 Ga[5]).d Y0 +
+          yup ubar.(gSu11 + I gPu11 Ga[5]).u Y0 +
+          ys  sbar.(gSd22 + I gPd22 Ga[5]).s Y0 +
+          yc  cbar.(gSu22 + I gPu22 Ga[5]).c Y0 +
+          yb  bbar.(gSd33 + I gPd33 Ga[5]).b Y0 +
+          yt  tbar.(gSu33 + I gPu33 Ga[5]).t Y0); *)
+
+L0VT := Module[{ii,jj}, 
+        ExpandIndices[gSh1/Lambda DC[Phibar[ii],mu] DC[Phi[ii],mu] Y0 
+        + gSh2/Lambda * MH^2 (Phibar[jj] Phi[jj] - vev^2 / 2) Y0,
+        FlavorExpand->{SU2D,SU2W}]] 
+        
+        + Module[{mu,nu}, 
+        ExpandIndices[ 1/Lambda FS[B,mu,nu] 
+        (gSBT FS[B,mu,nu] + gPBT Dual[FS][B,mu,nu]) Y0, 
+        FlavorExpand->{SU2D,SU2W}]] 
+        
+        + Module[{mu,nu,ii}, 
+        ExpandIndices[ 1/Lambda FS[Wi,mu,nu,ii] 
+        (gSWT FS[Wi,mu,nu,ii] + gPWT Dual[FS][Wi,mu,nu,ii]) Y0,
+        FlavorExpand->{SU2D,SU2W}]] ;
+        
+
+L0VL := Module[{mu}, 
+        ExpandIndices[ 1/Lambda gSBL B[mu] B[mu], 
+        FlavorExpand->{SU2D,SU2W}]] Y0
+        + Module[{mu,ii}, 
+        ExpandIndices[ Lambda gSWL Wi[mu,ii] Wi[mu,ii],
+        FlavorExpand->{SU2D,SU2W}]] Y0; 
+
+
+L0g := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] + 
+                                 gPg Dual[FS][G,mu,nu,a]) Y0;
+
+L0SMg := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] + 
+                                 gPg Dual[FS][G,mu,nu,a]) Y0;
+
+L0DM := L0X + L0f + L0VT + HC[L0VT] + L0VL + HC[L0VL] + L0g + HC[L0g];
