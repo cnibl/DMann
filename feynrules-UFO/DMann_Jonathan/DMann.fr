@@ -48,12 +48,12 @@ M$InteractionOrderHierarchy = {
 M$ClassesDescription = {
 
 S[9] == { 
-    ClassName -> Y0,
-    SelfConjugate -> True,
-    Mass -> {MD0, 1000.},
-    Width -> {WD0, 10.},
-    TeX -> Subscript[DM,0],
-    FullName -> "Scalar mediator" },
+  ClassName -> Y0,
+  SelfConjugate -> True,
+  Mass -> {MD0, 1000.},
+  Width -> {WD0, 10.},
+  TeX -> Subscript[DM,0],
+  FullName -> "Scalar mediator" },
 
 V[9] == {
   ClassName -> Y1,
@@ -61,7 +61,31 @@ V[9] == {
   Mass -> {MD1, 1000.},
   Width -> {WD1, 10.},
   TeX -> Subscript[DM,1],
-  FullName -> "Vector mediator" }
+  FullName -> "Vector mediator" },
+
+S[20] == {
+  ClassName -> Xr,
+  SelfConjugate -> True,
+  Mass -> {MXr, 499.},
+  Width -> 0,
+  Tex -> Subscript[X,r],
+  FullName -> "Real Scalar DM" },
+
+S[21] == {
+  ClassName -> Xc,
+  SelfConjugate -> False,
+  Mass -> {MXc, 499.},
+  Width -> 0,
+  Tex -> Subscript[X,c],
+  FullName -> "Complex Scalar DM" },
+
+F[20] == {
+  ClassName -> Xd,
+  SelfConjugate -> False,
+  Mass -> {MXd, 499.},
+  Width -> 0,
+  Tex -> Subscript[X,d],
+  FullName -> "Dirac Fermion DM" }
 
 };
 
@@ -448,6 +472,54 @@ M$Parameters = {
       Description -> "tau-Y1 axial-vector coupling",
       Value -> 1. },     
 
+ gSXr == {
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Subscript[SX,r]],
+      Description -> "Real Scalar DM-Y0 coupling",
+      Value -> 1. },
+
+ gSXc == {
+      ParameterType -> External,
+      InteractionOrder -> {DMS, 1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Subscript[SX,c]],
+      Description -> "Complex Scalar DM-Y0 coupling",
+      Value -> 1. },
+
+ gSXd == {
+      ParameterType -> External,
+      InteractionOrder -> {DMS,1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Subscript[SX,d]],
+      Description -> "Fermion DM-Y0 scalar coupling",
+      Value -> 1. },
+
+ gPXd == {
+      ParameterType -> External,
+      InteractionOrder -> {DMS,1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Subscript[PX,d]],
+      Description -> "Fermion DM-Y0 pseudoscalar coupling",
+      Value -> 1. },
+
+ gVXd == {
+      ParameterType -> External,
+      InteractionOrder -> {DMS,1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Subscript[VX,d]],
+      Description -> "Fermion DM-Y0 vector coupling",
+      Value -> 1. },
+ 
+ gAXd == {
+      ParameterType -> External,
+      InteractionOrder -> {DMS,1},
+      BlockName -> DMINPUTS,
+      TeX -> Subscript[g,Subscript[AX,d]],
+      Description -> "Fermion DM-Y0 axial coupling",
+      Value -> 1. },
+
  Lambda == { 
       ParameterType -> External,
       BlockName -> DMINPUTS, 
@@ -462,11 +534,15 @@ M$Parameters = {
 (* *****   Lagrangian   ***** *)
 (* ************************** *)
 
-(* L0X := 1/2 MXr gSXr Xr Xr Y0 +
+L0X := 1/2 MXr gSXr Xr Xr Y0 +
        MXc gSXc Xcbar Xc Y0 + 
-       Xdbar.(gSXd + I gPXd Ga[5]).Xd Y0; *)
+       Xdbar.(gSXd + I gPXd Ga[5]).Xd Y0;
 
-L0X = 0;
+(* Add derivative interactions with DM scalars below? *)
+
+L1X := Xdbar.Ga[mu].(gVXd + gAXd Ga[5]).Xd Y1[mu];
+
+(* L0X = 0; *)
 
 L0f := 1/Sqrt[2] *
         ( ydo dbar.(gSd11 + gPd11 Ga[5]).d Y0 +
@@ -477,9 +553,10 @@ L0f := 1/Sqrt[2] *
           yt  tbar.(gSu33 + gPu33 Ga[5]).t Y0 +
           ye  ebar.(gSe + gPe Ga[5]).e Y0 +
           ymm mubar.(gSmm + gPmm Ga[5]).mu Y0 +
-          ytau tabar.(gSta + gPta Ga[5]).ta Y0 +
+          ytau tabar.(gSta + gPta Ga[5]).ta Y0);
 
-          dbar.Ga[mu].(gVd11 + gAd11 Ga[5]).d Y1[mu] +
+L1f := 1/Sqrt[2] * 
+        ( dbar.Ga[mu].(gVd11 + gAd11 Ga[5]).d Y1[mu] +
           ubar.Ga[mu].(gVu11 + gAu11 Ga[5]).u Y1[mu] +
           sbar.Ga[mu].(gVd22 + gAd22 Ga[5]).s Y1[mu] +
           cbar.Ga[mu].(gVu22 + gAu22 Ga[5]).c Y1[mu] +
@@ -528,4 +605,4 @@ L0g := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] +
 L0SMg := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] + 
                                  gPg Dual[FS][G,mu,nu,a]) Y0;
 
-L0DM := L0X + L0f + L0VT + HC[L0VT] + L0VL + HC[L0VL] + L0g + HC[L0g];
+L0DM := L0X + L1X + L0f + L1f + L0VT + HC[L0VT] + L0VL + HC[L0VL] + L0g + HC[L0g];
