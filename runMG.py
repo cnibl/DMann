@@ -1,114 +1,61 @@
-import subprocess
-import sys
+#!/Users/carlniblaeus/anaconda/bin/python
+"""
+runMG.py
+
+Script that runs MadGraph for the DMann folders set up with setupMG.py. Simulations settings are set in simSettings.py
+
+Usage: ./runMG.py  
+
+"""
+
 import os
-import matplotlib.pyplot as plt 
-from runMG_helpfunctions import *
-"""
-A script that runs MadGraph with Pythia for a process.
-The process is defined in write_madgraphscript.
-The settings for the run (masses, beam energies etc.) are defined in the routines write_paramcard, write_runcard and write_pythiacard.
-"""
-
-def ann_mass(annPDG):
-	"""
-	Returns mass of particle with PDG code annPDG.
-	"""
-	masses = {5: 4.8, 6: 175., 15: 1.7, 24: 80.5}
-	return masses[annPDG]
-
-def readhepmc(HEPMCfilename,yieldPDG):
-	"""
-	Reads a specified HEPMC file and searches for energies of final state particles with codes in the list yieldPDG.
-	"""
-	try:
-		energies = {y : [] for y in yieldPDG}
-	except TypeError:
-		energies = {y : [] for y in [yieldPDG]}
-
-	with open(HEPMCfilename,"r") as infile:
-		for line in infile:
-			if line.startswith("P"): # corresponds to particle lines
-				vals = line.split()
-				if int(vals[8])==1 and int(vals[2]) in yieldPDG: # vals[8]=status, vals[2]=pdgID
-					energies[int(vals[2])].append(float(vals[6]))
-	return energies
-
-currentdir = r"%s" % os.getcwd()
-homedir = r"%s" % os.path.expanduser("~")
-mgdir = "/".join((homedir,"MG5_aMC_v2_6_3_2"))
-datadir = "/".join((currentdir,"Misc"))
-
-nann = 10
-a = 24
-rundir = "/".join((mgdir,"DMannRuns_annPDG"+str(a))) # the directory for the MadGraph output
-try: # delete rundir if exists already
-	subprocess.call(["rm","-rf",rundir])
-except OSError:
-	pass
-subprocess.call(["mkdir",rundir])
+import sys
+import subprocess
+import glob
+import simSettings as sets
+import MGfunctions as mgf
+import time
+import math
 
 """
-Now run MadGraph for the specified final state to generate the output directory.
+First check that everything is set up properly
 """
-mgscriptpath = write_madgraphscript(annPDG=a,run_dir=rundir)
-print "Now running MadGraph with annihilation pdg %s..." % str(a)
-with open("madgraph.log","w") as outfile:
-	subprocess.call(["./bin/mg5_aMC","/".join((currentdir,mgscriptpath))],cwd=mgdir,stdout=outfile)
-print "Done!"
-"""
-Specify WIMP masses to use and which yield particles to look for.
-"""
-wimpmasses = [200,1000,10000] 
-yieldPDGs = [-11,-14,14,22,-2212]
+if sets.MG_DIR.startswith("~"):
+   absMGdir=os.path.expanduser(sets.MG_DIR)
+else:
+   absMGdir=os.path.abspath(sets.MG_DIR)
+if not os.path.exists(absMGdir):
+   sys.exit("ERROR: The MadGraph directory provided does not exist")
+for ann in sets.ANN_CHANNELS:
+   if not os.path.exists(os.path.join(absMGdir,"DMann_"+ann)):
+      sys.exit("ERROR: No folder exists for %s, run setupMG.py" % ann)
+      
+# The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
+annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
+               "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
+               "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
 
-for mwimp in wimpmasses:
-	if mwimp > ann_mass(a):
-		for c in ["run","param","pythia8"]:
-			try:
-				os.remove("/".join((currentdir,c+"_card.dat")))
-				print "Removed %s" % c+"_card.dat"
-			except OSError:
-				pass
-		"""
-		Write the specific settings to cards and move to the MadGraph output directory
-		"""
-		pa = write_paramcard(mX=mwimp,mgoutput_path=rundir)
-		ru = write_runcard(nAnn=nann,mX=mwimp,mgoutput_path=rundir)
-		(py,hepmcfile) = write_pythiacard(mgoutput_path=rundir,HEPMCfilename="".join(("pyt8evts_y0med_mX",str(mwimp),"_a",str(a),".hepmc")))
-	
-		subprocess.call(["rm","/".join((rundir,"Cards",pa))])
-		subprocess.call(["rm","/".join((rundir,"Cards",ru))])
-		subprocess.call(["mv",pa,"/".join((rundir,"Cards",pa))])
-		subprocess.call(["mv",ru,"/".join((rundir,"Cards",ru))])
-		subprocess.call(["mv",py,"/".join((rundir,"Cards",py))])
-		
-		"""
-		Now run MadEvent with the settings specified in madeventscript (typically Pythia8 showering)
-		"""
-		runtag = "".join(("ann",str(int(a)),"_mx",str(int(mwimp))))
-		mescriptpath = write_madeventscript(run_tag=runtag)
-		print "Now running MadEvent with %d annihilations for WIMP mass %d..." % (nann,mwimp)
-		with open("madevent.log","w") as outfile:
-			subprocess.call(["./bin/madevent","/".join((currentdir,mescriptpath))],cwd=rundir,stdout=outfile)
-		print "Done!"
-		subprocess.call(["mkdir","-p","Misc"])
-		subprocess.call(["mv","/".join((rundir,"Events",runtag,hepmcfile)),"/".join((datadir,hepmcfile))])
-		print "".join(("Moved ",hepmcfile," to ",datadir))
-	#
-		"""
-		Read the produced HEPMC file and store yield particle energies in the dictionary energies
-		"""
-		energies = readhepmc("/".join((datadir,hepmcfile)),yieldPDGs)
-#
-		"""
-		Plot histograms
-		"""
-		for y in yieldPDGs:
-			fig,ax = plt.subplots()
-			ax.hist(energies[y],bins=100,histtype='step',linewidth=2,density=True)
-			ax.hist(energies[y],bins=100,histtype='stepfilled',color='blue',alpha=0.2,density=True)
-			ax.set_yscale('log')
-			#ax.set_xlim(0,500)
-			ax.set_ylim(1e-6,1e-1)
-			fig.savefig(''.join(("Misc/y0med_energy_y",str(y),"_mx",str(int(mwimp)),".pdf")))		
-			plt.close()
+if __name__=="__main__":
+   """
+   Go to MG directory and go down in directories corresponding to all annihilation channels and run MG for each WIMP mass.
+   """
+   for ann in sets.ANN_CHANNELS:
+      print "Running MadGraph for %s ... " % ann
+      os.chdir(os.path.join(absMGdir,"DMann_"+ann))
+      mgf.set_n_ann(sets.N_ANN)
+      for mwimp in sets.WIMP_MASSES:
+         print "\tRunning with mWIMP = %5.3f ... " % mwimp
+         start=time.time()
+         if annThresholds[ann] > mwimp:
+            print "\tWarning: m_WIMP = %5.3f GeV too small for annihilation channel %s" % (mwimp,ann)
+            continue # skip to next mwimp value
+         mgf.set_run_tag(sets.RUN_TAG+"_m"+str(mwimp))
+         mgf.set_wimp_mass(mwimp)
+         fileName=mgf.write_MG_runscript(ann,sets.N_ANN,sets.RUN_TAG,mwimp)
+         with open("".join(("DMann_runMG_",ann,"_mwimp",str(int(mwimp)),".log")),"w") as log:
+            proc=subprocess.Popen(["./bin/madevent",fileName],stdout=log,stderr=log)
+            proc.wait()
+         end=time.time()
+         print "Took %i minutes, %2.1f seconds" % (int(math.floor((end-start)/60)),(end-start)%60)
+   print "Done!"      
+         

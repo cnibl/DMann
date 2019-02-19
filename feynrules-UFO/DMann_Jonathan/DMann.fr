@@ -66,7 +66,7 @@ V[9] == {
 S[20] == {
   ClassName -> Xr,
   SelfConjugate -> True,
-  Mass -> {MXr, 499.},
+  Mass -> {MXr, 1.},
   Width -> 0,
   Tex -> Subscript[X,r],
   FullName -> "Real Scalar DM" },
@@ -101,89 +101,90 @@ M$Parameters = {
     BlockName        -> DMINPUTS,
     TeX              -> Subscript[g,Sh1],
     Description      -> "h-Y0 scalar coupling 1",
-    Value            -> 0. 
+    Value            -> 1. 
   },      
+  
   gSh2 == { 
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS,
     TeX              -> Subscript[g,Sh2],
     Description      -> "h-Y0 scalar coupling 2",
-    Value            -> 0. 
+    Value            -> 1. 
   },
+  
   gSWT == { 
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,SWT],
     Description      -> "W-Y0 scalar transverse coupling",
-    Value            -> 0. 
+    Value            -> 1. 
   },
+  
   gPWT == {
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS,
     TeX              -> Subscript[g,PWT],
     Description      -> "W-Y0 pseudoscalar transverse",
-    Value            -> 0. 
+    Value            -> 1. 
   },
+  
   gPBT == { 
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,PBT],
     Description      -> "B-Y0  transverse coupling",
-    Value            -> 0. 
+    Value            -> 1. 
   },
+  
   gSBT == {
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,SBT],
     Description      -> "B-Y0 scalar transverse coupling",
-    Value            -> 0. 
+    Value            -> 1. 
   },
+  
+    gSWL == { 
+    ParameterType    -> External,
+    InteractionOrder -> {DMS, 1},
+    BlockName        -> DMINPUTS, 
+    TeX              -> Subscript[g,SWL],
+    Description      -> "W-Y0 scalar longitudinal coupling",
+    Value            -> 1. 
+  },
+  
     gSBL == { 
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,SBL],
     Description      -> "B-Y0 scalar longitudinal coupling",
-    Value            -> 0. 
+    Value            -> 1. 
   },
-  gSWL == { 
-    ParameterType    -> External,
-    InteractionOrder -> {DMS, 1},
-    BlockName        -> DMINPUTS, 
-    TeX              -> Subscript[g,SWL],
-    Description      -> "W-Y0  longitudinal coupling",
-    Value            -> 0. 
-  },
-  gSZL == { 
-    ParameterType    -> External,
-    InteractionOrder -> {DMS, 1},
-    BlockName        -> DMINPUTS, 
-    TeX              -> Subscript[g,SZL],
-    Description      -> "Z-Y0  longitudinal coupling",
-    Value            -> 0. 
-  },
+  
   gSg == { 
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,Sg],
     Description      -> "g-Y0 scalar coupling",
-    Value            -> 0. 
+    Value            -> 1. 
   },
+  
   gPg == { 
     ParameterType    -> External,
     InteractionOrder -> {DMS, 1},
     BlockName        -> DMINPUTS, 
     TeX              -> Subscript[g,Pg],
     Description      -> "g-Y0  coupling",
-    Value            -> 0. 
+    Value            -> 1. 
   },
-
+  
  gSd11 == { 
       ParameterType -> External,
       InteractionOrder -> {DMS, 1},
@@ -525,7 +526,7 @@ M$Parameters = {
       BlockName -> DMINPUTS, 
       TeX -> \[CapitalLambda],
       Description -> "cutoff scale",
-      Value -> 10000. }
+      Value -> 1. }
 
 };
 
@@ -534,7 +535,7 @@ M$Parameters = {
 (* *****   Lagrangian   ***** *)
 (* ************************** *)
 
-L0X := 1/2 MXr gSXr Xr Xr Y0 +
+L0X := 1/2 Lambda gSXr Xr Xr Y0 +
        MXc gSXc Xcbar Xc Y0 + 
        Xdbar.(gSXd + I gPXd Ga[5]).Xd Y0;
 
@@ -575,28 +576,24 @@ L1f := 1/Sqrt[2] *
           yb  bbar.(gSd33 + I gPd33 Ga[5]).b Y0 +
           yt  tbar.(gSu33 + I gPu33 Ga[5]).t Y0); *)
 
-L0VT := Module[{ii,jj}, 
+L0H := Block[{ii,jj}, 
         ExpandIndices[gSh1/Lambda DC[Phibar[ii],mu] DC[Phi[ii],mu] Y0 
         + gSh2/Lambda * MH^2 (Phibar[jj] Phi[jj] - vev^2 / 2) Y0,
-        FlavorExpand->{SU2D,SU2W}]] 
-        
-        + Module[{mu,nu}, 
-        ExpandIndices[ 1/Lambda FS[B,mu,nu] 
-        (gSBT FS[B,mu,nu] + gPBT Dual[FS][B,mu,nu]) Y0, 
-        FlavorExpand->{SU2D,SU2W}]] 
-        
-        + Module[{mu,nu,ii}, 
-        ExpandIndices[ 1/Lambda FS[Wi,mu,nu,ii] 
-        (gSWT FS[Wi,mu,nu,ii] + gPWT Dual[FS][Wi,mu,nu,ii]) Y0,
         FlavorExpand->{SU2D,SU2W}]] ;
         
+        
+L0VT := Block[{mu,nu,ii}, ExpandIndices[ 
+           1/Lambda FS[Wi,mu,nu,ii] 
+           (gSWT FS[Wi,mu,nu,ii] + gPWT Dual[FS][Wi,mu,nu,ii]) Y0
+           + 1/Lambda FS[B,mu,nu] 
+           (gSBT FS[B,mu,nu] + gPBT Dual[FS][B,mu,nu]) Y0, 
+        FlavorExpand->True]] ;
+        
 
-L0VL := Module[{mu}, 
-        ExpandIndices[ 1/Lambda gSBL B[mu] B[mu], 
-        FlavorExpand->{SU2D,SU2W}]] Y0
-        + Module[{mu,ii}, 
-        ExpandIndices[ Lambda gSWL Wi[mu,ii] Wi[mu,ii],
-        FlavorExpand->{SU2D,SU2W}]] Y0; 
+L0VL := Block[{mu,ii}, ExpandIndices[ 
+            Lambda gSWL Wi[mu,ii] Wi[mu,ii] Y0
+            + Lambda gSBL B[mu] B[mu] Y0, 
+        FlavorExpand->True]]; 
 
 
 L0g := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] + 
@@ -605,4 +602,4 @@ L0g := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] +
 L0SMg := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] + 
                                  gPg Dual[FS][G,mu,nu,a]) Y0;
 
-L0DM := L0X + L1X + L0f + L1f + L0VT + HC[L0VT] + L0VL + HC[L0VL] + L0g + HC[L0g];
+L0DM := L0X + L1X + L0f + L1f + L0VT + L0VL + L0g + HC[L0g];
