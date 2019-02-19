@@ -1,6 +1,6 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Tue 19 Feb 2019 16:01:56
+# Date: Tue 19 Feb 2019 18:58:33
 
 
 from object_library import all_lorentz, Lorentz
@@ -23,6 +23,10 @@ UUV1 = Lorentz(name = 'UUV1',
 SSS1 = Lorentz(name = 'SSS1',
                spins = [ 1, 1, 1 ],
                structure = '1')
+
+SSS2 = Lorentz(name = 'SSS2',
+               spins = [ 1, 1, 1 ],
+               structure = 'P(-1,1)*P(-1,2)')
 
 FFS1 = Lorentz(name = 'FFS1',
                spins = [ 2, 2, 1 ],
@@ -74,6 +78,10 @@ FFV6 = Lorentz(name = 'FFV6',
 
 VSS1 = Lorentz(name = 'VSS1',
                spins = [ 3, 1, 1 ],
+               structure = 'P(1,2)')
+
+VSS2 = Lorentz(name = 'VSS2',
+               spins = [ 3, 1, 1 ],
                structure = 'P(1,2) - P(1,3)')
 
 VVS1 = Lorentz(name = 'VVS1',
@@ -99,6 +107,10 @@ VVV1 = Lorentz(name = 'VVV1',
 SSSS1 = Lorentz(name = 'SSSS1',
                 spins = [ 1, 1, 1, 1 ],
                 structure = '1')
+
+VSSS1 = Lorentz(name = 'VSSS1',
+                spins = [ 3, 1, 1, 1 ],
+                structure = 'P(1,2) - P(1,3)')
 
 VVSS1 = Lorentz(name = 'VVSS1',
                 spins = [ 3, 3, 1, 1 ],
@@ -135,6 +147,10 @@ VVVV4 = Lorentz(name = 'VVVV4',
 VVVV5 = Lorentz(name = 'VVVV5',
                 spins = [ 3, 3, 3, 3 ],
                 structure = 'Metric(1,4)*Metric(2,3) - (Metric(1,3)*Metric(2,4))/2. - (Metric(1,2)*Metric(3,4))/2.')
+
+VVSSS1 = Lorentz(name = 'VVSSS1',
+                 spins = [ 3, 3, 1, 1, 1 ],
+                 structure = 'Metric(1,2)')
 
 VVVVS1 = Lorentz(name = 'VVVVS1',
                  spins = [ 3, 3, 3, 3, 1 ],
