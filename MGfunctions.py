@@ -56,7 +56,7 @@ def write_MG_runscript(annch,nAnn,runTag,mwimp):
       if nAnn < 100000:
          f.write("launch run_"+runTag+"_m"+str(mwimp)+"\n")
       else:
-         f.write("multi_run run_"+runTag+"_m"+str(mwimp)+" "+str(nAnn/100000)+"\n")
+         f.write("multi_run "+str(nAnn/100000)+" run_"+runTag+"_m"+str(mwimp)+" --multicore --nb_core=4 \n")
       f.write("analysis=OFF\n")
       if annch in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
          f.write("madspin=ON\n")
@@ -206,8 +206,11 @@ def set_n_ann(n_ann):
          oldcard_content=f.read()
    newcard_content=oldcard_content
    
-   # Set number of events
-   newcard_content = re.sub(r".*= nevents ","".join( ("  ",str(n_ann)," = nevents ") ),newcard_content)  # number of events
+   # Set number of events, run max 100k events per run (for more events, multi_run is used).
+   if n_ann <= 100000:
+      newcard_content = re.sub(r".*= nevents ","".join( ("  ",str(n_ann)," = nevents ") ),newcard_content)  # number of events
+   else:
+      newcard_content = re.sub(r".*= nevents ","".join( ("  ",str(100000)," = nevents ") ),newcard_content)  # number of events
    
    # Write new card content to file
    with open(os.path.abspath(os.path.join("Cards","run_card.dat")),"w") as f:
@@ -270,3 +273,43 @@ def set_madspin_card(annch):
       f.write(newcard_content)
 
    return
+
+def reset_cuts():
+   """
+   Reads in the old run_card and removes all standard cuts and places in a new run_card, written to the Cards directory. Assumes that it operates in a subfolder corresponding to some annihilation channel in the MG install directory.
+   """
+   
+   oldcard_path=os.path.abspath(os.path.join("Cards","run_card.dat"))
+   try:
+      with open(oldcard_path,"r") as f:
+         oldcard_content=f.read()
+   except IOError:
+      oldcard_path=os.path.abspath(os.path.join("Cards","run_card_default.dat"))
+      with open(oldcard_path,"r") as f:
+         oldcard_content=f.read()
+   newcard_content=oldcard_content
+   
+   # Minimum pt's
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptj","\n 0.0 = ptj",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptb","\n 0.0 = ptb",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?pta","\n 0.0 = pta",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptl","\n 0.0 = ptl",newcard_content)  
+
+   # Max and min absolute rapidity
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etaj","\n -1.0 = etaj",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etaa","\n -1.0 = etaa",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etal","\n -1.0 = etal",newcard_content) 
+
+   # Max and min deltaR distance
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjj","\n 0.0 = drjj",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drll","\n 0.0 = drll",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draj","\n 0.0 = draj",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjl","\n 0.0 = drjl",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draa","\n 0.0 = draa",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?dral","\n 0.0 = dral",newcard_content) 
+
+   # Write new card content to file
+   with open(os.path.abspath(os.path.join("Cards","run_card.dat")),"w") as f:
+      f.write(newcard_content)
+   
+   return    

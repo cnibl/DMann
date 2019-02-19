@@ -39,6 +39,7 @@ if __name__=="__main__":
       os.chdir(os.path.join(absMGdir,"DMann_"+ann))         
       mgf.set_couplings(annch=ann) #use default value for WIMP mass 
       mgf.set_beam_particles()
+      mgf.reset_cuts()
       if ann in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
          mgf.set_madspin_card(annch=ann) 
 
