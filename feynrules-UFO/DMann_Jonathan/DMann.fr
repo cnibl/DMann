@@ -546,15 +546,15 @@ L1X := Xdbar.Ga[mu].(gVXd + gAXd Ga[5]).Xd Y1[mu];
 (* L0X = 0; *)
 
 L0f := 1/Sqrt[2] *
-        ( ydo dbar.(gSd11 + gPd11 Ga[5]).d Y0 +
-          yup ubar.(gSu11 + gPu11 Ga[5]).u Y0 +
-          ys  sbar.(gSd22 + gPd22 Ga[5]).s Y0 +
-          yc  cbar.(gSu22 + gPu22 Ga[5]).c Y0 +
-          yb  bbar.(gSd33 + gPd33 Ga[5]).b Y0 +
-          yt  tbar.(gSu33 + gPu33 Ga[5]).t Y0 +
-          ye  ebar.(gSe + gPe Ga[5]).e Y0 +
-          ymm mubar.(gSmm + gPmm Ga[5]).mu Y0 +
-          ytau tabar.(gSta + gPta Ga[5]).ta Y0);
+        ( dbar.(gSd11 + gPd11 Ga[5]).d Y0 +
+          ubar.(gSu11 + gPu11 Ga[5]).u Y0 +
+          sbar.(gSd22 + gPd22 Ga[5]).s Y0 +
+          cbar.(gSu22 + gPu22 Ga[5]).c Y0 +
+          bbar.(gSd33 + gPd33 Ga[5]).b Y0 +
+          tbar.(gSu33 + gPu33 Ga[5]).t Y0 +
+          ebar.(gSe + gPe Ga[5]).e Y0 +
+          mubar.(gSmm + gPmm Ga[5]).mu Y0 +
+          tabar.(gSta + gPta Ga[5]).ta Y0);
 
 L1f := 1/Sqrt[2] * 
         ( dbar.Ga[mu].(gVd11 + gAd11 Ga[5]).d Y1[mu] +
@@ -602,4 +602,4 @@ L0g := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] +
 L0SMg := 1/Lambda FS[G,mu,nu,a] (gSg FS[G,mu,nu,a] + 
                                  gPg Dual[FS][G,mu,nu,a]) Y0;
 
-L0DM := L0X + L1X + L0f + L1f + L0VT + L0VL + L0g + HC[L0g];
+L0DM := L0X + L1X + L0f + L1f + L0H + L0VT + L0VL + L0g + HC[L0g];

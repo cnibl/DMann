@@ -39,6 +39,7 @@ if __name__=="__main__":
    """
    Go to MG directory and go down in directories corresponding to all annihilation channels and run MG for each WIMP mass.
    """
+   allstart=time.time()
    for ann in sets.ANN_CHANNELS:
       print "Running MadGraph for %s ... " % ann
       os.chdir(os.path.join(absMGdir,"DMann_"+ann))
@@ -56,6 +57,14 @@ if __name__=="__main__":
             proc=subprocess.Popen(["./bin/madevent",fileName],stdout=log,stderr=log)
             proc.wait()
          end=time.time()
-         print "Took %i minutes, %2.1f seconds" % (int(math.floor((end-start)/60)),(end-start)%60)
-   print "Done!"      
+         if ((end-start)/60) > 60:
+            print "\tTook %i h, %i min, %i s" % (int(math.floor(math.floor((end-start)/60)/60)),
+                                                             int(math.floor((end-start)/60)%60),
+                                                             int((end-start)%60))
+         else:
+            print "\tTook %i min, %i s" % (int(math.floor((end-start)/60)),int((end-start)%60))
+   end=time.time()
+   print "Done! Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
+                                                             int(math.floor((end-allstart)/60)%60),
+                                                             int((end-allstart)%60))      
          

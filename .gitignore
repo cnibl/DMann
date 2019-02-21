@@ -21,3 +21,6 @@ Herwig/Runs-*
 # ignore temporary files
 tmp*
 */tmp*
+
+# other stuff
+*.pyc
