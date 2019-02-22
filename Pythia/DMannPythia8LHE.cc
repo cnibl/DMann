@@ -29,14 +29,26 @@ using namespace Pythia8;
 
 // A macro to make txt-files from ROOT TH1 histograms, modified from example 
 // at https://root-forum.cern.ch/t/histogram-to-ascii/14080/5
-void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent, std::string outDir) {
+void h12ascii (TH1* h, double mX, std::string annCh, int yieldpdg, int nEvent, std::string outDir) {
   ofstream outputfile;
-  string filename = outDir + "/da-pyt8-mx" 
+  string filename;
+  if (h->GetNbinsX() == 200) {
+    filename = outDir + "/da-pyt8-mx" 
                     + std::to_string((int)mX) 
-                    + "-ch" + std::to_string(ch) 
-                    + "-int" + std::to_string(yieldpdg) 
+                    + "-" + annCh 
+                    + "-y" + std::to_string(yieldpdg) 
                     + ".dat";  
+  }
+  else {
+    filename = outDir + "/da-pyt8-mx" 
+                    + std::to_string((int)mX) 
+                    + "-" + annCh 
+                    + "-y" + std::to_string(yieldpdg) 
+                    + "-log.dat";  
+  }
+  cout << filename << endl;
   outputfile.open (filename);
+
   // Header of file
   //  outputfile << "# DMann data file with dN/dE_kin as function of x=E_kin/mX=(E-m)/mX\n";
   outputfile << "# DMann Pythia8 data file with counts/nAnn as function of E_kin\n";  
@@ -45,7 +57,7 @@ void h12ascii (TH1* h, double mX, int ch, int yieldpdg, int nEvent, std::string 
   outputfile << "# Created: " << ctime(&rawtime);
   outputfile << "# Number of simulated events: " << std::to_string(nEvent) << "\n";
   outputfile << "# WIMP mass: " << std::to_string((int)mX) << " GeV\n";
-  outputfile << "# PDG code of annihilation channel: " << std::to_string(ch) << "\n";
+  outputfile << "# Annihilation channel: " << annCh << "\n";
   outputfile << "# PDG code of yield particle: " << std::to_string(yieldpdg) << "\n";   
   outputfile << "# \n";
 //  outputfile << "# x\tdN/dE\n";
@@ -88,12 +100,13 @@ void BinLogX(TH1*h)
 int main(int argc, char* argv[]) {
 
   // Check that correct number of command-line arguments
-  if (argc != 4) {
+  if (argc != 5) {
     cerr << " Unexpected number of command-line arguments. \n"
          << " You are expected to provide \n" 
          << " 1. Input cmnd-file for settings \n"
          << " 2. Path to input LHE file \n"
-         << " 3. Output folder \n"
+         << " 3. Annihilation channel \n"
+         << " 4. Output folder \n"
          << " Program stopped! " << endl;
     return 1;
   }
@@ -108,10 +121,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  // Confirm files to use
-  cout << " PYTHIA settings will be read from file " << argv[1] << endl;
-  cout << " PYTHIA will hadronise LHE file " << argv[2] << endl;
-  cout << " Output will be placed in folder " << argv[3] << endl;
+
   
   // Pythia generator.
   Pythia pythia;
@@ -119,10 +129,17 @@ int main(int argc, char* argv[]) {
   // Input parameters:
   //  1. Input cmnd-file for settings
   //  2. Path to input LHE file
-  //  3. Output folder
+  //  3. Annihilation channel 
+  //  4. Output folder
   string settingsFile = string(argv[1]);
   string LHEpath = string(argv[2]);
-  string outDir = string(argv[3]);
+  string annCh = string(argv[3]);
+  string outDir = string(argv[4]);
+
+  // Confirm files to use
+  cout << " PYTHIA settings will be read from file " << settingsFile << endl;
+  cout << " PYTHIA will hadronise LHE file " << LHEpath << endl;
+  cout << " Output will be placed in folder " << outDir << endl;
 
   // Read in ME configurations
   pythia.readString("Beams:frameType = 4");
@@ -146,10 +163,9 @@ int main(int argc, char* argv[]) {
   //The following is a method to find the particle ID of the first decay product (does not work with LHE)
   //const DecayChannel& channel = pythia.particleData.particleDataEntryPtr(9000006)->channel(0);
   //int ch = channel.product(0); // ID of decay product;
-  int ch = 15;
   cout << "mWIMP = " << mX << endl;
   cout << "nEvents = " << nEvent << endl;
-  cout << "Decay ch. PDG = " << ch << endl;
+  cout << "Decay channel = " << annCh << endl;
   
   // Define the PDG codes of the final state particles to be histogrammed (yield particles)
   // NOTE: ADD/REMOVE HERE IF YOU WANT TO INCLUDE MORE/FEWER FINAL STATE PARTICLES
@@ -168,19 +184,23 @@ int main(int argc, char* argv[]) {
   
   // Construct ROOT TH1F histogram for each yield particle with 250 logarithmic bins from mX*10^-10 to mX (25 bins per decade)
   map<long,TH1F*> histograms;
+  map<long,TH1F*> histogramslog;
   for (std::vector<long>::iterator idPtr = yieldpdgs.begin(); 
         idPtr != yieldpdgs.end(); ++idPtr) {
       string histoname = std::to_string(*idPtr);
       string histotitle = "Kinetic energy for yield PDG " + std::to_string(*idPtr);
       TH1F * histo = new TH1F(histoname.c_str(),
-                      histotitle.c_str(), 
+                              histotitle.c_str(), 
+                              200, 0., mX);
+      histograms.insert(make_pair((*idPtr), histo));     
+
+      string histonamelog = std::to_string(*idPtr)+"_log";
+      string histotitlelog = "Kinetic energy for yield PDG " + std::to_string(*idPtr);
+      TH1F * histolog = new TH1F(histonamelog.c_str(),
+                      histotitlelog.c_str(), 
                       250, -10+log10(mX), 0+log10(mX));
-      //TH1F * histo = new TH1F(histoname.c_str(),
-      //                        histotitle.c_str(), 
-      //                        250, 0., mX);
-      
-      histograms.insert(make_pair((*idPtr), histo));    
-      BinLogX(histograms[*idPtr]); 
+      histogramslog.insert(make_pair((*idPtr), histolog));    
+      BinLogX(histogramslog[*idPtr]); 
       
   }
   
@@ -218,7 +238,10 @@ int main(int argc, char* argv[]) {
         // Fill histograms with E_kin = E - m. CN With weight 1/nEvent to get dN/dx??
         for (std::vector<long>::iterator idPtr = yieldpdgs.begin(); 
               idPtr != yieldpdgs.end(); ++idPtr) {
-          if ( (*idPtr)==pythia.event[i].id() ) histograms[*idPtr]->Fill(eID-mID);
+          if ( (*idPtr)==pythia.event[i].id() ) {
+            histograms[*idPtr]->Fill(eID-mID);
+            histogramslog[*idPtr]->Fill(eID-mID);
+          }
         }
       }
     }
@@ -236,7 +259,8 @@ int main(int argc, char* argv[]) {
     TFile* outFile = new TFile(fName.c_str(), "RECREATE");
     histograms[(*idPtr)]->Write();
     delete outFile;    
-    h12ascii(histograms[(*idPtr)],mX,ch,(*idPtr),nEvent,outDir);
+    h12ascii(histograms[(*idPtr)],mX,annCh,(*idPtr),nEvent,outDir);
+    h12ascii(histogramslog[(*idPtr)],mX,annCh,(*idPtr),nEvent,outDir);
   }
   
   // Final statistics and histograms.

@@ -2,9 +2,9 @@
 # dmannmain.cc needs to be compiled with ROOT as well
 
 #on mac:
-PYTDIR=/Users/carlniblaeus/pythia8226/
+#PYTDIR=/Users/carlniblaeus/pythia8226/
 #on ubuntu desktop:
-#PYTDIR=/home/carlniblaeus/pythia8230/
+PYTDIR=/home/carlniblaeus/pythia8230/
 
 # Install directory prefixes.
 PREFIX_BIN=$(PYTDIR)bin
@@ -27,16 +27,16 @@ CXX_SONAME=-Wl,-dylib_install_name,@rpath/
 LIB_SUFFIX=.dylib
 
 # ROOT configuration on mac.
-ROOT_USE=true
-ROOT_BIN=/usr/local/Cellar/root/6.12.06_2/bin/
-ROOT_INCLUDE=/usr/local/Cellar/root/6.12.06_2/include/root/
-ROOT_LIB=/usr/local/Cellar/root/6.12.06_2/lib/root/
+#ROOT_USE=true
+#ROOT_BIN=/usr/local/Cellar/root/6.12.06_2/bin/
+#ROOT_INCLUDE=/usr/local/Cellar/root/6.12.06_2/include/root/
+#ROOT_LIB=/usr/local/Cellar/root/6.12.06_2/lib/root/
 
 # ROOT configuration on ubuntu desktop.
-#ROOT_USE=true
-#ROOT_BIN=../../ROOT6.10.08/bin/
-#ROOT_INCLUDE=../../ROOT6.10.08/include
-#ROOT_LIB=../../ROOT6.10.08/lib
+ROOT_USE=true
+ROOT_BIN=../../ROOT6.10.08/bin/
+ROOT_INCLUDE=../../ROOT6.10.08/include
+ROOT_LIB=../../ROOT6.10.08/lib
 
 CXX_COMMON:=-I$(PREFIX_INCLUDE) $(CXX_COMMON)
 CXX_COMMON+= -L$(PREFIX_LIB) -Wl,-rpath,$(PREFIX_LIB) -lpythia8 -ldl 

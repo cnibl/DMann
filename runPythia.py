@@ -12,6 +12,8 @@ import sys
 import re
 import simSettings as sets
 import multiprocessing as mp
+import time
+import math
 
 #if len(sys.argv)!=2:
 #   sys.exit("ERROR: correct usage is python runPythia.py LHEPATH where LHEPATH is a path to an LHEF.")
@@ -57,24 +59,30 @@ def run_pythia(lhef,outDir,nAnn,annCh,sun=False):
          scrDir=os.path.dirname(get_abspath(sys.argv[0]))
          os.chdir(os.path.join(scrDir,"Pythia")) 
       print "Starting ",lhef
-      p=subprocess.Popen(["./DMannPythia8LHE",absCmndPath,absLHEF,absOutDir],stdout=log,stderr=log)
+      start=time.time()
+      p=subprocess.Popen(["./DMannPythia8LHE",absCmndPath,absLHEF,annCh,absOutDir],stdout=log,stderr=log)
       returnCode=p.wait()
+
+      end=time.time()
       #print "Finished %s with returncode %d" % (lhef,returnCode)
    
-   return (lhef,returnCode)
+   return (lhef,returnCode,end-start)
    
 def write_cmnd_file(nAnn,annCh,sun):
    if not sun:
-      cmndFileName="DMann_P8_halo.cmnd"
+      cmndFileName="DMann_P8_halo_n"+str(nAnn)+"_"+annCh+".cmnd"
    else: 
-      cmndFileName="DMann_P8_sun.cmnd"
+      cmndFileName="DMann_P8_sun_n"+str(nAnn)+"_"+annCh+".cmnd"
    with open(cmndFileName,"w") as f:
       f.write("# This file contains commands to be read in for a Pythia8 run.\n")
       f.write("# Lines not beginning with a letter or digit are comments.\n")
       f.write("# Set up for Pythia8 runs of DM annihilation in the halo.\n")
       f.write("\n")
       f.write("# 1) General settings for run, output etc.\n")
-      f.write("Main:numberOfEvents = "+str(nAnn)+"        ! number of events to generate SYNC TO SIMSETTINGS.PY!\n")
+      if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]:
+         f.write("Main:numberOfEvents = "+str(nAnn)+"        ! number of events to generate SYNC TO SIMSETTINGS.PY!\n")
+      else:
+         f.write("Main:numberOfEvents = 100000        ! number of events to generate\n")
       f.write("Main:timesAllowErrors = 10          ! allow a few failures before quitting\n")
       f.write("Init:showChangedSettings = on       ! list changed settings\n")
       f.write("Init:showChangedParticleData = off  ! list changed particle data\n")
@@ -122,10 +130,10 @@ def mk_outdir(lhef):
       runName=""
    runDir=os.path.split(os.path.dirname(lhef))[-1]
    outDir=os.path.join(os.path.expanduser("~"),"DMann","Pythia","DMann_P8_"+annch+"_"+runDir)
-   print outDir
+
    #outDir=os.path.join(os.path.dirname(get_abspath(sys.argv[0])),"Pythia","DMann_P8_"+runName+"_"+annch)
-   #if not os.path.exists(outDir):
-   #   subprocess.call(["mkdir",get_abspath(outDir)])
+   if not os.path.exists(outDir):
+      subprocess.call(["mkdir",get_abspath(outDir)])
    return get_abspath(outDir) 
          
 def get_nAnn(lhef):
@@ -160,6 +168,11 @@ def collect_result(res):
    results.append(res)
    
 
+# The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
+annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
+               "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
+               "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
+
 if __name__=="__main__":
    """
    Set up and run Pythia8 for all the combinations in simSettings, parallellised.
@@ -169,26 +182,27 @@ if __name__=="__main__":
    LHEfiles=[]
    for mx in sets.WIMP_MASSES:
       for annCh in sets.ANN_CHANNELS:
-         if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]:
-            lhePath=os.path.join(get_abspath(sets.MG_DIR),
-                              "DMann_"+annCh,"Events",
-                              "run_"+sets.RUN_TAG+"_m"+str(mx),
-                              "unweighted_events.lhe")
-            LHEfiles.append(lhePath)
-         else:
-            if sets.N_ANN < 100000:
-               suffix=[]
-            else:
-               suffix=[]
-               for i in range(sets.N_ANN/100000):
-                  suffix.append("_"+str(i))
-            for s in suffix:
+         if annThresholds[annCh] < mx:
+            if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]:
                lhePath=os.path.join(get_abspath(sets.MG_DIR),
-                              "DMann_"+annCh,"Events",
-                              "run_"+sets.RUN_TAG+"_m"+str(mx)+s+"_decayed_1",
-                              "unweighted_events.lhe")
+                                 "DMann_"+annCh,"Events",
+                                 "run_"+sets.RUN_TAG+"_m"+str(mx),
+                                 "unweighted_events.lhe")
                LHEfiles.append(lhePath)
-   
+            else:
+               if sets.N_ANN < 100000:
+                  suffix=[]
+               else:
+                  suffix=[]
+                  for i in range(sets.N_ANN/100000):
+                     suffix.append("_"+str(i))
+               for s in suffix:
+                  lhePath=os.path.join(get_abspath(sets.MG_DIR),
+                                 "DMann_"+annCh,"Events",
+                                 "run_"+sets.RUN_TAG+"_m"+str(mx)+s+"_decayed_1",
+                                 "unweighted_events.lhe")
+                  LHEfiles.append(lhePath)
+      
 #   LHEfiles=[os.path.join(get_abspath(sets.MG_DIR),"DMann_tLtL","Events",
 #                          "run_190218_m500_decayed_"+str(i),"unweighted_events.lhe") for i in range(1,3)]
 #   for hel in ("L","R"):
@@ -198,12 +212,18 @@ if __name__=="__main__":
 #                          "run_190220_m1000","unweighted_events.lhe"))
 
    results=[]
-   pool=mp.Pool() #processes defaults to #cpus
+   pool=mp.Pool(processes=mp.cpu_count()) #processes defaults to #cpus
    print "Starting Pythia8 runs ..."
+   allstart=time.time()
    for lhef in LHEfiles:
+
       absLHEpath=get_abspath(lhef)
+      if os.path.exists(absLHEpath+".gz")==False and os.path.exists(absLHEpath)==False:
+         print "Warning: LHEF (or .gz) does not exist. Skipping."
+         continue
       if not os.path.exists(absLHEpath):
          subprocess.call(["gunzip","-k",absLHEpath+".gz"])
+
       outDir=mk_outdir(absLHEpath)
       nAnn=get_nAnn(absLHEpath)
       annch=get_annch(absLHEpath)  
@@ -211,11 +231,15 @@ if __name__=="__main__":
       pool.apply_async(run_pythia,args=(absLHEpath,outDir,nAnn,annch),callback=collect_result) # run run_pythia for #cpu processes in parallel until LHEF list exhausted
    pool.close()
    pool.join()
+   allend=time.time()
+   print "Done! Total time: %i h, %i min, %i s" % (int(math.floor(math.floor((allend-allstart)/60)/60)),
+                                                             int(math.floor((allend-allstart)/60)%60),
+                                                             int((allend-allstart)%60))
    print "Have run Pythia8 on following files:"
-   print "LHEF path\t\tReturn code"
-   for lhef,ret in results:
-      print "MG_DIR/"+os.path.relpath(lhef,start=os.path.abspath(sets.MG_DIR)),"\t\t",ret
+   print "LHEF path\t\tReturn code\t\tTime spent [s]"
+   for lhef,ret,delta in results:
+      print "MG_DIR/"+os.path.relpath(lhef,start=get_abspath(sets.MG_DIR))
+                  +"\t\t"+ret+"\t\t"+delta
    
    
 
-   
