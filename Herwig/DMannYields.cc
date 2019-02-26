@@ -16,17 +16,21 @@
 #include "ThePEG/Persistency/PersistentOStream.h"
 #include "ThePEG/Persistency/PersistentIStream.h"
 
+#include "Herwig/Utilities/Histogram.h"
+
 //#include "TH1F.h"
+//#include "TFile.h"
 //#include "TCanvas.h"
 
 using namespace DMann;
 
 //histo(2.e-10.,200.,250)
 DMannYields::DMannYields() : 
- histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))), 
+ //histo(Herwig::Histogram::LogBins(2.e-8,250,pow(10,0.04))), 
 _yieldpdg(0),
 _massdm(0.0),
-_annpdg(0)
+_annpdg(0),
+_annstate("")
 {}
 
 DMannYields::~DMannYields() {}
@@ -50,6 +54,10 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
   _annpdg = abs((*(outPtr[0])).id());
   //sub->printMe(cout); // print out hard process
 
+  string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
+  ofstream eventfile(eventfilename.c_str(),std::fstream::app);
+  long nEvtCur = generator()->currentEventNumber();
+  eventfile << "# Event " << nEvtCur << endl;
   for(set<tcPPtr>::const_iterator it = particles.begin(); 
     it != particles.end(); ++it) {
     /** Check if particle id in list (i.e. (*it)->id()) equals any of yield particle IDs and fill histograms */
@@ -57,10 +65,16 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
           idPtr != _pdgvec.end(); ++idPtr) {
       if ((*it)->id()==(*idPtr)) { 
         p = (*it)->momentum(); //the four-momentum
+        _histogramslog[(*idPtr)].addWeighted( (p.e()-p.mass())/GeV, 1.0/(double)_nevt ); // Fill log histogram corresponding to yield ID, divided by number of events
         _histograms[(*idPtr)].addWeighted( (p.e()-p.mass())/GeV, 1.0/(double)_nevt ); // Fill histogram corresponding to yield ID, divided by number of events
+        //_histogramsROOT[(*idPtr)]->Fill((p.e()-p.mass())/GeV);
+        eventfile << setw(10) << left <<(*it)->id() 
+                  << setw(15) << left << std::scientific << p.e()/GeV 
+                  << setw(10) << left << ((*it)->parents())[0]->id() << endl;
       }
     }
   }
+  eventfile.close();
 }
 
 LorentzRotation DMannYields::transform(tcEventPtr event) const {
@@ -77,12 +91,13 @@ void DMannYields::analyze(tPPtr, double weight) {}
 
 void DMannYields::dofinish() {
   // *** ATTENTION *** Normalize and post-process histograms here.
-
   long nEvt = generator()->currentEventNumber() - 1;  
   for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
     useMe();
-    string filename = "Herwig7Data/da-her7-mx"+std::to_string((int)_massdm)+"-ch"+std::to_string(_annpdg)+"-int"+std::to_string(*idPtr)+".dat";
+    //string filename = "Herwig7Data/da-her7-mx"+std::to_string((int)_massdm)+"-ch"+std::to_string(_annpdg)+"-y"+std::to_string(*idPtr)+".dat";
+    string filename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-y"+std::to_string(*idPtr)+".dat";
+    
     ofstream outfile(filename.c_str());
     outfile << "# DMann Herwig7 data file with counts/nAnn as function of E_kin\n";
     time_t rawtime;
@@ -90,14 +105,54 @@ void DMannYields::dofinish() {
     outfile << "# Created: " << ctime(&rawtime);
     outfile << "# Number of simulated events: " << std::to_string(nEvt) << "\n";
     outfile << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV\n";
-    outfile << "# PDG code of annihilation channel: " << std::to_string(_annpdg) << "\n"; 
+    outfile << "# Annihilation channel: " << _annstate << "\n"; 
     outfile << "# PDG code of yield particle: " << std::to_string((*idPtr)) << "\n";   
     outfile << "# \n";
-    outfile << "# E_low\tE_high\tnorm\tcounts\n";  
+    //outfile << "# E_low\tE_high\tnorm\tcounts\n";  
+    outfile << "# E\t\tcounts/nAnn\n";  
     
-    _histograms[(*idPtr)].simpleOutput(outfile, false, false);
+    std::vector<double> binEntries = _histograms[(*idPtr)].dumpBins(); //note:first bin is underflow, last overflow
+    double deltaBin = 1./_histograms[(*idPtr)].numberOfBins();
+    for (unsigned int i=1; i != _histograms[(*idPtr)].numberOfBins()+1; ++i) { 
+      outfile << 1./_histograms[(*idPtr)].numberOfBins()/2.+(i-1)*deltaBin << "\t\t" << binEntries[i] << endl;
+    }
+    //_histograms[(*idPtr)].simpleOutput(outfile, false, false);
     outfile.close();
+
+
+    //Same for log histogram
+    string filenamelog = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-y"+std::to_string(*idPtr)+"-log.dat";
+    
+    ofstream outfilelog(filenamelog.c_str());
+    outfilelog << "# DMann Herwig7 data file with counts/nAnn as function of E_kin, logarithmic bins\n";
+    outfilelog << "# Created: " << ctime(&rawtime);
+    outfilelog << "# Number of simulated events: " << std::to_string(nEvt) << "\n";
+    outfilelog << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV\n";
+    outfilelog << "# Annihilation channel: " << _annstate << "\n"; 
+    outfilelog << "# PDG code of yield particle: " << std::to_string((*idPtr)) << "\n";   
+    outfilelog << "# \n";
+    outfilelog << "# E_low\tE_high\tnorm\tcounts\n";  
+
+    //vector<double> logbinedges = _histogramslog[(*idPtr)].LogBins()
+    //for (unsigned int i=0; i != _histogramslog[(*idPtr)].numberOfBins (); ++i) {
+    //  cout << logbinedges[i] << endl;
+    //}
+
+    _histogramslog[(*idPtr)].simpleOutput(outfilelog, false, false);
+    outfilelog.close();
+
+    //string fName = "yieldpdg_"+std::to_string(*idPtr)+".root";
+    //TFile* outFile = new TFile(fName.c_str(), "RECREATE");
+    //_histogramsROOT[(*idPtr)]->Write();
+    //delete outFile;  
+
     AnalysisHandler::dofinish();
+    
+    string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
+    ofstream eventfile(eventfilename.c_str(),std::fstream::app);
+    eventfile << "#END" << endl;
+    eventfile.close();
+
   }
 }
 
@@ -107,8 +162,32 @@ void DMannYields::doinitrun() {
   // *** ATTENTION *** histogramFactory().mkdirs("/SomeDir"); // Put histograms in specal directory.
   for (std::vector<long>::iterator idPtr = _pdgvec.begin(); 
         idPtr != _pdgvec.end(); ++idPtr) {
+    _histogramslog.insert(make_pair((*idPtr),
+      Herwig::Histogram(Herwig::Histogram::LogBins(1.e-10*_massdm,250,pow(10,0.04)))));     
     _histograms.insert(make_pair((*idPtr),
-      Herwig::Histogram(Herwig::Histogram::LogBins(1.e-10*_massdm,250,pow(10,0.04)))));    
+      Herwig::Histogram(0.,_massdm,200)));   
+
+    //string histoname = std::to_string(*idPtr);
+    //string histotitle = "Kinetic energy for yield PDG " + std::to_string(*idPtr);
+    //TH1F * histoROOT = new TH1F("test",
+    //                        "multiplicity",
+    //                        200, 0., _massdm);
+    //_histogramsROOT.insert(make_pair((*idPtr), histoROOT)); 
+
+    string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
+    ofstream eventfile(eventfilename.c_str(),std::fstream::trunc);
+    time_t rawtime;
+    time(&rawtime);
+    eventfile << "# DMann Herwig7 event file with particles printed out" << endl;
+    eventfile << "# Created: " << ctime(&rawtime);
+    eventfile << "# Number of simulated events: " << std::to_string(_nevt) << endl;
+    eventfile << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV" << endl;
+    eventfile << "# Annihilation channel: " << _annstate << endl; 
+    eventfile << "# " << endl;
+    eventfile << setw(10) << left << "# PDG" 
+              << setw(15) << left << "E [GeV]" 
+              << setw(10) << left << "MotherPDG" << endl;
+    eventfile.close();
   }
 }
 
@@ -157,11 +236,11 @@ void DMannYields::Init() {
      &DMannYields::_massdm, 0, 0., 0., 100000.0, 
      false, false, Interface::limited);
 
-  static Parameter<DMannYields,long> interfaceyieldpdg //OBSOLETE
+  /*static Parameter<DMannYields,long> interfaceyieldpdg //OBSOLETE
     ("YieldPDG",
      "PDG code of the yield particle of interest (gamma, e+ etc.)",
      &DMannYields::_yieldpdg, 0, 0, 0, 100000, 
-     false, false, Interface::limited);    
+     false, false, Interface::limited);    */
 
   static ParVector<DMannYields,long> interfacepdgvec
     ("ParticleCodes",
@@ -175,6 +254,24 @@ void DMannYields::Init() {
      "The number of events to simulate",
      &DMannYields::_nevt, 0, 0., 0., 100000000.0, 
      false, false, Interface::limited);    
+
+  static Parameter<DMannYields,string> interfaceannstate
+    ("AnnState",
+     "The name of the annihilation state",
+     &DMannYields::_annstate,"", 
+     false, false);    
+
+  static Parameter<DMannYields,string> interfaceoutdir
+    ("OutDir",
+     "The directory to put output files in, must exist already.",
+     &DMannYields::_outdir,"Herwig7Data", 
+     false, false);    
+
+//  static Parameter<MatchboxFactory,string> interfacePoleData
+//    ("PoleData",
+//     "Prefix for subtraction check data.",
+//     &MatchboxFactory::thePoleData, "",
+//     false, false);    
 
   static ClassDocumentation<DMannYields> documentation
     ("There is no documentation for the DMannYields class");

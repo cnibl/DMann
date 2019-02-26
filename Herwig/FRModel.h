@@ -73,10 +73,59 @@ public:
 
   double ZERO() const { return ZERO_; }
   double cabi() const { return cabi_; }
-  double gSf() const { return gSf_; }
-  double Lambda() const { return Lambda_; }
-  double gSEW() const { return gSEW_; }
+  double gSh1() const { return gSh1_; }
+  double gSh2() const { return gSh2_; }
+  double gSWT() const { return gSWT_; }
+  double gPWT() const { return gPWT_; }
+  double gPBT() const { return gPBT_; }
+  double gSBT() const { return gSBT_; }
+  double gSWL() const { return gSWL_; }
+  double gSBL() const { return gSBL_; }
+  double gSg() const { return gSg_; }
   double gPg() const { return gPg_; }
+  double gSd11() const { return gSd11_; }
+  double gSu11() const { return gSu11_; }
+  double gSd22() const { return gSd22_; }
+  double gSu22() const { return gSu22_; }
+  double gSd33() const { return gSd33_; }
+  double gSu33() const { return gSu33_; }
+  double gPd11() const { return gPd11_; }
+  double gPu11() const { return gPu11_; }
+  double gPd22() const { return gPd22_; }
+  double gPu22() const { return gPu22_; }
+  double gPd33() const { return gPd33_; }
+  double gPu33() const { return gPu33_; }
+  double gSe() const { return gSe_; }
+  double gPe() const { return gPe_; }
+  double gSmm() const { return gSmm_; }
+  double gPmm() const { return gPmm_; }
+  double gSta() const { return gSta_; }
+  double gPta() const { return gPta_; }
+  double gVd11() const { return gVd11_; }
+  double gVu11() const { return gVu11_; }
+  double gVd22() const { return gVd22_; }
+  double gVu22() const { return gVu22_; }
+  double gVd33() const { return gVd33_; }
+  double gVu33() const { return gVu33_; }
+  double gAd11() const { return gAd11_; }
+  double gAu11() const { return gAu11_; }
+  double gAd22() const { return gAd22_; }
+  double gAu22() const { return gAu22_; }
+  double gAd33() const { return gAd33_; }
+  double gAu33() const { return gAu33_; }
+  double gVe() const { return gVe_; }
+  double gAe() const { return gAe_; }
+  double gVmm() const { return gVmm_; }
+  double gAmm() const { return gAmm_; }
+  double gVta() const { return gVta_; }
+  double gAta() const { return gAta_; }
+  double gSXr() const { return gSXr_; }
+  double gSXc() const { return gSXc_; }
+  double gSXd() const { return gSXd_; }
+  double gPXd() const { return gPXd_; }
+  double gVXd() const { return gVXd_; }
+  double gAXd() const { return gAXd_; }
+  double Lambda() const { return Lambda_; }
   double aEWM1() const { return aEWM1_; }
   double Gf() const { return Gf_; }
   double aS() const { return aS_; }
@@ -100,12 +149,20 @@ public:
   double MS() const { return MS_; }
   double MB() const { return MB_; }
   double MH() const { return MH_; }
-  double MGR() const { return MGR_; }
+  double MD0() const { return MD0_; }
+  double MD1() const { return MD1_; }
+  double MXr() const { return MXr_; }
+  double MXc() const { return MXc_; }
+  double MXd() const { return MXd_; }
   double WZ() const { return WZ_; }
   double WW() const { return WW_; }
+  double WE() const { return WE_; }
+  double WMU() const { return WMU_; }
+  double WTA() const { return WTA_; }
   double WT() const { return WT_; }
   double WH() const { return WH_; }
-  double WGR() const { return WGR_; }
+  double WD0() const { return WD0_; }
+  double WD1() const { return WD1_; }
   double aEW() const { return aEW_; }
   double G() const { return G_; }
   Complex CKM1x1() const { return CKM1x1_; }
@@ -136,42 +193,42 @@ public:
   double ytau() const { return ytau_; }
   double yup() const { return yup_; }
   double muH() const { return muH_; }
-  Complex I1b11() const { return I1b11_; }
-  Complex I1b12() const { return I1b12_; }
-  Complex I1b13() const { return I1b13_; }
-  Complex I1b21() const { return I1b21_; }
-  Complex I1b22() const { return I1b22_; }
-  Complex I1b23() const { return I1b23_; }
-  Complex I1b31() const { return I1b31_; }
-  Complex I1b32() const { return I1b32_; }
-  Complex I1b33() const { return I1b33_; }
-  Complex I2b11() const { return I2b11_; }
-  Complex I2b12() const { return I2b12_; }
-  Complex I2b13() const { return I2b13_; }
-  Complex I2b21() const { return I2b21_; }
-  Complex I2b22() const { return I2b22_; }
-  Complex I2b23() const { return I2b23_; }
-  Complex I2b31() const { return I2b31_; }
-  Complex I2b32() const { return I2b32_; }
-  Complex I2b33() const { return I2b33_; }
-  Complex I3b11() const { return I3b11_; }
-  Complex I3b12() const { return I3b12_; }
-  Complex I3b13() const { return I3b13_; }
-  Complex I3b21() const { return I3b21_; }
-  Complex I3b22() const { return I3b22_; }
-  Complex I3b23() const { return I3b23_; }
-  Complex I3b31() const { return I3b31_; }
-  Complex I3b32() const { return I3b32_; }
-  Complex I3b33() const { return I3b33_; }
-  Complex I4b11() const { return I4b11_; }
-  Complex I4b12() const { return I4b12_; }
-  Complex I4b13() const { return I4b13_; }
-  Complex I4b21() const { return I4b21_; }
-  Complex I4b22() const { return I4b22_; }
-  Complex I4b23() const { return I4b23_; }
-  Complex I4b31() const { return I4b31_; }
-  Complex I4b32() const { return I4b32_; }
-  Complex I4b33() const { return I4b33_; }
+  Complex I1a11() const { return I1a11_; }
+  Complex I1a12() const { return I1a12_; }
+  Complex I1a13() const { return I1a13_; }
+  Complex I1a21() const { return I1a21_; }
+  Complex I1a22() const { return I1a22_; }
+  Complex I1a23() const { return I1a23_; }
+  Complex I1a31() const { return I1a31_; }
+  Complex I1a32() const { return I1a32_; }
+  Complex I1a33() const { return I1a33_; }
+  Complex I2a11() const { return I2a11_; }
+  Complex I2a12() const { return I2a12_; }
+  Complex I2a13() const { return I2a13_; }
+  Complex I2a21() const { return I2a21_; }
+  Complex I2a22() const { return I2a22_; }
+  Complex I2a23() const { return I2a23_; }
+  Complex I2a31() const { return I2a31_; }
+  Complex I2a32() const { return I2a32_; }
+  Complex I2a33() const { return I2a33_; }
+  Complex I3a11() const { return I3a11_; }
+  Complex I3a12() const { return I3a12_; }
+  Complex I3a13() const { return I3a13_; }
+  Complex I3a21() const { return I3a21_; }
+  Complex I3a22() const { return I3a22_; }
+  Complex I3a23() const { return I3a23_; }
+  Complex I3a31() const { return I3a31_; }
+  Complex I3a32() const { return I3a32_; }
+  Complex I3a33() const { return I3a33_; }
+  Complex I4a11() const { return I4a11_; }
+  Complex I4a12() const { return I4a12_; }
+  Complex I4a13() const { return I4a13_; }
+  Complex I4a21() const { return I4a21_; }
+  Complex I4a22() const { return I4a22_; }
+  Complex I4a23() const { return I4a23_; }
+  Complex I4a31() const { return I4a31_; }
+  Complex I4a32() const { return I4a32_; }
+  Complex I4a33() const { return I4a33_; }
 
   //@}  
   
@@ -236,10 +293,59 @@ private:
 
   double ZERO_;
   double cabi_;
-  double gSf_;
-  double Lambda_;
-  double gSEW_;
+  double gSh1_;
+  double gSh2_;
+  double gSWT_;
+  double gPWT_;
+  double gPBT_;
+  double gSBT_;
+  double gSWL_;
+  double gSBL_;
+  double gSg_;
   double gPg_;
+  double gSd11_;
+  double gSu11_;
+  double gSd22_;
+  double gSu22_;
+  double gSd33_;
+  double gSu33_;
+  double gPd11_;
+  double gPu11_;
+  double gPd22_;
+  double gPu22_;
+  double gPd33_;
+  double gPu33_;
+  double gSe_;
+  double gPe_;
+  double gSmm_;
+  double gPmm_;
+  double gSta_;
+  double gPta_;
+  double gVd11_;
+  double gVu11_;
+  double gVd22_;
+  double gVu22_;
+  double gVd33_;
+  double gVu33_;
+  double gAd11_;
+  double gAu11_;
+  double gAd22_;
+  double gAu22_;
+  double gAd33_;
+  double gAu33_;
+  double gVe_;
+  double gAe_;
+  double gVmm_;
+  double gAmm_;
+  double gVta_;
+  double gAta_;
+  double gSXr_;
+  double gSXc_;
+  double gSXd_;
+  double gPXd_;
+  double gVXd_;
+  double gAXd_;
+  double Lambda_;
   double aEWM1_;
   double Gf_;
   double aS_;
@@ -263,12 +369,20 @@ private:
   double MS_;
   double MB_;
   double MH_;
-  double MGR_;
+  double MD0_;
+  double MD1_;
+  double MXr_;
+  double MXc_;
+  double MXd_;
   double WZ_;
   double WW_;
+  double WE_;
+  double WMU_;
+  double WTA_;
   double WT_;
   double WH_;
-  double WGR_;
+  double WD0_;
+  double WD1_;
   double aEW_;
   double G_;
   Complex CKM1x1_;
@@ -299,42 +413,42 @@ private:
   double ytau_;
   double yup_;
   double muH_;
-  Complex I1b11_;
-  Complex I1b12_;
-  Complex I1b13_;
-  Complex I1b21_;
-  Complex I1b22_;
-  Complex I1b23_;
-  Complex I1b31_;
-  Complex I1b32_;
-  Complex I1b33_;
-  Complex I2b11_;
-  Complex I2b12_;
-  Complex I2b13_;
-  Complex I2b21_;
-  Complex I2b22_;
-  Complex I2b23_;
-  Complex I2b31_;
-  Complex I2b32_;
-  Complex I2b33_;
-  Complex I3b11_;
-  Complex I3b12_;
-  Complex I3b13_;
-  Complex I3b21_;
-  Complex I3b22_;
-  Complex I3b23_;
-  Complex I3b31_;
-  Complex I3b32_;
-  Complex I3b33_;
-  Complex I4b11_;
-  Complex I4b12_;
-  Complex I4b13_;
-  Complex I4b21_;
-  Complex I4b22_;
-  Complex I4b23_;
-  Complex I4b31_;
-  Complex I4b32_;
-  Complex I4b33_;
+  Complex I1a11_;
+  Complex I1a12_;
+  Complex I1a13_;
+  Complex I1a21_;
+  Complex I1a22_;
+  Complex I1a23_;
+  Complex I1a31_;
+  Complex I1a32_;
+  Complex I1a33_;
+  Complex I2a11_;
+  Complex I2a12_;
+  Complex I2a13_;
+  Complex I2a21_;
+  Complex I2a22_;
+  Complex I2a23_;
+  Complex I2a31_;
+  Complex I2a32_;
+  Complex I2a33_;
+  Complex I3a11_;
+  Complex I3a12_;
+  Complex I3a13_;
+  Complex I3a21_;
+  Complex I3a22_;
+  Complex I3a23_;
+  Complex I3a31_;
+  Complex I3a32_;
+  Complex I3a33_;
+  Complex I4a11_;
+  Complex I4a12_;
+  Complex I4a13_;
+  Complex I4a21_;
+  Complex I4a22_;
+  Complex I4a23_;
+  Complex I4a31_;
+  Complex I4a32_;
+  Complex I4a33_;
   //@}
 };
 

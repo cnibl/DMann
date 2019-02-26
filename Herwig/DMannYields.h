@@ -4,13 +4,19 @@
 #define DMann_DMannYields_H
 //
 // This is the declaration of the DMannYields class.
-//
-//#include "TH1F.h"
-//#include "TCanvas.h"
+
 
 #include "ThePEG/Handlers/AnalysisHandler.h"
-
 #include "Herwig/Utilities/Histogram.h"
+
+#include "ThePEG/EventRecord/Event.h"
+#include "ThePEG/EventRecord/Particle.h"
+#include "ThePEG/EventRecord/StandardSelectors.h"
+
+//#include "TH1F.h"
+//#include "TFile.h"
+//#include "TCanvas.h"
+
 
 namespace DMann {
 
@@ -178,8 +184,8 @@ private:
    *  (the int is the PDG id)
    */
   map<long,Herwig::Histogram> _histograms;
-
-  Herwig::Histogram histo;
+  map<long,Herwig::Histogram> _histogramslog;
+  //map<long,TH1F*> _histogramsROOT;
 
   /**
    *  The PDG code of the yield particle
@@ -203,9 +209,20 @@ private:
   long _annpdg;
 
   /**
+   *  The name of the final state
+   */
+  string _annstate;
+  
+  /**
+   *  The name of the output directory
+   */
+  string _outdir;
+
+  /**
    *  Number of simulated events
    */
   long _nevt;
+
 };
 
 }
