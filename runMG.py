@@ -106,9 +106,9 @@ if __name__=="__main__":
    pool.close()
    pool.join()
    print "Have run MadGraph for the following combinations: " 
-   print "Run\tErrorcode\tTime spent[sec]"
+   print "Run\t\tErrorcode\tTime spent[sec]"
    for res in results:
-      print res[0],"\t",res[1],"\t",res[2]
+      print "%s\t\t%i\t%15.1f" % (res[0],res[1],res[2])
    end=time.time()
    print "Done! Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
                                                              int(math.floor((end-allstart)/60)%60),
