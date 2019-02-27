@@ -31,7 +31,7 @@ def run_pythia(lhef,outDir,nAnn,annCh,sun=False):
    """
    Runs pythia on the provided LHE file and places output in outDir
    Input: lhef - path to the LHE file with events
-          outDir - directory to put results in
+          outDir - directory to put results for this run in
           nAnn - number of events in file
           annCh - annihilation channel (string)
           sun - whether to set up Pythia for annihilations in the Sun (default is halo)
@@ -164,6 +164,9 @@ def get_annch(lhef):
       return annch
 
 def collect_result(res):
+   """
+   A callback function needed to collect results in apply_async call 
+   """
    global results
    results.append(res)
    
