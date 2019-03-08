@@ -28,34 +28,49 @@ else:
 if not os.path.exists(absMGdir):
    sys.exit("ERROR: The MadGraph directory provided does not exist")
 for ann in sets.ANN_CHANNELS:
-   if not os.path.exists(os.path.join(absMGdir,"DMann_"+ann)):
-      sys.exit("ERROR: No folder exists for %s, run setupMG.py" % ann)
+   for mX in sets.WIMP_MASSES:
+      if not os.path.exists(os.path.join(absMGdir,"DMann_"+sets.RUN_TAG+"_"+ann+"_m"+str(mX))):
+         sys.exit("ERROR: No folder exists for %s, run setupMG.py" % ann)
       
 # The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
                "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
                "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
 
-def run_MG(annCh,mWimp,runTag,nAnn):
+def run_MG(annCh,mWimp,runTag,nAnn,nCores):
    """
-   Runs MadGraph for given input, assumes to be in correct directory.
+   Runs MadGraph for given input
    Input: annCh - the annihilation channel 
           mWimp - the WIMP mass
           runTag - the run_tag for the run
           nAnn - number of annihilations
-   Returns: return code from madevent
+          nCores - number of cores to use per MG run
+   Returns: the scenario, return code from madevent and time spent
    """
    start=time.time()
-   os.chdir(os.path.join(absMGdir,"DMann_"+annCh))
-   mgf.set_run_tag(runTag+"_m"+str(mWimp))
+   """
+   Set no. of ann., runtag, WIMP mass, couplings corresponding to polarization in param_card, couplings and properties of beams, reset all cuts and set up madspin_card if necessary
+   """
+   os.chdir(os.path.join(absMGdir,"DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mWimp)))   
+   mgf.set_n_ann(nAnn)
+   mgf.set_run_tag(runTag)
+   mgf.set_couplings(annCh) 
    mgf.set_wimp_mass(mWimp)
-   mgf.set_n_ann(sets.N_ANN)
-   fileName=mgf.write_MG_runscript(annCh,nAnn,runTag,mWimp)
+   mgf.set_beam_particles()
+   mgf.reset_cuts()
+   if annCh in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
+      mgf.set_madspin_card(annCh) 
+   fileName=mgf.write_MG_runscript(annCh,nAnn,runTag,mWimp,nCores)
    print "Starting MadGraph run for %s, mWIMP=%5.1f" % (annCh,mWimp)
-   with open("".join(("DMann_runMG_",annCh,"_mwimp",str(int(mWimp)),".log")),"w") as log:
+   logFile=os.path.join(absMGdir,"log_DMann","DMann_runMG_"+sets.RUN_TAG+"_"+annCh+"_m"+str(int(mWimp))+".log")
+   with open(logFile,"w") as log:
       proc=subprocess.Popen(["./bin/madevent",fileName],stdout=log,stderr=log)
       returnCode=proc.wait()
    end=time.time()
+   global totalRuns
+   with nCur.get_lock():
+      nCur.value+=1
+   print "Finished run %i of %i" % (nCur.value,totalRuns)
    return (annCh+", m="+str(mWimp),returnCode,end-start)
 
 def collect_result(res):
@@ -65,52 +80,35 @@ def collect_result(res):
    global results
    results.append(res)
    return
-
-
+   
 if __name__=="__main__":
    """
-   Go to MG directory and go down in directories corresponding to all annihilation channels and run MG for each WIMP mass.
+   Go to MG directory and go down in directories corresponding to all annihilation channels and WIMP masses and run MG for all combinations in a parallellised way.
    """
+   nCur=mp.Value('i',0) #integer shared between processes to count current run, initialised at 0
+   totalRuns=len(sets.WIMP_MASSES)*len(sets.ANN_CHANNELS)
    allstart=time.time()
    results=[]
    cpus=mp.cpu_count()
-   if cpus>4:
-      pool=mp.Pool(processes=cpus-2) #leave some room for parallellisation in madevent (don't use up all cpus)
-   else:
-      pool=mp.Pool(processes=cpus)
+   pool=mp.Pool(processes=sets.MG_PAR) #processes=number of parallell MG runs to do
+   if not os.path.exists(os.path.join(absMGdir,"log_DMann")):
+      os.makedirs(os.path.join(absMGdir,"log_DMann"))
    for annCh in sets.ANN_CHANNELS:
-#      print "Starting MadGraph for %s ... " % annCh
-      os.chdir(os.path.join(absMGdir,"DMann_"+annCh))
-      mgf.set_n_ann(sets.N_ANN)
       for mwimp in sets.WIMP_MASSES:
-#         print "\tRunning with mWIMP = %5.3f ... " % mwimp
          if annThresholds[annCh] > mwimp:
-            print "\tWarning: m_WIMP = %5.3f GeV too small for annihilation channel %s" % (mwimp,annCh)
+            print "Note: m_WIMP = %5.3f GeV too small for annihilation channel %s, skipping" % (mwimp,annCh)
             continue # skip to next mwimp value
-         pool.apply_async(run_MG,args=(annCh,mwimp,sets.RUN_TAG,sets.N_ANN),callback=collect_result)
-
-#         mgf.set_run_tag(sets.RUN_TAG+"_m"+str(mwimp))
-#         mgf.set_wimp_mass(mwimp)
-#         fileName=mgf.write_MG_runscript(annCh,sets.N_ANN,sets.RUN_TAG,mwimp)
-#         with open("".join(("DMann_runMG_",annCh,"_mwimp",str(int(mwimp)),".log")),"w") as log:
-#            proc=subprocess.Popen(["./bin/madevent",fileName],stdout=log,stderr=log)
-#            proc.wait()
-#         end=time.time()
-#         if ((end-start)/60) > 60:
-#            print "\tTook %i h, %i min, %i s" % (int(math.floor(math.floor((end-start)/60)/60)),
-#                                                             int(math.floor((end-start)/60)%60),
-#                                                             int((end-start)%60))
-#         else:
-#            print "\tTook %i min, %i s" % (int(math.floor((end-start)/60)),int((end-start)%60))
+         pool.apply_async(run_MG,args=(annCh,mwimp,sets.RUN_TAG,sets.N_ANN,sets.MG_CORES),callback=collect_result)
    
    pool.close()
    pool.join()
+   end=time.time()
+   print "===================================================="
+   print "Done! Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
+                                                             int(math.floor((end-allstart)/60)%60),
+                                                             int((end-allstart)%60))      
    print "Have run MadGraph for the following combinations: " 
    print "Run\t\tErrorcode\tTime spent[sec]"
    for res in results:
       print "%s\t\t%i\t%15.1f" % (res[0],res[1],res[2])
-   end=time.time()
-   print "Done! Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
-                                                             int(math.floor((end-allstart)/60)%60),
-                                                             int((end-allstart)%60))      
-         
+   

@@ -12,6 +12,7 @@ import os
 import sys
 import subprocess
 import glob
+import multiprocessing as mp
 import simSettings as sets
 import MGfunctions as mgf
 
@@ -22,25 +23,41 @@ else:
 if not os.path.exists(absMGdir):
    sys.exit("ERROR: The MadGraph directory provided does not exist")
 
+
+def setup_MG(annCh,mX,runTag):
+   """
+   Go to MG directory and run mg5_aMC to create directories for all annihilation channels and WIMP masses
+   """
+   os.chdir(absMGdir)
+   fileName=mgf.write_MG_setupscript(annCh,mX,runTag)
+   print "Setting up %s, mX = %-5.0f..." % (annCh,mX)
+   with open("".join(("log_DMann/DMann_setupMG_",runTag,"_",annCh,"_m",str(mX),".log")),"w") as log:
+      proc=subprocess.Popen(["./bin/mg5_aMC",fileName],stdout=log,stderr=log)
+      proc.wait()
+      
+
+def collect_result(res):
+   """
+   A callback function needed to collect results in apply_async call 
+   """
+   global results
+   results.append(res)
+   
+      
 if __name__=="__main__":
    """
-   Go to MG directory and run mg5_aMC to create directories for all annihilation channels 
+   Setup the MG folders for each annihilation channel and WIMP mass in parallell.
    """
-   for ann in sets.ANN_CHANNELS:
-      os.chdir(absMGdir)
-      fileName=mgf.write_MG_setupscript(annch=ann)
-      print "Setting up %s ..." % ann
-      with open("".join(("DMann_setupMG_",ann,".log")),"w") as log:
-         proc=subprocess.Popen(["./bin/mg5_aMC",fileName],stdout=log,stderr=log)
-         proc.wait()
-      """
-      Set couplings corresponding to polarization in param_card, and set up madspin_card if necessary
-      """
-      os.chdir(os.path.join(absMGdir,"DMann_"+ann))         
-      mgf.set_couplings(annch=ann) #use default value for WIMP mass 
-      mgf.set_beam_particles()
-      mgf.reset_cuts()
-      if ann in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
-         mgf.set_madspin_card(annch=ann) 
+   cpus=mp.cpu_count()
+   pool=mp.Pool(cpus)
+   results=[]
+   os.makedirs(os.path.join(absMGdir,"log_DMann"))
+   for annCh in sets.ANN_CHANNELS:
+      for mX in sets.WIMP_MASSES:
+         pool.apply_async(setup_MG,args=(annCh,mX,sets.RUN_TAG),callback=collect_result)
+         
+   pool.close()
+   pool.join()
+         
 
          

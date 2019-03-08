@@ -53,19 +53,23 @@ def run_pythia(lhef,outDir,nAnn,annCh,sun=False):
    absCmndPath=get_abspath(write_cmnd_file(nAnn,annCh,sun))
    absOutDir=get_abspath(outDir)
    absLHEF=get_abspath(lhef)
+   res=re.search(r"m(\d+\.?\d*)",lhef)
+   mX=res.groups()[0]
    logname=os.path.dirname(absLHEF).split("/")[-1]
    with open(os.path.join(absOutDir,logname+".log"),"w") as log:
       if os.path.split(os.getcwd())[-1]!="Pythia":
          scrDir=os.path.dirname(get_abspath(sys.argv[0]))
          os.chdir(os.path.join(scrDir,"Pythia")) 
-      print "Starting ",lhef
+
+      print "Starting %s, m = %-s... " % (annCh,mX)
       start=time.time()
       p=subprocess.Popen(["./DMannPythia8LHE",absCmndPath,absLHEF,annCh,absOutDir],stdout=log,stderr=log)
       returnCode=p.wait()
-
-      end=time.time()
-      #print "Finished %s with returncode %d" % (lhef,returnCode)
-   
+   end=time.time()
+   global totalRuns
+   with nCur.get_lock():
+      nCur.value+=1
+   print "Finished run %i of %i" % (nCur.value,totalRuns)
    return (lhef,returnCode,end-start)
    
 def write_cmnd_file(nAnn,annCh,sun):
@@ -118,10 +122,11 @@ def mk_outdir(lhef):
    Input: lhef - path to an LHEF file, should be constructed with the setupMG+runMG pipeline
    """
    absLHEF=get_abspath(lhef)
-   res=re.search(r"DMann_(\w+)",absLHEF)
-   annch=res.groups(1)[0]
-   res=re.search(r"run_(.+)_m\d+",absLHEF)
-   runName=res.groups(1)[0]
+   res=re.search(r"_(\w{2,6})_m\d+",absLHEF)
+   annch=res.groups()[0]
+   res=re.search(r"run_(.+)_m(\d+)",absLHEF)
+   runName=res.groups()[0]
+   mWIMP=res.groups()[1]
    if len(annch)==0:
       print "Warning: could not find annihilation channel in LHEF path."
       annch="XX"
@@ -129,11 +134,10 @@ def mk_outdir(lhef):
       print "Warning: could not find run_tag in LHEF path."
       runName=""
    runDir=os.path.split(os.path.dirname(lhef))[-1]
-   outDir=os.path.join(os.path.expanduser("~"),"DMann","Pythia","DMann_P8_"+annch+"_"+runDir)
-
-   #outDir=os.path.join(os.path.dirname(get_abspath(sys.argv[0])),"Pythia","DMann_P8_"+runName+"_"+annch)
+   outDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),"Pythia",annch+"_m"+str(mWIMP))
    if not os.path.exists(outDir):
-      subprocess.call(["mkdir",get_abspath(outDir)])
+      #os.makedirs(get_abspath(outDir))
+      subprocess.call(["mkdir","-p",get_abspath(outDir)])
    return get_abspath(outDir) 
          
 def get_nAnn(lhef):
@@ -155,8 +159,8 @@ def get_annch(lhef):
    Input: lhef - path to an LHEF file, should be constructed with the setupMG+runMG pipeline
    """
    absLHEF=get_abspath(lhef)
-   res=re.search(r"DMann_(\w+)",absLHEF)
-   annch=res.groups(1)[0]
+   res=re.search(r"_(\w{2,6})_m\d+",absLHEF)
+   annch=res.groups()[0]
    if len(annch)==0:
       print "Warning: could not find annihilation channel in LHEF path."
       return "XX"
@@ -181,14 +185,16 @@ if __name__=="__main__":
    Set up and run Pythia8 for all the combinations in simSettings, parallellised.
    """
    
-   
+   """
+   Begin by setting up a list of all the LHE files to shower
+   """
    LHEfiles=[]
    for mx in sets.WIMP_MASSES:
       for annCh in sets.ANN_CHANNELS:
          if annThresholds[annCh] < mx:
             if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]:
                lhePath=os.path.join(get_abspath(sets.MG_DIR),
-                                 "DMann_"+annCh,"Events",
+                                 "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
                                  "run_"+sets.RUN_TAG+"_m"+str(mx),
                                  "unweighted_events.lhe")
                LHEfiles.append(lhePath)
@@ -201,48 +207,40 @@ if __name__=="__main__":
                      suffix.append("_"+str(i))
                for s in suffix:
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
-                                 "DMann_"+annCh,"Events",
+                                 "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
                                  "run_"+sets.RUN_TAG+"_m"+str(mx)+s+"_decayed_1",
                                  "unweighted_events.lhe")
                   LHEfiles.append(lhePath)
-      
-#   LHEfiles=[os.path.join(get_abspath(sets.MG_DIR),"DMann_tLtL","Events",
-#                          "run_190218_m500_decayed_"+str(i),"unweighted_events.lhe") for i in range(1,3)]
-#   for hel in ("L","R"):
-#      LHEfiles.append(os.path.join(get_abspath(sets.MG_DIR),"DMann_mu"+hel+"mu"+hel,"Events",
-#                          "run_190218_m200","unweighted_events.lhe"))
-#      LHEfiles.append(os.path.join(get_abspath(sets.MG_DIR),"DMann_ta"+hel+"ta"+hel,"Events",
-#                          "run_190220_m1000","unweighted_events.lhe"))
-
+   
+   """
+   Run DMannPythia8LHE on all LHEF in parallell               
+   """
    results=[]
+   nCur=mp.Value('i',0) #integer shared between processes to count current run, initialised at 0
+   totalRuns=len(sets.WIMP_MASSES)*len(sets.ANN_CHANNELS)   
    pool=mp.Pool(processes=mp.cpu_count()) #processes defaults to #cpus
    print "Starting Pythia8 runs ..."
    allstart=time.time()
    for lhef in LHEfiles:
-
       absLHEpath=get_abspath(lhef)
       if os.path.exists(absLHEpath+".gz")==False and os.path.exists(absLHEpath)==False:
          print "Warning: LHEF (or .gz) does not exist. Skipping."
          continue
       if not os.path.exists(absLHEpath):
          subprocess.call(["gunzip","-k",absLHEpath+".gz"])
-
       outDir=mk_outdir(absLHEpath)
       nAnn=get_nAnn(absLHEpath)
-      annch=get_annch(absLHEpath)  
-
-      pool.apply_async(run_pythia,args=(absLHEpath,outDir,nAnn,annch),callback=collect_result) # run run_pythia for #cpu processes in parallel until LHEF list exhausted
+      annCh=get_annch(absLHEpath)  
+      pool.apply_async(run_pythia,args=(absLHEpath,outDir,nAnn,annCh),callback=collect_result) # run run_pythia for #cpu processes in parallel until LHEF list exhausted
    pool.close()
    pool.join()
-   allend=time.time()
-   print "Done! Total time: %i h, %i min, %i s" % (int(math.floor(math.floor((allend-allstart)/60)/60)),
-                                                             int(math.floor((allend-allstart)/60)%60),
-                                                             int((allend-allstart)%60))
+   end=time.time()
+   print "===================================================================================================="
+   print "Done! Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
+                                                             int(math.floor((end-allstart)/60)%60),
+                                                             int((end-allstart)%60))      
    print "Have run Pythia8 on following files:"
    print "LHEF path\t\tReturn code\t\tTime spent [s]"
-   for lhef,ret,delta in results:
-      print "MG_DIR/"+os.path.relpath(lhef,start=get_abspath(sets.MG_DIR))
-                  +"\t\t"+ret+"\t\t"+delta
+   for res in results:
+      print "%s\t\t%i\t%15.1f" % ("MG_DIR/"+os.path.relpath(res[0],start=get_abspath(sets.MG_DIR)),res[1],res[2])
    
-   
-

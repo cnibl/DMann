@@ -120,8 +120,6 @@ int main(int argc, char* argv[]) {
       return 1;
     }
   }
-
-
   
   // Pythia generator.
   Pythia pythia;
@@ -204,6 +202,21 @@ int main(int argc, char* argv[]) {
       
   }
   
+  string eventFileName = outDir+"/da-pyt8-mx"+std::to_string((int)mX)+"-"+annCh+"-events.dat";
+  ofstream eventFile(eventFileName.c_str(),std::fstream::trunc);
+  time_t rawtime;
+  time(&rawtime);
+  eventFile << "# DMann Pythia8 event file with particles printed out" << endl;
+  eventFile << "# Created: " << ctime(&rawtime);
+  eventFile << "# Number of simulated events: " << std::to_string(nEvent) << endl;
+  eventFile << "# WIMP mass: " << std::to_string((int)mX) << " GeV" << endl;
+  eventFile << "# Annihilation channel: " << annCh << endl; 
+  eventFile << "# " << endl;
+  eventFile << setw(10) << left << "# PDG" 
+            << setw(15) << left << "E [GeV]" 
+            << setw(10) << left << "MotherPDG" << endl;
+  eventFile.close();
+  
 
   // Begin event loop.
   int iAbort = 0;
@@ -227,6 +240,11 @@ int main(int argc, char* argv[]) {
       // If failure because reached end of file then exit event loop.
       if (pythia.info.atEndOfFile()) break;
     }
+    
+    string eventFileName = outDir+"/da-pyt8-mx"+std::to_string((int)mX)+"-"+annCh+"-events.dat";
+    ofstream eventFile(eventFileName.c_str(),std::fstream::app);
+    int nEvtCur = iEvent + 1;
+    eventFile << "# Event " << nEvtCur << endl;
 
     // Loop over all particles and analyze the final-state ones.
     for (int i = 0; i < pythia.event.size(); ++i) {
@@ -241,11 +259,16 @@ int main(int argc, char* argv[]) {
           if ( (*idPtr)==pythia.event[i].id() ) {
             histograms[*idPtr]->Fill(eID-mID);
             histogramslog[*idPtr]->Fill(eID-mID);
+            int mother = pythia.event[i].mother1();
+            eventFile << setw(10) << left << pythia.event[i].id()
+                      << setw(15) << left << std::scientific << eID
+                      << setw(10) << left << pythia.event[mother].id() << endl;
           }
         }
       }
     }
-  // End of event loop.
+    // End of event loop.
+    eventFile.close();
   }
   
 //  eGamma->Draw();
@@ -262,6 +285,10 @@ int main(int argc, char* argv[]) {
     h12ascii(histograms[(*idPtr)],mX,annCh,(*idPtr),nEvent,outDir);
     h12ascii(histogramslog[(*idPtr)],mX,annCh,(*idPtr),nEvent,outDir);
   }
+
+  ofstream eventFileEnd(eventFileName.c_str(),std::fstream::app);
+  eventFileEnd << "#END" << endl;
+  eventFileEnd.close();
   
   // Final statistics and histograms.
   pythia.stat();
