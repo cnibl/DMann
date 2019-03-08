@@ -1,32 +1,35 @@
-# DMann
-Project on uncertainties in production fluxes from dark matter annihilation. Simulates WIMP annihilations into various final states and produces datafiles with the yields of various secondary particles of interest binned in kinetic energy.
+# Prerequisites
+To run the DMann scripts, you will need:
+ * python 2.7, not 3
+ * Pythia8 for the Pythia part
+ * Herwig7 for the Herwig part
+ * ROOT
 
-## How to run, PYTHIA8
-Go to the folder `Pythia`. To compile, first provide the correct path to the corresponding Pythia8 directories in the variables `PREFIX_BIN/INCLUDE/LIB/SHARE` in the makefile. An installation of ROOT is required since ROOT TH1F histograms are used. Provide the ROOT directories in the variables `ROOT_BIN/INCLUDE/LIB`. Then simply type 'make'.
-
-The python script `MakeRunPythia.py` is responsible for creating the text files (.cmnd) needed to run the C++ main program. In that script one specifies the WIMP masses and annihilation channels of interest, the script then creates one cmnd-file for each WIMP mass and annihilation channel and puts them in the folder `Runs-todo`. Other parameters of the runs can also be changed in that file, for example changing decay properties of certain particles etc.
-
-Running the shell script `RunPythia.sh` will, if necessary, create the run files, compile the main program  `DMannPythia8.cc` and run it for all the produced run files. 
-
-Run files are organised in three directories: `Runs-todo`, `Runs-running` and `Runs-done`. `Runs-todo` contains cmnd-files corresponding to runs that have not yet been done. The runscript takes a file from `Runs-todo` and moves this to `Runs-running` and runs `DMannPythia8` with this file. When this is done the run file is moved to `Runs-done`. This process continues until there are no more files left in `Runs-todo`. This means that multiple threads running the runscript can be started simultaneously to speed up the process. 
-
-*Note:* it is sometimes necessary to activate the ROOT environment variables by typing `source $ROOTDIR/bin/thisroot.sh` where `$ROOTDIR` is the ROOT installation directory.
-
-The PDG codes of the yield/secondary particles of interest (gammas, neutrinos, antiprotons etc.) are defined in the main program `DMannPythia8.cc` as elements in the vector `yieldpdgs`. They are not defined in the run files and must thus be provided manually in `DMannPythia8.cc`. 
-
-One output file per WIMP mass, annihilation channel and yield particle is put in the folder `Pythia8Data`. In the files, the columns correspond to 1) kinetic energy bins and 2) number of particles per annihilation per energy bin (number of particles per energy bin divided by the total number of WIMP annihilations).
+# How to set up
+The file `simSettings.py` contains the settings for annihilation channels, WIMP masses, and other things that will be used by the other scripts. If you want to change what to run, do it in this file. 
 
 
-## How to run, Herwig7
-Go to the folder `Herwig`. Provide the necessary Herwig include directory in the variable `CPP_FLAGS` in the makefile and then type `make`. This will compile the C++ files responsible for the actual analysis of each event (`DMannYields`) and the model files corresponding to the simple model used to simulate to WIMP annihilations (`FRModel` files). Then run the shell script `RunHerwig.sh`. This will construct the necessary run files (`.in`-files) and put them in the folder `Runs-todo` and run Herwig with these files, which produces datafiles in the folder `Herwig7Data`. 
+# To run MadGraph
+There are two scripts that set up and run MadGraph for the chosen combinations of annihilation channels and WIMP masses. These are `setupMG.py` and `runMG.py`, where the first one sets up the folder structure in a MadGraph installation directory (one folder for each annihilation channel and WIMP mass) and the latter script runs through the event generation for all these folders.
 
-*Note:* it is sometimes necessary to activate the Herwig environment variables by typing `source $HERDIR/activate/bin` where `$HERDIR` is the Herwig installation directory.
+First set the desired annihilation channels, WIMP masses and number of annihilations in `simSettings.py`. If the number of events to generate is above 100000, it must be a multiple of 100000. If below 100000, it can be any number. You must also set the `MG_DIR` variable, that is the directory of the MadGraph installation you want to use. 
 
-The python script `MakeRunHerwig.py` constructs the Herwig input (.in) files, one per run. In the script, the desired WIMP masses, annihilation channels and yield particles are given (unlike in Pythia, the yield particles are for Herwig given in the run files). 
+The `RUN_TAG` variable is a tag that is used to identify the folders belonging to this run, you can for example set it to today's date and some extra identifying tag. 
 
-One output file per WIMP mass, annihilation channel and yield particle is produced when running `RunHerwig.sh` and put in the folder `Herwig7Data`. In the files, the columns correspond to 1) lower limit of kinetic energy bin 2) upper limit of kinetic energy bin, 3) some normalised output (not used at all) and 4) number of particles per annihilation per energy bin (number of particles per energy bin divided by the total number of WIMP annihilations).
+Lastly, you should set the `MG_CORES` and `MG_PAR` variables. The first of these determines the number of cores to use for each MadGraph run and the second determines how many parallell runs to run simultaneously. If using the full number of cpus on the computer for `MG_PAR`, you should not use a too large value for `MG_CORES` as this can lead to errors in the run. A reasonable number seems to be around `MG_CORES=2-4` for a 16-core machine, and probably lower on a 4-core machine.  
 
-The run script works in the same way as the Pythia run script with regards to the folders `Runs-todo`, `Runs-running` and `Runs-done` and multiple cores can be used to speed everything up as described above.
+To set up MadGraph after having set all the relevant variables in `simSettings.py`, g to the `DMann` main directory where the scripts are and run `python setupMG.py` in a terminal. This creates one MadGraph output folder for each combination of WIMP mass and annihilation channel.
 
-### How to construct the new model files from UFO files
-UFO files can be used to define a new BSM model in Herwig through the command line interface `ufo2herwig`. The folder `UFOfiles` contains a file with instructions on how this is done.
+To run MadGraph after setting up, simply run `python runMG.py` in the `DMann` main directory. This will run MadGraph for the chosen number of annihilations for all the folders created in the set up stage. Note that for more than 100000 events, several folders are created for each run, this is because the MadGraph command `multi_run` is used, which will here separate the run into subruns of 100000 events each. Note also that in the final states where MadSpin is used, there will not be any merged LHEF with all the events, but only the subrun LHEFs with 100000 events each. The folder names containing the LHEF with decayed events are the ones ending with "decayed_1". 
+
+Note that it will not work to run the scripts from another directory than the `DMann` main directory.
+
+# To run Pythia8 on the created LHEF
+To set up Pythia8 for running, you must first compile the main program `DMannPythia8LHE`that will be used, which is in the `DMann/Pythia` subdirectory. Edit the makefile to account for where ROOT and Pythia are installed on your system run `make DMannPythia8LHE` in the `Pythia` subdirectory. Then go back to the `DMann` main directory and run `python runPythia.py`. This will first unzip all the gzipped LHE files, which can take a rather long time. Then it will run pythia on all the LHEF in parallell (using the full number of cores on the computer). 
+
+You can also simply run the `runPythia.sh` bash script to run Pythia8, however this requires that you supply the correct ROOT installation directory in the second line of that script. 
+
+The output directory for the histogram and event files created by Pythia are placed in the folder specified by the variable `DMANN_OUTDIR` in `simSettings.py`. 
+
+# To run Herwig7
+To be added...

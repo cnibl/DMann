@@ -61,7 +61,7 @@ def run_MG(annCh,mWimp,runTag,nAnn,nCores):
    if annCh in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
       mgf.set_madspin_card(annCh) 
    fileName=mgf.write_MG_runscript(annCh,nAnn,runTag,mWimp,nCores)
-   print "Starting MadGraph run for %s, mWIMP=%5.1f" % (annCh,mWimp)
+   print "Starting MadGraph run for %s, m_WIMP = %5.1f" % (annCh,mWimp)
    logFile=os.path.join(absMGdir,"log_DMann","DMann_runMG_"+sets.RUN_TAG+"_"+annCh+"_m"+str(int(mWimp))+".log")
    with open(logFile,"w") as log:
       proc=subprocess.Popen(["./bin/madevent",fileName],stdout=log,stderr=log)
