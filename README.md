@@ -4,15 +4,17 @@ To run the DMann scripts, you will need:
  * Pythia8 for the Pythia part
  * Herwig7 for the Herwig part
  * ROOT
+ * the DMann UFO model
 
 # How to set up
 The file `simSettings.py` contains the settings for annihilation channels, WIMP masses, and other things that will be used by the other scripts. If you want to change what to run, do it in this file. 
 
-
 # To run MadGraph
 There are two scripts that set up and run MadGraph for the chosen combinations of annihilation channels and WIMP masses. These are `setupMG.py` and `runMG.py`, where the first one sets up the folder structure in a MadGraph installation directory (one folder for each annihilation channel and WIMP mass) and the latter script runs through the event generation for all these folders.
 
-First set the desired annihilation channels, WIMP masses and number of annihilations in `simSettings.py`. If the number of events to generate is above 100000, it must be a multiple of 100000. If below 100000, it can be any number. You must also set the `MG_DIR` variable, that is the directory of the MadGraph installation you want to use. 
+First set the desired annihilation channels, WIMP masses and number of annihilations in `simSettings.py`. If the number of events to generate is above 100000, it must be a multiple of 100000. If below 100000, it can be any number. You must also set the `MG_DIR` variable, that is the directory of the MadGraph installation you want to use. In the directory corresponding to `MG_DIR` the DMann UFO model must be in the `models` subdirectory, with the folder name `DMann` (so that it can be imported in MadGraph with `import model DMann`). 
+
+Make sure that you have set the variable `automatic_html_opening = False` in the `input/mg5_configuration.txt` file in the MadGraph installation, in order to avoid the automatic opening of browser tabs for each separate MadGraph run. 
 
 The `RUN_TAG` variable is a tag that is used to identify the folders belonging to this run, you can for example set it to today's date and some extra identifying tag. 
 

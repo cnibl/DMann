@@ -51,7 +51,8 @@ if __name__=="__main__":
    cpus=mp.cpu_count()
    pool=mp.Pool(cpus)
    results=[]
-   os.makedirs(os.path.join(absMGdir,"log_DMann"))
+   if not os.path.exists(os.path.join(absMGdir,"log_DMann")):
+      os.makedirs(os.path.join(absMGdir,"log_DMann"))
    for annCh in sets.ANN_CHANNELS:
       for mX in sets.WIMP_MASSES:
          pool.apply_async(setup_MG,args=(annCh,mX,sets.RUN_TAG),callback=collect_result)
