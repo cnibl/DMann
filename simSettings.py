@@ -7,15 +7,15 @@ The list of annihilationchannels to simulate. Channels must be from following li
 WLWL, WTWT, ZLZL, ZTZT, hh, taLtaL, taRtaR, muLmuL, muRmuR, ee, tLtL, tRtR, bb, cc, ss, uu, dd
 Note: if only using one channel, it must be given in the format ANN_CHANNELS=(ann_ch,).
 """
-ANN_CHANNELS=("uu", "dd", "cc", "ss","tLtL", "tRtR", "bb", 
-              "taLtaL", "taRtaR", "muLmuL", "muRmuR", "ee", 
-              "WLWL", "WTWT", "ZLZL", "ZTZT", "hh"  )
+ANN_CHANNELS=("uu", "dd", "cc", "ss")#,"tLtL", "tRtR", "bb", 
+#              "taLtaL", "taRtaR", "muLmuL", "muRmuR", "ee", 
+#              "WLWL", "WTWT", "ZLZL", "ZTZT", "hh"  )
 #ANN_CHANNELS=("uu",)
 
 """
 The number of annihilations. If below 100k, can be anything. If above 100k, must be multiple of 100k.
 """
-N_ANN=1000000
+N_ANN=10
 
 """
 The WIMP masses to use. Note: if only using one mass, it must be given in the format WIMP_MASSES=(mX,).
@@ -29,9 +29,22 @@ WIMP_MASSES=(10,100,1000,10000)
 """
 The MadGraph installation directory
 """
-MG_DIR="~/MG5_aMC_v2_6_3_2/"
+MG_DIR="/Volumes/GoldDrive/MG5_aMC_v2_6_5_DMann/"
 
 """
 The run tag, appended to the directory names for all the runs (the directories with LHEF)
 """
-RUN_TAG="190218_1M"
+RUN_TAG="190308_test"
+
+"""
+The directory to put Pythia and Herwig files in
+"""
+#DMANN_OUTDIR="~/DMann/res_"+RUN_TAG
+DMANN_OUTDIR="/Volumes/GoldDrive/DMann/res_"+RUN_TAG
+
+"""
+The number of cores to use for each MG run (don't use to many, this can cause errors) and the number of parallell MG runs to do.
+"""
+import multiprocessing as mp
+MG_CORES=2
+MG_PAR=mp.cpu_count() #number of cpu cores
