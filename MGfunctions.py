@@ -34,12 +34,12 @@ def annch_to_MGFinState(annch):
    else:
       sys.exit("ERROR: unknown annihilation channel provided")
       
-def write_MG_setupscript(annch):
+def write_MG_setupscript(annch,mx,runTag):
    """
-   Writes the MadGraph commands for generating the folder corresponding to input annch into a text file.
+   Writes the MadGraph commands for generating the folder corresponding to ann. channel annch and wimp mass mx into a text file.
    """
-   folderName="".join(("DMann_",annch))
-   fileName="".join(("DMann_setupMG_",annch,".txt"))
+   folderName="".join(("DMann_",runTag,"_",annch,"_m",str(mx)))
+   fileName="".join(("log_DMann/DMann_setupMG_",runTag,"_",annch,"_m",str(mx),".txt"))
    with open(fileName,"w") as f:
       f.write("import model DMann\n")
       f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch)+"\n")
@@ -47,7 +47,7 @@ def write_MG_setupscript(annch):
       f.write("y")
    return fileName
    
-def write_MG_runscript(annch,nAnn,runTag,mwimp):
+def write_MG_runscript(annch,nAnn,runTag,mwimp,ncores):
    """
    Writes the MadGraph commands for running n_ann annihilations for input annch.
    """
@@ -56,7 +56,7 @@ def write_MG_runscript(annch,nAnn,runTag,mwimp):
       if nAnn < 100000:
          f.write("launch run_"+runTag+"_m"+str(mwimp)+"\n")
       else:
-         f.write("multi_run "+str(nAnn/100000)+" run_"+runTag+"_m"+str(mwimp)+" --multicore --nb_core=4 \n")
+         f.write("multi_run "+str(nAnn/100000)+" run_"+runTag+" --multicore --nb_core="+str(ncores)+" \n")
       f.write("analysis=OFF\n")
       if annch in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
          f.write("madspin=ON\n")
@@ -290,61 +290,61 @@ def reset_cuts():
    newcard_content=oldcard_content
    
    # Minimum pt's
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptj[^a-z]\s+","\n 0.0 = ptj",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptb[^a-z]\s+","\n 0.0 = ptb",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?pta[^a-z]\s+","\n 0.0 = pta",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptl[^a-z]\s+","\n 0.0 = ptl",newcard_content)  
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?misset[^m]\s+","\n 0.0 = misset",newcard_content)  
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptjmax\s+","\n -1.0 = ptjmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptbmax\s+","\n -1.0 = ptbmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptamax\s+","\n -1.0 = ptamax",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptlmax\s+","\n -1.0 = ptlmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?missetmax\s+","\n -1.0 = missetmax",newcard_content)  
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptj[^a-z]\s+","\n 0.0 = ptj ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptb[^a-z]\s+","\n 0.0 = ptb ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?pta[^a-z]\s+","\n 0.0 = pta ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptl[^a-z]\s+","\n 0.0 = ptl ",newcard_content)  
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?misset[^m]\s+","\n 0.0 = misset ",newcard_content)  
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptjmax\s+","\n -1.0 = ptjmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptbmax\s+","\n -1.0 = ptbmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptamax\s+","\n -1.0 = ptamax ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptlmax\s+","\n -1.0 = ptlmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?missetmax\s+","\n -1.0 = missetmax ",newcard_content)  
 
    # Max and min absolute rapidity
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etaj[^m]\s+","\n -1.0 = etaj",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etaa[^m]\s+","\n -1.0 = etaa",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etal[^m]\s+","\n -1.0 = etal",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etaj[^m]\s+","\n -1.0 = etaj ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etaa[^m]\s+","\n -1.0 = etaa ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?etal[^m]\s+","\n -1.0 = etal ",newcard_content) 
 
    # Max and min deltaR distance
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjj[^a-z]\s+","\n 0.0 = drjj",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbb[^a-z]\s+","\n 0.0 = drbb",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drll[^a-z]\s+","\n 0.0 = drll",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draa[^a-z]\s+","\n 0.0 = draa",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbj[^a-z]\s+","\n 0.0 = drbj",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draj[^a-z]\s+","\n 0.0 = draj",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjl[^a-z]\s+","\n 0.0 = drjl",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drab[^a-z]\s+","\n 0.0 = drab",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbl[^a-z]\s+","\n 0.0 = drbl",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?dral[^a-z]\s+","\n 0.0 = dral",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjj[^a-z]\s+","\n 0.0 = drjj ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbb[^a-z]\s+","\n 0.0 = drbb ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drll[^a-z]\s+","\n 0.0 = drll ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draa[^a-z]\s+","\n 0.0 = draa ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbj[^a-z]\s+","\n 0.0 = drbj ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draj[^a-z]\s+","\n 0.0 = draj ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjl[^a-z]\s+","\n 0.0 = drjl ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drab[^a-z]\s+","\n 0.0 = drab ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbl[^a-z]\s+","\n 0.0 = drbl ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?dral[^a-z]\s+","\n 0.0 = dral ",newcard_content) 
 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjjmax","\n -1.0 = drjjmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbbmax","\n -1.0 = drbbmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drllmax","\n -1.0 = drllmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draamax","\n -1.0 = draamax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbjmax","\n -1.0 = drbjmax",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drajmax","\n -1.0 = drajmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjlmax","\n -1.0 = drjlmax",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drabmax","\n -1.0 = drabmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drblmax","\n -1.0 = drblmax",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?dralmax","\n -1.0 = dralmax",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjjmax","\n -1.0 = drjjmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbbmax","\n -1.0 = drbbmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drllmax","\n -1.0 = drllmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?draamax","\n -1.0 = draamax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drbjmax","\n -1.0 = drbjmax ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drajmax","\n -1.0 = drajmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drjlmax","\n -1.0 = drjlmax ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drabmax","\n -1.0 = drabmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?drblmax","\n -1.0 = drblmax ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?dralmax","\n -1.0 = dralmax ",newcard_content) 
 
    # Max and min invariant masses
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmjj[^a-z]\s+","\n 0.0 = mmjj",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmbb[^a-z]\s+","\n 0.0 = mmbb",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmaa[^a-z]\s+","\n 0.0 = mmaa",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmll[^a-z]\s+","\n 0.0 = mmll",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmnl[^a-z]\s+","\n 0.0 = mmnl",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmjj[^a-z]\s+","\n 0.0 = mmjj ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmbb[^a-z]\s+","\n 0.0 = mmbb ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmaa[^a-z]\s+","\n 0.0 = mmaa ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmll[^a-z]\s+","\n 0.0 = mmll ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmnl[^a-z]\s+","\n 0.0 = mmnl ",newcard_content) 
 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmjjmax","\n -1.0 = mmjjmax",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmbbmax","\n -1.0 = mmbbmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmaamax","\n -1.0 = mmaamax",newcard_content)
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmllmax","\n -1.0 = mmllmax",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmnlmax","\n -1.0 = mmnlmax",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmjjmax","\n -1.0 = mmjjmax ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmbbmax","\n -1.0 = mmbbmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmaamax","\n -1.0 = mmaamax ",newcard_content)
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmllmax","\n -1.0 = mmllmax ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?mmnlmax","\n -1.0 = mmnlmax ",newcard_content) 
 
    # pt of leptons
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptllmin","\n 0.0 = ptllmin",newcard_content) 
-   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptllmax","\n -1.0 = ptllmax",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptllmin","\n 0.0 = ptllmin ",newcard_content) 
+   newcard_content=re.sub(r"\n\s*\S+\s*=\s?ptllmax","\n -1.0 = ptllmax ",newcard_content) 
 
    # Write new card content to file
    with open(os.path.abspath(os.path.join("Cards","run_card.dat")),"w") as f:
