@@ -4,7 +4,9 @@
 #on mac:
 #PYTDIR=/Users/carlniblaeus/pythia8226/
 #on ubuntu desktop:
-PYTDIR=/home/carlniblaeus/pythia8230/
+#PYTDIR=/home/carlniblaeus/pythia8230/
+#on 16-core mac in Joakims office
+PYTDIR=/Users/cniblaeus/pythia8240/
 
 # Install directory prefixes.
 PREFIX_BIN=$(PYTDIR)bin
@@ -21,7 +23,8 @@ PREFIX_SHARE=$(PYTDIR)share/Pythia8
 # Compilation flags (see ./configure --help for further documentation).
 ENABLE_SHARED=false
 CXX=g++
-CXX_COMMON=-O2 -std=c++98 -pedantic -W -Wall -Wshadow -fPIC
+#CXX_COMMON=-O2 -std=c++98 -pedantic -W -Wall -Wshadow -fPIC
+CXX_COMMON=-O2 -std=c++11 -pedantic -W -Wall -Wshadow -fPIC
 CXX_SHARED=-dynamiclib
 CXX_SONAME=-Wl,-dylib_install_name,@rpath/
 LIB_SUFFIX=.dylib
@@ -33,13 +36,28 @@ LIB_SUFFIX=.dylib
 #ROOT_LIB=/usr/local/Cellar/root/6.12.06_2/lib/root/
 
 # ROOT configuration on ubuntu desktop.
+#ROOT_USE=true
+#ROOT_BIN=../../ROOT6.10.08/bin/
+#ROOT_INCLUDE=../../ROOT6.10.08/include
+#ROOT_LIB=../../ROOT6.10.08/lib
+
+# ROOT configuration on 16-core mac in Joakims office
 ROOT_USE=true
-ROOT_BIN=../../ROOT6.10.08/bin/
-ROOT_INCLUDE=../../ROOT6.10.08/include
-ROOT_LIB=../../ROOT6.10.08/lib
+ROOT_BIN=/Users/cniblaeus/root-6.11.02/bin/
+ROOT_INCLUDE=/Users/cniblaeus/root-6.11.02/include
+ROOT_LIB=/Users/cniblaeus/root-6.11.02/lib
 
 CXX_COMMON:=-I$(PREFIX_INCLUDE) $(CXX_COMMON)
 CXX_COMMON+= -L$(PREFIX_LIB) -Wl,-rpath,$(PREFIX_LIB) -lpythia8 -ldl 
+
+GZIP_BIN=
+GZIP_INCLUDE=./
+GZIP_LIB=./
+# Handle GZIP support.
+GZIP_INC=
+GZIP_FLAGS=
+GZIP_INC+= -DGZIPSUPPORT -I$(GZIP_INCLUDE)
+GZIP_FLAGS+= -L$(GZIP_LIB) -Wl,-rpath,$(GZIP_LIB) -lz
 
 ################################################################################
 # RULES: Definition of the make rules used to build.
@@ -68,7 +86,7 @@ endif
 
 DMannPythia8LHE : DMannPythia8LHE.cc $(PREFIX_LIB)/libpythia8.a
 ifeq ($(ROOT_USE),true)
-	$(CXX) $< -o $@ -w -I$(ROOT_INCLUDE) $(CXX_COMMON)\
+	$(CXX) $< -o $@ -w -I$(ROOT_INCLUDE) $(CXX_COMMON) $(GZIP_INC) $(GZIP_FLAGS)\
 	 `$(ROOTBIN)root-config --cflags`\
 	 -Wl,-rpath,$(ROOT_LIB) `$(ROOT_BIN)root-config --glibs`
 else

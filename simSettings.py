@@ -7,15 +7,15 @@ The list of annihilationchannels to simulate. Channels must be from following li
 WLWL, WTWT, ZLZL, ZTZT, hh, taLtaL, taRtaR, muLmuL, muRmuR, ee, tLtL, tRtR, bb, cc, ss, uu, dd
 Note: if only using one channel, it must be given in the format ANN_CHANNELS=(ann_ch,).
 """
-ANN_CHANNELS=("uu", "dd", "cc", "ss")#,"tLtL", "tRtR", "bb", 
-#              "taLtaL", "taRtaR", "muLmuL", "muRmuR", "ee", 
-#              "WLWL", "WTWT", "ZLZL", "ZTZT", "hh"  )
-#ANN_CHANNELS=("uu",)
+#ANN_CHANNELS=("WLWL", "WTWT", "ZLZL", "ZTZT", "hh",
+#	           "taLtaL", "taRtaR", "muLmuL", "muRmuR", "ee", 
+#	           "uu", "dd", "cc", "ss","tLtL", "tRtR", "bb")
+ANN_CHANNELS=("WLWL","WTWT","tRtR")
 
 """
 The number of annihilations. If below 100k, can be anything. If above 100k, must be multiple of 100k.
 """
-N_ANN=10
+N_ANN=10000000
 
 """
 The WIMP masses to use. Note: if only using one mass, it must be given in the format WIMP_MASSES=(mX,).
@@ -29,22 +29,31 @@ WIMP_MASSES=(10,100,1000,10000)
 """
 The MadGraph installation directory
 """
-MG_DIR="/Volumes/GoldDrive/MG5_aMC_v2_6_5_DMann/"
+MG_DIR="/data1/cniblaeus/MG5_aMC_v2_6_5_DMann_run190318/"#
+#MG_DIR="/data1/cniblaeus/MG5_aMC_v2_6_5_DMann_run190308/"
 
 """
-The run tag, appended to the directory names for all the runs (the directories with LHEF)
+The run tag, appended to the directory names for all the runs (the directories with LHEF). Don't use underscores in the run tag!
 """
-RUN_TAG="190308_test"
+RUN_TAG="190318_failed190308runs"
+#RUN_TAG="190308"
 
 """
 The directory to put Pythia and Herwig files in
 """
 #DMANN_OUTDIR="~/DMann/res_"+RUN_TAG
-DMANN_OUTDIR="/Volumes/GoldDrive/DMann/res_"+RUN_TAG
+DMANN_OUTDIR="/data1/cniblaeus/DMann/res_"+RUN_TAG
 
 """
-The number of cores to use for each MG run (don't use to many, this can cause errors) and the number of parallell MG runs to do.
+Whether to gzip Pythia/Herwig event files (saves space)
+"""
+GZIP_EVTFILE=True
+
+"""
+The number of cores to use for each MG run (don't use to many, this can cause errors), the number of parallell MG runs to do and seed to use.
 """
 import multiprocessing as mp
-MG_CORES=2
+MG_CORES=1
 MG_PAR=mp.cpu_count() #number of cpu cores
+MG_RNDM_SEED=False #if true, set seed randomly for each run, otherwise use default or if not None, use MG_SEED
+MG_SEED=1 #ignored if MG_RNDM_SEED==True

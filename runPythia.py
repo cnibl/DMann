@@ -27,29 +27,17 @@ def get_abspath(path):
    else:
       return os.path.abspath(path)
    
-def run_pythia(lhef,outDir,nAnn,annCh,sun=False):
+def run_pythia(lhef,outDir,nAnn,annCh,suffix=None,sun=False):
    """
    Runs pythia on the provided LHE file and places output in outDir
    Input: lhef - path to the LHE file with events
           outDir - directory to put results for this run in
           nAnn - number of events in file
           annCh - annihilation channel (string)
+          suffix - a suffix that gives the number of the run when separating runs in 100k at a time
           sun - whether to set up Pythia for annihilations in the Sun (default is halo)
    """
-   
-   with open(lhef,"r") as f:
-      for line in f:
-         if "Number of Events" in line:
-            entries=line.split()
-            try:
-               nAnn_file=int(entries[5])
-            except:
-               print "Warning: could not identify nAnn in LHEF, file may be faulty. Using nAnn provided."
-               nAnn_file=nAnn
-               break
-   if nAnn_file!=nAnn:
-      print "Warning: nAnn provided does not agree with that in LHEF, using nAnn from LHEF."
-      nAnn=nAnn_file
+
    absCmndPath=get_abspath(write_cmnd_file(nAnn,annCh,sun))
    absOutDir=get_abspath(outDir)
    absLHEF=get_abspath(lhef)
@@ -61,7 +49,7 @@ def run_pythia(lhef,outDir,nAnn,annCh,sun=False):
          scrDir=os.path.dirname(get_abspath(sys.argv[0]))
          os.chdir(os.path.join(scrDir,"Pythia")) 
 
-      print "Starting %s, m = %-s... " % (annCh,mX)
+      print "Starting %s, m_WIMP = %-s, run %s ... " % (annCh,mX,str(int(suffix[1:])+1))
       start=time.time()
       p=subprocess.Popen(["./DMannPythia8LHE",absCmndPath,absLHEF,annCh,absOutDir],stdout=log,stderr=log)
       returnCode=p.wait()
@@ -83,11 +71,12 @@ def write_cmnd_file(nAnn,annCh,sun):
       f.write("# Set up for Pythia8 runs of DM annihilation in the halo.\n")
       f.write("\n")
       f.write("# 1) General settings for run, output etc.\n")
-      if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]:
-         f.write("Main:numberOfEvents = "+str(nAnn)+"        ! number of events to generate SYNC TO SIMSETTINGS.PY!\n")
-      else:
+      if nAnn < 100000:
+         f.write("Main:numberOfEvents = "+str(nAnn)+"        ! number of events to generate\n")
+         f.write("Main:timesAllowErrors = "+str(nAnn/10)+"       ! allow a few failures before quitting\n")
+      else:   
          f.write("Main:numberOfEvents = 100000        ! number of events to generate\n")
-      f.write("Main:timesAllowErrors = 10          ! allow a few failures before quitting\n")
+         f.write("Main:timesAllowErrors = 10000       ! allow a few failures before quitting\n")
       f.write("Init:showChangedSettings = on       ! list changed settings\n")
       f.write("Init:showChangedParticleData = off  ! list changed particle data\n")
       f.write("Next:numberCount = 10000            ! print message every n events\n")
@@ -116,17 +105,16 @@ def write_cmnd_file(nAnn,annCh,sun):
    
    return cmndFileName
    
-def mk_outdir(lhef):
+def mk_outdir(lhef,suffix=None):
    """
    Creates the output directory where Pythia output is placed by identifying the necessary parameters in the LHEF filename.
    Input: lhef - path to an LHEF file, should be constructed with the setupMG+runMG pipeline
    """
    absLHEF=get_abspath(lhef)
-   res=re.search(r"_(\w{2,6})_m\d+",absLHEF)
-   annch=res.groups()[0]
-   res=re.search(r"run_(.+)_m(\d+)",absLHEF)
+   res=re.search(r"DMann_([^_]*_failed[^_]*)_(\w{2,6})_m(\d+)",absLHEF) 
    runName=res.groups()[0]
-   mWIMP=res.groups()[1]
+   annch=res.groups()[1]
+   mWIMP=res.groups()[2]
    if len(annch)==0:
       print "Warning: could not find annihilation channel in LHEF path."
       annch="XX"
@@ -134,9 +122,8 @@ def mk_outdir(lhef):
       print "Warning: could not find run_tag in LHEF path."
       runName=""
    runDir=os.path.split(os.path.dirname(lhef))[-1]
-   outDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),"Pythia",annch+"_m"+str(mWIMP))
+   outDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),"Pythia_"+str(int(suffix[1:])+1),annch+"_m"+str(mWIMP))
    if not os.path.exists(outDir):
-      #os.makedirs(get_abspath(outDir))
       subprocess.call(["mkdir","-p",get_abspath(outDir)])
    return get_abspath(outDir) 
          
@@ -159,7 +146,8 @@ def get_annch(lhef):
    Input: lhef - path to an LHEF file, should be constructed with the setupMG+runMG pipeline
    """
    absLHEF=get_abspath(lhef)
-   res=re.search(r"_(\w{2,6})_m\d+",absLHEF)
+   #res=re.search(r"_(\w{2,6})_m\d+",absLHEF) # proper one
+   res=re.search(r"DMann_[^_]*_failed[^_]*_(\w{2,6})_m\d+",absLHEF) # proper one
    annch=res.groups()[0]
    if len(annch)==0:
       print "Warning: could not find annihilation channel in LHEF path."
@@ -173,7 +161,14 @@ def collect_result(res):
    """
    global results
    results.append(res)
-   
+
+def unzip(lhef):
+   """
+   unzips gzipped file, keeps gz file
+   """
+   print "Unzipping %s.gz ..." % lhef
+   subprocess.call(["gunzip","-k",get_abspath(lhef)+".gz"]) 
+   return
 
 # The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
@@ -189,35 +184,42 @@ if __name__=="__main__":
    Begin by setting up a list of all the LHE files to shower
    """
    LHEfiles=[]
-   for mx in sets.WIMP_MASSES:
-      for annCh in sets.ANN_CHANNELS:
-         if annThresholds[annCh] < mx:
-            if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]:
-               lhePath=os.path.join(get_abspath(sets.MG_DIR),
-                                 "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
-                                 "run_"+sets.RUN_TAG+"_m"+str(mx),
-                                 "unweighted_events.lhe")
-               LHEfiles.append(lhePath)
-            else:
-               if sets.N_ANN < 100000:
-                  suffix=[]
-               else:
-                  suffix=[]
-                  for i in range(sets.N_ANN/100000):
-                     suffix.append("_"+str(i))
-               for s in suffix:
+   LHEsuffixes={}
+   """
+   If >100k events, run 100k events at a time and put in folders Pythia_1, Pythia_2 etc. (with events normalised with 100k events in each folder, all folders are statistically independent)
+   """
+   if sets.N_ANN < 100000:
+      suffix=[]
+   else:
+      suffix=[]
+      for i in range(sets.N_ANN/100000):
+         suffix.append("_"+str(i))
+   for s in suffix:
+      for mx in sets.WIMP_MASSES:
+         for annCh in sets.ANN_CHANNELS:
+            if annThresholds[annCh] < mx:
+               if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]: #all except MadSpin runs
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
                                  "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
-                                 "run_"+sets.RUN_TAG+"_m"+str(mx)+s+"_decayed_1",
-                                 "unweighted_events.lhe")
+                                 "run_"+sets.RUN_TAG+s,
+                                 "unweighted_events.lhe.gz")
                   LHEfiles.append(lhePath)
-   
+                  LHEsuffixes[lhePath]=s
+               else: #MadSpin runs              
+                  lhePath=os.path.join(get_abspath(sets.MG_DIR),
+                                 "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
+                                 "run_"+sets.RUN_TAG+s+"_decayed_1",
+                                 "unweighted_events.lhe.gz")
+                  LHEfiles.append(lhePath)
+                  LHEsuffixes[lhePath]=s
+
    """
    Run DMannPythia8LHE on all LHEF in parallell               
    """
+   
    results=[]
    nCur=mp.Value('i',0) #integer shared between processes to count current run, initialised at 0
-   totalRuns=len(sets.WIMP_MASSES)*len(sets.ANN_CHANNELS)   
+   totalRuns=len(LHEfiles)   
    pool=mp.Pool(processes=mp.cpu_count()) #processes defaults to #cpus
    print "Starting Pythia8 runs ..."
    allstart=time.time()
@@ -226,14 +228,17 @@ if __name__=="__main__":
       if os.path.exists(absLHEpath+".gz")==False and os.path.exists(absLHEpath)==False:
          print "Warning: LHEF (or .gz) does not exist. Skipping."
          continue
-      if not os.path.exists(absLHEpath):
-         subprocess.call(["gunzip","-k",absLHEpath+".gz"])
-      outDir=mk_outdir(absLHEpath)
-      nAnn=get_nAnn(absLHEpath)
+      suffix=LHEsuffixes[lhef]
+      outDir=mk_outdir(absLHEpath,suffix)
+      if sets.N_ANN < 100000:
+         nAnn=sets.N_ANN
+      else:
+         nAnn=100000
       annCh=get_annch(absLHEpath)  
-      pool.apply_async(run_pythia,args=(absLHEpath,outDir,nAnn,annCh),callback=collect_result) # run run_pythia for #cpu processes in parallel until LHEF list exhausted
+      pool.apply_async(run_pythia,args=(absLHEpath,outDir,nAnn,annCh,suffix),callback=collect_result) # run run_pythia for #cpu processes in parallel until LHEF list exhausted
    pool.close()
    pool.join()
+
    end=time.time()
    print "===================================================================================================="
    print "Done! Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
@@ -244,3 +249,17 @@ if __name__=="__main__":
    for res in results:
       print "%s\t\t%i\t%15.1f" % ("MG_DIR/"+os.path.relpath(res[0],start=get_abspath(sets.MG_DIR)),res[1],res[2])
    
+   if sets.GZIP_EVTFILE==True:
+      print "Now gzipping event files ... "
+      zipstart=time.time()
+      for s in suffix:
+         for annCh in sets.ANN_CHANNELS:
+            for mX in sets.WIMP_MASSES:
+               if annThresholds[mX] < mX:
+                  eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia_"+str(int(s[1:])+1),
+                            annCh+"_m"+str(mx),"da-pyt8-mx"+str(mx)+"-"+annCh+"-events.dat")
+                  subprocess.call(["gzip",get_abspath(eventFile)])
+      zipend=time.time()
+      print "Done gzipping. Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
+                                                             int(math.floor((zipend-zipstart)/60)%60),
+                                                             int((zipend-zipstart)%60))      

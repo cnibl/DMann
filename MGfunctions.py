@@ -351,3 +351,35 @@ def reset_cuts():
       f.write(newcard_content)
    
    return    
+
+
+def set_seed(inputSeed=None,rndmSeed=False):
+   """
+   Reads in the old run_card and sets the seed to a random integer in a new run_card, written to the Cards directory. Assumes that it operates in a subfolder corresponding to some annihilation channel in the MG install directory.
+   
+   """
+
+   import random
+   oldcard_path=os.path.abspath(os.path.join("Cards","run_card.dat"))
+   try:
+      with open(oldcard_path,"r") as f:
+         oldcard_content=f.read()
+   except IOError:
+      oldcard_path=os.path.abspath(os.path.join("Cards","run_card_default.dat"))
+      with open(oldcard_path,"r") as f:
+         oldcard_content=f.read()
+   newcard_content=oldcard_content
+   
+   if rndmSeed==True:
+      seed=random.randint(1,100000)
+   elif seed!=None:
+      seed=inputSeed
+   else: #if no inputSeed or rndmSeed==False, don't do anything
+      return 
+   newcard_content = re.sub(r".*= iseed ","".join( ("  ",str(seed)," = iseed ") ),newcard_content)  
+   
+   # Write new card content to file
+   with open(os.path.abspath(os.path.join("Cards","run_card.dat")),"w") as f:
+      f.write(newcard_content)
+   
+   return    

@@ -57,6 +57,10 @@ def run_MG(annCh,mWimp,runTag,nAnn,nCores):
    mgf.set_couplings(annCh) 
    mgf.set_wimp_mass(mWimp)
    mgf.set_beam_particles()
+   if sets.MG_RNDM_SEED==True:
+      mgf.set_seed(rndmSeed==True)
+   elif sets.MG_SEED!=None:
+      mgf.set_seed(sets.MG_SEED,rndmSeed==False)
    mgf.reset_cuts()
    if annCh in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
       mgf.set_madspin_card(annCh) 
