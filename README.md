@@ -4,7 +4,7 @@ To run the DMann scripts, you will need:
  * Pythia8 for the Pythia part
  * Herwig7 for the Herwig part
  * ROOT
- * the DMann UFO model
+ * A MadGraph directory with the DMann UFO model in `models`
 
 # How to set up
 The file `simSettings.py` contains the settings for annihilation channels, WIMP masses, and other things that will be used by the other scripts. If you want to change what to run, do it in this file. 
