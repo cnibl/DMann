@@ -24,12 +24,12 @@ if not os.path.exists(absMGdir):
    sys.exit("ERROR: The MadGraph directory provided does not exist")
 
 
-def setup_MG(annCh,mX,runTag):
+def setup_MG(annCh,mX,runTag,madspin):
    """
    Go to MG directory and run mg5_aMC to create directories for all annihilation channels and WIMP masses
    """
    os.chdir(absMGdir)
-   fileName=mgf.write_MG_setupscript(annCh,mX,runTag)
+   fileName=mgf.write_MG_setupscript(annCh,mX,runTag,madspin)
    print "Setting up %s, mX = %-5.0f..." % (annCh,mX)
    with open("".join(("log_DMann/DMann_setupMG_",runTag,"_",annCh,"_m",str(mX),".log")),"w") as log:
       proc=subprocess.Popen(["./bin/mg5_aMC",fileName],stdout=log,stderr=log)
@@ -55,7 +55,7 @@ if __name__=="__main__":
       os.makedirs(os.path.join(absMGdir,"log_DMann"))
    for annCh in sets.ANN_CHANNELS:
       for mX in sets.WIMP_MASSES:
-         pool.apply_async(setup_MG,args=(annCh,mX,sets.RUN_TAG),callback=collect_result)
+         pool.apply_async(setup_MG,args=(annCh,mX,sets.RUN_TAG,sets.MADSPIN),callback=collect_result)
          
    pool.close()
    pool.join()

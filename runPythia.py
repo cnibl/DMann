@@ -47,9 +47,11 @@ def run_pythia(lhef,outDir,nAnn,annCh,suffix=None,sun=False):
    with open(os.path.join(absOutDir,logname+".log"),"w") as log:
       if os.path.split(os.getcwd())[-1]!="Pythia":
          scrDir=os.path.dirname(get_abspath(sys.argv[0]))
-         os.chdir(os.path.join(scrDir,"Pythia")) 
-
-      print "Starting %s, m_WIMP = %-s, run %s ... " % (annCh,mX,str(int(suffix[1:])+1))
+         os.chdir(os.path.join(scrDir,"Pythia"))       
+      if len(suffix)>0:
+         print "Starting %s, m_WIMP = %-s, run %s ... " % (annCh,mX,str(int(suffix[1:])+1))
+      else:
+         print "Starting %s, m_WIMP = %-s ... " % (annCh,mX)
       start=time.time()
       p=subprocess.Popen(["./DMannPythia8LHE",absCmndPath,absLHEF,annCh,absOutDir],stdout=log,stderr=log)
       returnCode=p.wait()
@@ -80,6 +82,16 @@ def write_cmnd_file(nAnn,annCh,sun):
       f.write("Init:showChangedSettings = on       ! list changed settings\n")
       f.write("Init:showChangedParticleData = off  ! list changed particle data\n")
       f.write("Next:numberCount = 10000            ! print message every n events\n")
+      """
+      # Tolerated energy/mom mismatch before errors/warnings occur:
+      errTol=0.01
+      warnTol=0.1
+      f.write("Check:epTolErr = "+str(errTol)+"\n")
+      f.write("Check:epTolWarn = "+str(warnTol)+"\n")
+      f.write("Check:mTolErr = "+str(errTol)+"\n")
+      f.write("Check:mTolWarn = "+str(warnTol)+"\n")            
+      f.write("LesHouches:matchInOut = off") #off because MG messes things up with energy-mom in MadSpin decays
+      """
       f.write("\n")
       f.write("# 2) Incoming beam settings\n")
       f.write("LesHouches:idRenameBeams = 9000008\n")
@@ -109,9 +121,10 @@ def mk_outdir(lhef,suffix=None):
    """
    Creates the output directory where Pythia output is placed by identifying the necessary parameters in the LHEF filename.
    Input: lhef - path to an LHEF file, should be constructed with the setupMG+runMG pipeline
+          suffix - the suffix for this run of 100k events (if less than 100k events, should be "" (length zero))
    """
    absLHEF=get_abspath(lhef)
-   res=re.search(r"DMann_([^_]*_failed[^_]*)_(\w{2,6})_m(\d+)",absLHEF) 
+   res=re.search(r"DMann_([^_]*)_(\w{2,6})_m(\d+)",absLHEF) 
    runName=res.groups()[0]
    annch=res.groups()[1]
    mWIMP=res.groups()[2]
@@ -122,7 +135,11 @@ def mk_outdir(lhef,suffix=None):
       print "Warning: could not find run_tag in LHEF path."
       runName=""
    runDir=os.path.split(os.path.dirname(lhef))[-1]
-   outDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),"Pythia_"+str(int(suffix[1:])+1),annch+"_m"+str(mWIMP))
+   if len(suffix)==0:
+      pytDir="Pythia"
+   else:
+      pytDir="Pythia_"+str(int(suffix[1:])+1)
+   outDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),pytDir,annch+"_m"+str(mWIMP))
    if not os.path.exists(outDir):
       subprocess.call(["mkdir","-p",get_abspath(outDir)])
    return get_abspath(outDir) 
@@ -147,7 +164,7 @@ def get_annch(lhef):
    """
    absLHEF=get_abspath(lhef)
    #res=re.search(r"_(\w{2,6})_m\d+",absLHEF) # proper one
-   res=re.search(r"DMann_[^_]*_failed[^_]*_(\w{2,6})_m\d+",absLHEF) # proper one
+   res=re.search(r"DMann_[^_]*_(\w{2,6})_m\d+",absLHEF) # proper one
    annch=res.groups()[0]
    if len(annch)==0:
       print "Warning: could not find annihilation channel in LHEF path."
@@ -175,28 +192,18 @@ annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" 
                "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
                "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
 
-if __name__=="__main__":
+def setup_LHEF(suffixes,wimpMasses,annChannels,):
    """
-   Set up and run Pythia8 for all the combinations in simSettings, parallellised.
-   """
-   
-   """
-   Begin by setting up a list of all the LHE files to shower
+   Sets up a list of all the LHEF to process, along with the corresponding folder suffix for each file.
+   Input: suffixes - a list of suffixes in the form "_i" where i is an integer signifying which 100k events that are simulated, suffixes is just [""] for less than 100k events
+          wimpMasses - a list of WIMP masses to consider
+          annChannels - a list of annihilation channels to consider
    """
    LHEfiles=[]
    LHEsuffixes={}
-   """
-   If >100k events, run 100k events at a time and put in folders Pythia_1, Pythia_2 etc. (with events normalised with 100k events in each folder, all folders are statistically independent)
-   """
-   if sets.N_ANN < 100000:
-      suffix=[]
-   else:
-      suffix=[]
-      for i in range(sets.N_ANN/100000):
-         suffix.append("_"+str(i))
-   for s in suffix:
-      for mx in sets.WIMP_MASSES:
-         for annCh in sets.ANN_CHANNELS:
+   for s in suffixes:
+      for mx in wimpMasses:
+         for annCh in annChannels:
             if annThresholds[annCh] < mx:
                if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]: #all except MadSpin runs
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
@@ -212,7 +219,29 @@ if __name__=="__main__":
                                  "unweighted_events.lhe.gz")
                   LHEfiles.append(lhePath)
                   LHEsuffixes[lhePath]=s
+   return LHEfiles,LHEsuffixes
+   
 
+if __name__=="__main__":
+   """
+   Set up and run Pythia8 for all the combinations in simSettings, parallellised.
+   """
+   
+
+   """
+   If >100k events, run 100k events at a time and put in folders Pythia+suffix (Pythia_1, Pythia_2 etc.), suffixes is a list with elements "_i" where i runs from 0 to nAnn/100000 
+   """
+   if sets.N_ANN < 100000:
+      suffix=[""]
+   else:
+      suffix=[]
+      for i in range(sets.N_ANN/100000):
+         suffix.append("_"+str(i))
+   """
+   Begin by setting up a list of all the LHE files to shower
+   """
+   (LHEfiles,LHEsuffixes)=setup_LHEF(suffix,wimpMasses=sets.WIMP_MASSES,annChannels=sets.ANN_CHANNELS)
+   
    """
    Run DMannPythia8LHE on all LHEF in parallell               
    """
@@ -249,17 +278,28 @@ if __name__=="__main__":
    for res in results:
       print "%s\t\t%i\t%15.1f" % ("MG_DIR/"+os.path.relpath(res[0],start=get_abspath(sets.MG_DIR)),res[1],res[2])
    
+   """
+   gzip all the event files created to save space   
+   """
    if sets.GZIP_EVTFILE==True:
       print "Now gzipping event files ... "
       zipstart=time.time()
-      for s in suffix:
+      if sets.N_ANN > 100000:
+         suffixes=["_"+str(i) for i in range(1,sets.N_ANN/100000+1)]
+      else:
+         suffixes=[""]
+      for s in suffixes:
          for annCh in sets.ANN_CHANNELS:
             for mX in sets.WIMP_MASSES:
-               if annThresholds[mX] < mX:
-                  eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia_"+str(int(s[1:])+1),
-                            annCh+"_m"+str(mx),"da-pyt8-mx"+str(mx)+"-"+annCh+"-events.dat")
-                  subprocess.call(["gzip",get_abspath(eventFile)])
+               if annThresholds[annCh] < mX:
+                  if len(s)>0:
+                     eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia_"+str(int(s[1:])+1),
+                            annCh+"_m"+str(mX),"da-pyt8-mx"+str(mX)+"-"+annCh+"-events.dat")
+                  else:
+                     eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia",
+                            annCh+"_m"+str(mX),"da-pyt8-mx"+str(mX)+"-"+annCh+"-events.dat")
+                  subprocess.call(["gzip","-f",get_abspath(eventFile)])
       zipend=time.time()
-      print "Done gzipping. Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
+      print "Done gzipping. Took %i h, %i min, %i s" % (int(math.floor(math.floor((zipend-zipstart)/60)/60)),
                                                              int(math.floor((zipend-zipstart)/60)%60),
                                                              int((zipend-zipstart)%60))      

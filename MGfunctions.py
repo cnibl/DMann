@@ -6,15 +6,30 @@ import sys
 import re
 import subprocess
 
-def annch_to_MGFinState(annch):
+# The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
+annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
+               "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
+               "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
+               
+               
+def annch_to_MGFinState(annch,madspin):
    if annch in ["WLWL","WTWT"]:
-      return "w+ w-"
+      if madspin==True:
+         return "w+ w-"
+      else:
+         return "w+ w-, w+ > allsm allsm, w- > allsm all"
    elif annch in ["ZLZL","ZTZT"]:
-      return "z z"
+      if madspin==True:
+         return "z z"
+      else:
+         return "z z, z > allsm all"
    elif annch=="hh":
       return "h h"
    elif annch in ["tLtL","tRtR"]:
-      return "t t~"
+      if madspin==True:
+         return "t t~"
+      else:
+         return "t t~, (t > allsm allsm, w+ > allsm all), (t~ > allsm allsm, w- > allsm all)"
    elif annch in ["taLtaL","taRtaR"]:
       return "ta+ ta-"
    elif annch in ["muLmuL","muRmuR"]:
@@ -34,7 +49,7 @@ def annch_to_MGFinState(annch):
    else:
       sys.exit("ERROR: unknown annihilation channel provided")
       
-def write_MG_setupscript(annch,mx,runTag):
+def write_MG_setupscript(annch,mx,runTag,madspin):
    """
    Writes the MadGraph commands for generating the folder corresponding to ann. channel annch and wimp mass mx into a text file.
    """
@@ -42,24 +57,31 @@ def write_MG_setupscript(annch,mx,runTag):
    fileName="".join(("log_DMann/DMann_setupMG_",runTag,"_",annch,"_m",str(mx),".txt"))
    with open(fileName,"w") as f:
       f.write("import model DMann\n")
-      f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch)+"\n")
+      if annch not in ["tRtR","tLtL","tRtL","tLtR"]:
+         f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~\n")
+      else:
+         f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~ w+ w- z h\n")
+      f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch,madspin)+"\n")
       f.write("output "+folderName+"\n")
       f.write("y")
    return fileName
    
-def write_MG_runscript(annch,nAnn,runTag,mwimp,ncores):
+def write_MG_runscript(annch,nAnn,runTag,mwimp,ncores,madspin):
    """
    Writes the MadGraph commands for running n_ann annihilations for input annch.
    """
    fileName="".join(("DMann_runMG_",annch,".txt"))
    with open(fileName,"w") as f:
       if nAnn < 100000:
-         f.write("launch run_"+runTag+"_m"+str(mwimp)+"\n")
+         f.write("launch run_"+runTag+"\n")
       else:
          f.write("multi_run "+str(nAnn/100000)+" run_"+runTag+" --multicore --nb_core="+str(ncores)+" \n")
       f.write("analysis=OFF\n")
-      if annch in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
+      print madspin
+      if madspin==True and annch in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
          f.write("madspin=ON\n")
+      else:
+         f.write("madspin=OFF\n")         
    return fileName  
    
 def set_beam_particles():
@@ -267,7 +289,7 @@ def set_madspin_card(annch):
    if annch in ["tLtL","tRtR"]:
       newcard_content = re.sub(r"\n#+decay t",r"\ndecay t",newcard_content) 
       newcard_content = re.sub(r"\n#+decay t~",r"\ndecay t~",newcard_content) 
-   
+
    # Write new card content to file
    with open(os.path.abspath(os.path.join("Cards","madspin_card.dat")),"w") as f:
       f.write(newcard_content)
@@ -371,8 +393,8 @@ def set_seed(inputSeed=None,rndmSeed=False):
    newcard_content=oldcard_content
    
    if rndmSeed==True:
-      seed=random.randint(1,100000)
-   elif seed!=None:
+      seed=random.randint(1,1000000)
+   elif inputSeed!=None:
       seed=inputSeed
    else: #if no inputSeed or rndmSeed==False, don't do anything
       return 

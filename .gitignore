@@ -24,3 +24,8 @@ tmp*
 
 # other stuff
 *.pyc
+*.log
+
+# Pythia cmnd files
+*.cmnd
+Pythia/*.cmnd

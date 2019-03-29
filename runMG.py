@@ -37,7 +37,7 @@ annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" 
                "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
                "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
 
-def run_MG(annCh,mWimp,runTag,nAnn,nCores):
+def run_MG(annCh,mWimp,runTag,nAnn,nCores,madspin):
    """
    Runs MadGraph for given input
    Input: annCh - the annihilation channel 
@@ -58,13 +58,13 @@ def run_MG(annCh,mWimp,runTag,nAnn,nCores):
    mgf.set_wimp_mass(mWimp)
    mgf.set_beam_particles()
    if sets.MG_RNDM_SEED==True:
-      mgf.set_seed(rndmSeed==True)
+      mgf.set_seed(inputSeed=None,rndmSeed=True)
    elif sets.MG_SEED!=None:
-      mgf.set_seed(sets.MG_SEED,rndmSeed==False)
+      mgf.set_seed(inputSeed=sets.MG_SEED,rndmSeed=False)
    mgf.reset_cuts()
    if annCh in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
       mgf.set_madspin_card(annCh) 
-   fileName=mgf.write_MG_runscript(annCh,nAnn,runTag,mWimp,nCores)
+   fileName=mgf.write_MG_runscript(annCh,nAnn,runTag,mWimp,nCores,madspin)
    print "Starting MadGraph run for %s, m_WIMP = %5.1f" % (annCh,mWimp)
    logFile=os.path.join(absMGdir,"log_DMann","DMann_runMG_"+sets.RUN_TAG+"_"+annCh+"_m"+str(int(mWimp))+".log")
    with open(logFile,"w") as log:
@@ -99,10 +99,10 @@ if __name__=="__main__":
       os.makedirs(os.path.join(absMGdir,"log_DMann"))
    for annCh in sets.ANN_CHANNELS:
       for mwimp in sets.WIMP_MASSES:
-         if annThresholds[annCh] > mwimp:
+         if mgf.annThresholds[annCh] > mwimp:
             print "Note: m_WIMP = %5.3f GeV too small for annihilation channel %s, skipping" % (mwimp,annCh)
             continue # skip to next mwimp value
-         pool.apply_async(run_MG,args=(annCh,mwimp,sets.RUN_TAG,sets.N_ANN,sets.MG_CORES),callback=collect_result)
+         pool.apply_async(run_MG,args=(annCh,mwimp,sets.RUN_TAG,sets.N_ANN,sets.MG_CORES,sets.MADSPIN),callback=collect_result)
    
    pool.close()
    pool.join()
