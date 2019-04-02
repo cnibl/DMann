@@ -284,7 +284,7 @@ if __name__=="__main__":
    if sets.GZIP_EVTFILE==True:
       print "Now gzipping event files ... "
       zipstart=time.time()
-      if sets.N_ANN > 100000:
+      if sets.N_ANN >= 100000:
          suffixes=["_"+str(i) for i in range(1,sets.N_ANN/100000+1)]
       else:
          suffixes=[""]
@@ -293,7 +293,7 @@ if __name__=="__main__":
             for mX in sets.WIMP_MASSES:
                if annThresholds[annCh] < mX:
                   if len(s)>0:
-                     eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia_"+str(int(s[1:])+1),
+                     eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia_"+s,
                             annCh+"_m"+str(mX),"da-pyt8-mx"+str(mX)+"-"+annCh+"-events.dat")
                   else:
                      eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia",
