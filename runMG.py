@@ -32,10 +32,6 @@ for ann in sets.ANN_CHANNELS:
       if not os.path.exists(os.path.join(absMGdir,"DMann_"+sets.RUN_TAG+"_"+ann+"_m"+str(mX))):
          sys.exit("ERROR: No folder exists for %s, run setupMG.py" % ann)
       
-# The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
-annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
-               "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
-               "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
 
 def run_MG(annCh,mWimp,runTag,nAnn,nCores,madspin):
    """

@@ -8,7 +8,7 @@ import subprocess
 
 # The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
-               "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
+               "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
                "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
                
                
@@ -25,14 +25,14 @@ def annch_to_MGFinState(annch,madspin):
          return "z z, z > allsm all"
    elif annch=="hh":
       return "h h"
-   elif annch in ["tLtL","tRtR"]:
+   elif annch in ["tLtL","tRtR","tLtR","tRtL"]:
       if madspin==True:
          return "t t~"
       else:
          return "t t~, (t > allsm allsm, w+ > allsm all), (t~ > allsm allsm, w- > allsm all)"
-   elif annch in ["taLtaL","taRtaR"]:
+   elif annch in ["taLtaL","taRtaR","taLtaR","taRtaL"]:
       return "ta+ ta-"
-   elif annch in ["muLmuL","muRmuR"]:
+   elif annch in ["muLmuL","muRmuR","muLmuR","muRmuL"]:
       return "mu+ mu-, mu+ > e+ ve vm~, mu- > e- ve~ vm"
    elif annch=="ee":
       return "e+ e-"
@@ -61,7 +61,10 @@ def write_MG_setupscript(annch,mx,runTag,madspin):
          f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~\n")
       else:
          f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~ w+ w- z h\n")
-      f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch,madspin)+"\n")
+      if annch not in ["taLtaR","taRtaL","tRtL","tLtR",,"muRmuL","muLmuR"]:
+         f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch,madspin)+"\n")
+      else:
+         f.write("generate xd xd~ > y1 > "+annch_to_MGFinState(annch,madspin)+"\n")
       f.write("output "+folderName+"\n")
       f.write("y")
    return fileName
@@ -77,8 +80,7 @@ def write_MG_runscript(annch,nAnn,runTag,mwimp,ncores,madspin):
       else:
          f.write("multi_run "+str(nAnn/100000)+" run_"+runTag+" --multicore --nb_core="+str(ncores)+" \n")
       f.write("analysis=OFF\n")
-      print madspin
-      if madspin==True and annch in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR"]:
+      if madspin==True and annch in ["WLWL","WTWT","ZLZL","ZTZT","tLtL","tRtR","tLtR","tRtL"]:
          f.write("madspin=ON\n")
       else:
          f.write("madspin=OFF\n")         
@@ -101,10 +103,12 @@ def set_beam_particles():
    
    # Set coupling between incoming beams and resonance
    searchExpr=r"(\D*\d{1,2}) \d+\.?\d*[eE]?\+?\d{1,2}"  # the part before the coupling name
-   newcard_content = re.sub(searchExpr+r" # gSXr",r"\1 1.000000e+00 # gSXr",newcard_content) # must be non-zero for collisions
+   newcard_content = re.sub(searchExpr+r" # gSXr",r"\1 1.000000e+00 # gSXr",newcard_content) # must be non-zero for y0 collisions
+   newcard_content = re.sub(searchExpr+r" # gAXd",r"\1 1.000000e+00 # gAXd",newcard_content) # must be non-zero for y1 collisions
    
    # Set incoming beams to be massless
    newcard_content = re.sub(r"9000008.+# MXr",r"9000008 0.0 # MXr",newcard_content) 
+   newcard_content = re.sub(r"9000010.+# MXd",r"9000010 0.0 # MXd",newcard_content) 
 
    # Write new card content to file
    with open(os.path.abspath(os.path.join("Cards","param_card.dat")),"w") as f:
@@ -142,27 +146,45 @@ def set_couplings(annch):
       newcard_content = re.sub(searchExpr+r" # gSh1",r"\1 1.000000e+00 # gSh1",newcard_content) 
       newcard_content = re.sub(searchExpr+r" # gSh2",r"\1 1.000000e+00 # gSh2",newcard_content)
    # Leptons
-   if annch in ["taLtaL","taRtaR"]:
+   if annch in ["taLtaL","taRtaR"]: #scalar
       newcard_content = re.sub(searchExpr+r" # gSta",r"\1 1.000000e+00 # gSta",newcard_content) 
       if annch=="taLtaL":
          newcard_content = re.sub(searchExpr+r" # gPta",r"\1 -1.000000e+00 # gPta",newcard_content)
       elif annch=="taRtaR":
          newcard_content = re.sub(searchExpr+r" # gPta",r"\1 1.000000e+00 # gPta",newcard_content)   
-   if annch in ["muLmuL","muRmuR"]:
+   if annch in ["taLtaR","taRtaL"]: #vector
+      newcard_content = re.sub(searchExpr+r" # gVta",r"\1 1.000000e+00 # gVta",newcard_content) 
+      if annch=="taLtaR":
+         newcard_content = re.sub(searchExpr+r" # gAta",r"\1 -1.000000e+00 # gAta",newcard_content)
+      elif annch=="taRtaL":
+         newcard_content = re.sub(searchExpr+r" # gAta",r"\1 1.000000e+00 # gAta",newcard_content)   
+   if annch in ["muLmuL","muRmuR"]: # scalar
       newcard_content = re.sub(searchExpr+r" # gSmm",r"\1 1.000000e+00 # gSmm",newcard_content) 
       if annch=="muLmuL":
          newcard_content = re.sub(searchExpr+r" # gPmm",r"\1 -1.000000e+00 # gPmm",newcard_content)
       elif annch=="muRmuR":
          newcard_content = re.sub(searchExpr+r" # gPmm",r"\1 1.000000e+00 # gPmm",newcard_content)       
+   if annch in ["muLmuR","muRmuL"]: # vector
+      newcard_content = re.sub(searchExpr+r" # gVmm",r"\1 1.000000e+00 # gVmm",newcard_content) 
+      if annch=="muLmuL":
+         newcard_content = re.sub(searchExpr+r" # gAmm",r"\1 -1.000000e+00 # gAmm",newcard_content)
+      elif annch=="muRmuR":
+         newcard_content = re.sub(searchExpr+r" # gAmm",r"\1 1.000000e+00 # gAmm",newcard_content)
    if annch=="ee":
       newcard_content = re.sub(searchExpr+r" # gSe",r"\1 1.000000e+00 # gSe",newcard_content) 
    # Quarks
-   if annch in ["tLtL","tRtR"]:
+   if annch in ["tLtL","tRtR"]: # scalar
       newcard_content = re.sub(searchExpr+r" # gSu33",r"\1 1.000000e+00 # gSu33",newcard_content) 
       if annch=="tLtL":
          newcard_content = re.sub(searchExpr+r" # gPu33",r"\1 -1.000000e+00 # gPu33",newcard_content)
       elif annch=="tRtR":
          newcard_content = re.sub(searchExpr+r" # gPu33",r"\1 1.000000e+00 # gPu33",newcard_content)  
+   if annch in ["tLtR","tRtL"]: # vector
+      newcard_content = re.sub(searchExpr+r" # gVu33",r"\1 1.000000e+00 # gVu33",newcard_content) 
+      if annch=="tLtL":
+         newcard_content = re.sub(searchExpr+r" # gAu33",r"\1 -1.000000e+00 # gAu33",newcard_content)
+      elif annch=="tRtR":
+         newcard_content = re.sub(searchExpr+r" # gAu33",r"\1 1.000000e+00 # gAu33",newcard_content)  
    if annch=="bb":
       newcard_content = re.sub(searchExpr+r" # gSd33",r"\1 1.000000e+00 # gSd33",newcard_content) 
    if annch=="cc":
@@ -200,6 +222,7 @@ def set_wimp_mass(mwimp):
       if cardType=="param":
          #newcard_content = re.sub(r"\n\s*(\d+).+#\s*MD0",r"\n  \1 "+str(2*mwimp)+"  # MD0",newcard_content) # set mediator mass
          newcard_content = re.sub(r"9000006.+# MD0",r"9000006 "+str(2*mwimp)+" # MD0",newcard_content) # set mediator mass
+         newcard_content = re.sub(r"9000007.+# MD1",r"9000007 "+str(2*mwimp)+" # MD1",newcard_content) # set mediator mass
       if cardType=="run":
 	      newcard_content = re.sub(r"\n.+= ebeam1 ","".join(("\n  ",str(mwimp)," = ebeam1 ")),newcard_content)  # beam energy 1
 	      newcard_content = re.sub(r"\n.+= ebeam2 ","".join(("\n  ",str(mwimp)," = ebeam2 ")),newcard_content)  # beam energy 2

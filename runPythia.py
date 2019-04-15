@@ -14,6 +14,7 @@ import simSettings as sets
 import multiprocessing as mp
 import time
 import math
+import MGfunctions as mgf
 
 #if len(sys.argv)!=2:
 #   sys.exit("ERROR: correct usage is python runPythia.py LHEPATH where LHEPATH is a path to an LHEF.")
@@ -80,7 +81,7 @@ def write_cmnd_file(nAnn,annCh,sun):
          f.write("Main:numberOfEvents = 100000        ! number of events to generate\n")
          f.write("Main:timesAllowErrors = 10000       ! allow a few failures before quitting\n")
       f.write("Init:showChangedSettings = on       ! list changed settings\n")
-      f.write("Init:showChangedParticleData = off  ! list changed particle data\n")
+      f.write("Init:showChangedParticleData = on  ! list changed particle data\n")
       f.write("Next:numberCount = 10000            ! print message every n events\n")
       """
       # Tolerated energy/mom mismatch before errors/warnings occur:
@@ -94,11 +95,15 @@ def write_cmnd_file(nAnn,annCh,sun):
       """
       f.write("\n")
       f.write("# 2) Incoming beam settings\n")
-      f.write("LesHouches:idRenameBeams = 9000008\n")
+      if annCh not in ("taLtaR","taRtaL"):
+         f.write("LesHouches:idRenameBeams = 9000008\n")
+      else:
+         f.write("LesHouches:idRenameBeams = 9000010\n")
       f.write("PartonLevel:ISR = off\n")
       f.write("PartonLevel:MPI = off\n")
       f.write("\n")
       f.write("# 3) Set stable particles to decay (note: different for Sun/halo)\n")
+      
       if not sun:
          f.write("13:mayDecay   = true                ! mu+-\n")
          f.write("211:mayDecay  = true                ! pi+-\n")
@@ -110,11 +115,14 @@ def write_cmnd_file(nAnn,annCh,sun):
          f.write("xxx:mayDecay  = false               ! pi0\n")
          f.write("xxx:mayDecay  = false               ! K0_S\n")
          f.write("321:mayDecay  = false               ! K+-\n")
-      f.write("\n")
-      if annCh in ["taLtaL","taRtaR"]:
+      
+      if annCh in ["taLtaL","taRtaR","taLtaR","taRtaL"]:
          f.write("# 4) Settings for tau decay, use SPINUP for external taus (not produced internally in Pythia)\n")
-         f.write("!TauDecays:externalMode = 0\n")
-   
+         f.write("TauDecays:externalMode = 0\n") #suggested as best by Philip Ilten
+         #f.write("TauDecays:mode=3\n")
+         #f.write("TauDecays:tauPolarization=1\n")     
+         #f.write("15:0:meMode = 1531\n") # sometimes needed for sophisticated tau decays 
+         
    return cmndFileName
    
 def mk_outdir(lhef,suffix=None):
@@ -187,11 +195,6 @@ def unzip(lhef):
    subprocess.call(["gunzip","-k",get_abspath(lhef)+".gz"]) 
    return
 
-# The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
-annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
-               "taLtaL" : 1.8, "taRtaR" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
-               "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
-
 def setup_LHEF(suffixes,wimpMasses,annChannels,):
    """
    Sets up a list of all the LHEF to process, along with the corresponding folder suffix for each file.
@@ -204,7 +207,7 @@ def setup_LHEF(suffixes,wimpMasses,annChannels,):
    for s in suffixes:
       for mx in wimpMasses:
          for annCh in annChannels:
-            if annThresholds[annCh] < mx:
+            if mgf.annThresholds[annCh] < mx:
                if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]: #all except MadSpin runs
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
                                  "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
@@ -255,7 +258,8 @@ if __name__=="__main__":
    for lhef in LHEfiles:
       absLHEpath=get_abspath(lhef)
       if os.path.exists(absLHEpath+".gz")==False and os.path.exists(absLHEpath)==False:
-         print "Warning: LHEF (or .gz) does not exist. Skipping."
+         print "Warning: LHEF does not exist. Skipping. File name:"
+         print absLHEpath
          continue
       suffix=LHEsuffixes[lhef]
       outDir=mk_outdir(absLHEpath,suffix)
@@ -269,7 +273,7 @@ if __name__=="__main__":
    pool.join()
 
    end=time.time()
-   print "===================================================================================================="
+   print "========================================================================================================================="
    print "Done! Took %i h, %i min, %i s" % (int(math.floor(math.floor((end-allstart)/60)/60)),
                                                              int(math.floor((end-allstart)/60)%60),
                                                              int((end-allstart)%60))      
@@ -291,14 +295,14 @@ if __name__=="__main__":
       for s in suffixes:
          for annCh in sets.ANN_CHANNELS:
             for mX in sets.WIMP_MASSES:
-               if annThresholds[annCh] < mX:
+               if mgf.annThresholds[annCh] < mX:
                   if len(s)>0:
-                     eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia_"+s,
+                     eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia"+s,
                             annCh+"_m"+str(mX),"da-pyt8-mx"+str(mX)+"-"+annCh+"-events.dat")
                   else:
                      eventFile=os.path.join(sets.DMANN_OUTDIR,"Pythia",
                             annCh+"_m"+str(mX),"da-pyt8-mx"+str(mX)+"-"+annCh+"-events.dat")
-                  subprocess.call(["gzip","-f",get_abspath(eventFile)])
+                  subprocess.call(["gzip","-f",get_abspath(eventFile)]) #overwrites any existing file
       zipend=time.time()
       print "Done gzipping. Took %i h, %i min, %i s" % (int(math.floor(math.floor((zipend-zipstart)/60)/60)),
                                                              int(math.floor((zipend-zipstart)/60)%60),

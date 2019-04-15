@@ -203,7 +203,7 @@ int main(int argc, char* argv[]) {
   }
   
   string eventFileName = outDir+"/da-pyt8-mx"+std::to_string((int)mX)+"-"+annCh+"-events.dat";
-  ofstream eventFile(eventFileName.c_str(),std::fstream::trunc);
+  ofstream eventFile(eventFileName.c_str(),std::fstream::out);
   time_t rawtime;
   time(&rawtime);
   eventFile << "# DMann Pythia8 event file with particles printed out" << endl;
