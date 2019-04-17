@@ -10,19 +10,19 @@ Note: if only using one channel, it must be given in the format ANN_CHANNELS=(an
 #ANN_CHANNELS=("WLWL", "WTWT", "ZLZL", "ZTZT", "hh", 
 #              "taLtaL", "taRtaR", "muLmuL", "muRmuR", "ee", 
 #              "uu", "dd", "cc", "ss","tLtL", "tRtR", "bb")
-ANN_CHANNELS=("ZLZL","ZTZT")
-#ANN_CHANNELS=("uu",)
+#ANN_CHANNELS=("taLtaR","taRtaL","WLWL","WTWT","ee")
+ANN_CHANNELS=("WLWL", "WTWT", "ZLZL", "ZTZT","taLtaR", "taRtaL","tLtR", "tRtL", "bb")
 
 """
 The number of annihilations. If below 100k, can be anything. If above 100k, must be multiple of 100k.
 """
 #N_ANN=10000
-N_ANN=1000
+N_ANN=100000
 
 """
 The WIMP masses to use. Note: if only using one mass, it must be given in the format WIMP_MASSES=(mX,).
 """
-WIMP_MASSES=(100,1000,10000)
+WIMP_MASSES=(10000,1000)
 #WIMP_MASSES=(100,)
 #WIMPMASSES=(3, 4, 5, 6, 8, 10, 15, 20, 25, 35, 
 #            50, 80.3, 91.2, 100, 150, 176, 200, 
@@ -32,17 +32,22 @@ WIMP_MASSES=(100,1000,10000)
 """
 The run tag, appended to the directory names for all the runs (the directories with LHEF). Cannot contain underscores.
 """
-RUN_TAG="190328-ZTEST"
+RUN_TAG="190415-QEDRadHan"
 
 """
 The MadGraph installation directory
 """
-MG_DIR="/Volumes/GoldDrive/MG5_aMC_v2_6_5_DMann_190328-Ztest"
+MG_DIR="~/MG5_aMC_v2_6_3_2/"
 
 """
 The directory to put Pythia and Herwig files in
 """
-DMANN_OUTDIR="/Volumes/GoldDrive/DMann/res_"+RUN_TAG
+DMANN_OUTDIR="/media/carlniblaeus/SimResults/DMann/res_"+RUN_TAG
+
+"""
+Whether to run for solar interior or not (if sun, some particles should not decay)
+"""
+SUN=False
 
 """
 Whether to gzip Pythia/Herwig event files (saves space)
@@ -66,3 +71,13 @@ MG_SEED=1 #ignored if MG_RNDM_SEED==True
 Whether to use MadSpin for decays of W, Z, t (otherwise decay chain syntax, which is significantly slower)
 """
 MADSPIN=False
+
+"""
+Whether to use EvtGen for B and D decays in Herwig
+"""
+HER_EVTGEN=False
+
+"""
+Whether to use a QED radiation handler in Herwig
+"""
+HER_QRH=True
