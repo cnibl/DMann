@@ -8,8 +8,8 @@ import subprocess
 
 # The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
-               "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "ee" : 5.2e-6, 
-               "tLtL" : 173., "tRtR" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
+               "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "muLmuR" : 0.11, "muRmuL" : 0.11, "ee" : 5.2e-6, 
+               "tLtL" : 173., "tRtR" : 173., "tLtR" : 173., "tRtL" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
                
                
 def annch_to_MGFinState(annch,madspin):
@@ -61,7 +61,7 @@ def write_MG_setupscript(annch,mx,runTag,madspin):
          f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~\n")
       else:
          f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~ w+ w- z h\n")
-      if annch not in ["taLtaR","taRtaL","tRtL","tLtR",,"muRmuL","muLmuR"]:
+      if annch not in ["taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR"]:
          f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch,madspin)+"\n")
       else:
          f.write("generate xd xd~ > y1 > "+annch_to_MGFinState(annch,madspin)+"\n")
