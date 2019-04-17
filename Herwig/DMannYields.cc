@@ -30,7 +30,9 @@ DMannYields::DMannYields() :
 _yieldpdg(0),
 _massdm(0.0),
 _annpdg(0),
-_annstate("")
+_annstate(""),
+_evtFile(true),
+_done(false)
 {}
 
 DMannYields::~DMannYields() {}
@@ -54,27 +56,40 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
   _annpdg = abs((*(outPtr[0])).id());
   //sub->printMe(cout); // print out hard process
 
-  string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
-  ofstream eventfile(eventfilename.c_str(),std::fstream::app);
-  long nEvtCur = generator()->currentEventNumber();
-  eventfile << "# Event " << nEvtCur << endl;
+  if (_evtFile==true) {
+    string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
+    ofstream eventfile(eventfilename.c_str(),std::fstream::app);
+    long nEvtCur = generator()->currentEventNumber();
+    eventfile << "# Event " << nEvtCur << endl;
+    eventfile.close();
+  }
   for(set<tcPPtr>::const_iterator it = particles.begin(); 
     it != particles.end(); ++it) {
     /** Check if particle id in list (i.e. (*it)->id()) equals any of yield particle IDs and fill histograms */
     for (std::vector<long>::const_iterator idPtr = _pdgvec.begin(); 
           idPtr != _pdgvec.end(); ++idPtr) {
       if ((*it)->id()==(*idPtr)) { 
+        //if (abs((*it)->id())==14) {
+        //  int parID = ((*it)->parents())[0]->id();
+        //  if (abs(parID)==23 || abs(parID)==24) {
+        //    ((*it)->parents())[0]->print(cout);
+        //  }
+        //}
         p = (*it)->momentum(); //the four-momentum
         _histogramslog[(*idPtr)].addWeighted( (p.e()-p.mass())/GeV, 1.0/(double)_nevt ); // Fill log histogram corresponding to yield ID, divided by number of events
         _histograms[(*idPtr)].addWeighted( (p.e()-p.mass())/GeV, 1.0/(double)_nevt ); // Fill histogram corresponding to yield ID, divided by number of events
         //_histogramsROOT[(*idPtr)]->Fill((p.e()-p.mass())/GeV);
-        eventfile << setw(10) << left <<(*it)->id() 
+        if (_evtFile==true) {
+          string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
+          ofstream eventfile(eventfilename.c_str(),std::fstream::app);
+          eventfile << setw(10) << left <<(*it)->id() 
                   << setw(15) << left << std::scientific << p.e()/GeV 
                   << setw(10) << left << ((*it)->parents())[0]->id() << endl;
+          eventfile.close();
+        }
       }
     }
   }
-  eventfile.close();
 }
 
 LorentzRotation DMannYields::transform(tcEventPtr event) const {
@@ -146,12 +161,16 @@ void DMannYields::dofinish() {
     //_histogramsROOT[(*idPtr)]->Write();
     //delete outFile;  
 
-    AnalysisHandler::dofinish();
     
-    string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
-    ofstream eventfile(eventfilename.c_str(),std::fstream::app);
-    eventfile << "#END" << endl;
-    eventfile.close();
+    if (_evtFile==true && _done==false) {
+      string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
+      ofstream eventfile(eventfilename.c_str(),std::fstream::app);
+      eventfile << "#END" << endl;
+      eventfile.close();
+      _done==true;
+    }
+
+    AnalysisHandler::dofinish();
 
   }
 }
@@ -173,21 +192,22 @@ void DMannYields::doinitrun() {
     //                        "multiplicity",
     //                        200, 0., _massdm);
     //_histogramsROOT.insert(make_pair((*idPtr), histoROOT)); 
-
-    string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
-    ofstream eventfile(eventfilename.c_str(),std::fstream::trunc);
-    time_t rawtime;
-    time(&rawtime);
-    eventfile << "# DMann Herwig7 event file with particles printed out" << endl;
-    eventfile << "# Created: " << ctime(&rawtime);
-    eventfile << "# Number of simulated events: " << std::to_string(_nevt) << endl;
-    eventfile << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV" << endl;
-    eventfile << "# Annihilation channel: " << _annstate << endl; 
-    eventfile << "# " << endl;
-    eventfile << setw(10) << left << "# PDG" 
-              << setw(15) << left << "E [GeV]" 
-              << setw(10) << left << "MotherPDG" << endl;
-    eventfile.close();
+    if (_evtFile==true) {
+      string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
+      ofstream eventfile(eventfilename.c_str(),std::fstream::trunc);
+      time_t rawtime;
+      time(&rawtime);
+      eventfile << "# DMann Herwig7 event file with particles printed out" << endl;
+      eventfile << "# Created: " << ctime(&rawtime);
+      eventfile << "# Number of simulated events: " << std::to_string(_nevt) << endl;
+      eventfile << "# WIMP mass: " << std::to_string((int)_massdm) << " GeV" << endl;
+      eventfile << "# Annihilation channel: " << _annstate << endl; 
+      eventfile << "# " << endl;
+      eventfile << setw(10) << left << "# PDG" 
+                << setw(15) << left << "E [GeV]" 
+                << setw(10) << left << "MotherPDG" << endl;
+      eventfile.close();
+    }
   }
 }
 
