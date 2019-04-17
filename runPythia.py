@@ -111,10 +111,11 @@ def write_cmnd_file(nAnn,annCh,sun):
          f.write("130:mayDecay  = true                ! K0_L\n")
          f.write("2112:mayDecay = true                ! n\n")
       else:
-         f.write("13:mayDecay   = false               ! mu+-\n")         
-         f.write("xxx:mayDecay  = false               ! pi0\n")
-         f.write("xxx:mayDecay  = false               ! K0_S\n")
-         f.write("321:mayDecay  = false               ! K+-\n")
+         f.write("13:mayDecay   = false                ! mu+-\n")
+         f.write("211:mayDecay  = false                ! pi+-\n")
+         f.write("321:mayDecay  = false                ! K+-\n")
+         f.write("130:mayDecay  = false                ! K0_L\n")
+         f.write("2112:mayDecay = false                ! n\n")
       
       if annCh in ["taLtaL","taRtaR","taLtaR","taRtaL"]:
          f.write("# 4) Settings for tau decay, use SPINUP for external taus (not produced internally in Pythia)\n")
