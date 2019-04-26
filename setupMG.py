@@ -55,8 +55,8 @@ if __name__=="__main__":
       os.makedirs(os.path.join(absMGdir,"log_DMann"))
    for annCh in sets.ANN_CHANNELS:
       for mX in sets.WIMP_MASSES:
-         if mgf.annThresholds[annCh] > mwimp:
-            print "Note: m_WIMP = %5.3f GeV too small for annihilation channel %s, skipping" % (mwimp,annCh)
+         if mgf.annThresholds[annCh] > mX:
+            print "Note: m_WIMP = %5.3f GeV too small for annihilation channel %s, skipping" % (mX,annCh)
             continue # skip to next mwimp value
          pool.apply_async(setup_MG,args=(annCh,mX,sets.RUN_TAG,sets.MADSPIN),callback=collect_result)
          

@@ -27,7 +27,7 @@ if not os.path.exists(resDir):
 
 annChannels=("tLtR","tRtL","bb","WLWL","WTWT","ZLZL","ZTZT","taLtaR","taRtaL")
 WIMPMasses=(10,100,1000,10000)
-yieldParticles=(-11,11,-14,14)#,-12,12,-14,14,-16,16,22,-2212)
+yieldParticles=(-11,11,-14,14,-12,12,-14,14,-16,16,22,-2212)
 
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
                "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, 
@@ -87,10 +87,10 @@ if __name__=="__main__":
                 if os.path.exists(dataFile):
                   with open(dataFile,"r") as f:
                     data=np.genfromtxt(f,skip_header=8)
-                  #binWid=np.diff(data[:,0])[0]
-                  binWid=np.diff(mX*data[:,0])[0] #for Herwig runs from before Apr 23
+                  binWid=np.diff(data[:,0])[0]
+                  #binWid*=mX #for Herwig runs from before Apr 23
                   if nFiles==0:
-                    x=data[:,0]#/mX #note: Herwig runs from before April 23 have x, not E, in dataFile
+                    x=data[:,0]/mX #note: Herwig runs from before April 23 have x, not E, in dataFile
                     dNdx=data[:,1]*mX/binWid
                   else:
                     dNdx+=data[:,1]*mX/binWid

@@ -17,19 +17,19 @@ def annch_to_MGFinState(annch,madspin):
       if madspin==True:
          return "w+ w-"
       else:
-         return "w+ w-, w+ > allsm allsm, w- > allsm all"
+         return "w+ w-, w+ > allsm allsm, w- > allsm allsm"
    elif annch in ["ZLZL","ZTZT"]:
       if madspin==True:
          return "z z"
       else:
-         return "z z, z > allsm all"
+         return "z z, z > allsm allsm"
    elif annch=="hh":
       return "h h"
    elif annch in ["tLtL","tRtR","tLtR","tRtL"]:
       if madspin==True:
          return "t t~"
       else:
-         return "t t~, (t > allsm allsm, w+ > allsm all), (t~ > allsm allsm, w- > allsm all)"
+         return "t t~, (t > b w+, w+ > allsm allsm), (t~ > b~ w-, w- > allsm allsm)"
    elif annch in ["taLtaL","taRtaR","taLtaR","taRtaL"]:
       return "ta+ ta-"
    elif annch in ["muLmuL","muRmuR","muLmuR","muRmuL"]:
@@ -57,10 +57,7 @@ def write_MG_setupscript(annch,mx,runTag,madspin):
    fileName="".join(("log_DMann/DMann_setupMG_",runTag,"_",annch,"_m",str(mx),".txt"))
    with open(fileName,"w") as f:
       f.write("import model DMann\n")
-      if annch not in ["tRtR","tLtL","tRtL","tLtR"]:
-         f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~\n")
-      else:
-         f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~ w+ w- z h\n")
+      f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~\n")
       if annch not in ["taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR"]:
          f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch,madspin)+"\n")
       else:
@@ -166,9 +163,9 @@ def set_couplings(annch):
          newcard_content = re.sub(searchExpr+r" # gPmm",r"\1 1.000000e+00 # gPmm",newcard_content)       
    if annch in ["muLmuR","muRmuL"]: # vector
       newcard_content = re.sub(searchExpr+r" # gVmm",r"\1 1.000000e+00 # gVmm",newcard_content) 
-      if annch=="muLmuL":
+      if annch=="muLmuR":
          newcard_content = re.sub(searchExpr+r" # gAmm",r"\1 -1.000000e+00 # gAmm",newcard_content)
-      elif annch=="muRmuR":
+      elif annch=="muRmuL":
          newcard_content = re.sub(searchExpr+r" # gAmm",r"\1 1.000000e+00 # gAmm",newcard_content)
    if annch=="ee":
       newcard_content = re.sub(searchExpr+r" # gSe",r"\1 1.000000e+00 # gSe",newcard_content) 
@@ -181,9 +178,9 @@ def set_couplings(annch):
          newcard_content = re.sub(searchExpr+r" # gPu33",r"\1 1.000000e+00 # gPu33",newcard_content)  
    if annch in ["tLtR","tRtL"]: # vector
       newcard_content = re.sub(searchExpr+r" # gVu33",r"\1 1.000000e+00 # gVu33",newcard_content) 
-      if annch=="tLtL":
+      if annch=="tLtR":
          newcard_content = re.sub(searchExpr+r" # gAu33",r"\1 -1.000000e+00 # gAu33",newcard_content)
-      elif annch=="tRtR":
+      elif annch=="tRtL":
          newcard_content = re.sub(searchExpr+r" # gAu33",r"\1 1.000000e+00 # gAu33",newcard_content)  
    if annch=="bb":
       newcard_content = re.sub(searchExpr+r" # gSd33",r"\1 1.000000e+00 # gSd33",newcard_content) 

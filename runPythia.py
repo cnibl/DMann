@@ -93,9 +93,11 @@ def write_cmnd_file(nAnn,annCh,sun):
       f.write("Check:mTolWarn = "+str(warnTol)+"\n")            
       f.write("LesHouches:matchInOut = off") #off because MG messes things up with energy-mom in MadSpin decays
       """
+#      f.write("Next:numberShowEvent = 100\n")
+#      f.write("Next:showScaleAndVertex = on\n")
       f.write("\n")
       f.write("# 2) Incoming beam settings\n")
-      if annCh not in ("taLtaR","taRtaL"):
+      if annCh not in ("taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR"):
          f.write("LesHouches:idRenameBeams = 9000008\n")
       else:
          f.write("LesHouches:idRenameBeams = 9000010\n")
@@ -209,20 +211,23 @@ def setup_LHEF(suffixes,wimpMasses,annChannels,):
       for mx in wimpMasses:
          for annCh in annChannels:
             if mgf.annThresholds[annCh] < mx:
-               if annCh not in ["WLWL","WTWT","ZLZL","ZTZT","tRtR","tLtL"]: #all except MadSpin runs
+               madSpinChannels=("WLWL","WTWT","ZLZL","ZTZT","tRtL","tLtR","tLtL","tRtR")
+               if sets.MADSPIN==False or annCh not in madSpinChannels: #all except MadSpin runs
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
                                  "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
                                  "run_"+sets.RUN_TAG+s,
                                  "unweighted_events.lhe.gz")
                   LHEfiles.append(lhePath)
                   LHEsuffixes[lhePath]=s
-               else: #MadSpin runs              
+               elif sets.MADSPIN==True and annCh in madSpinChannels: #MadSpin runs              
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
                                  "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
                                  "run_"+sets.RUN_TAG+s+"_decayed_1",
                                  "unweighted_events.lhe.gz")
                   LHEfiles.append(lhePath)
                   LHEsuffixes[lhePath]=s
+               else:
+                  print annCh,sets.MADSPIN
    return LHEfiles,LHEsuffixes
    
 
@@ -236,7 +241,7 @@ if __name__=="__main__":
    If >100k events, run 100k events at a time and put in folders Pythia+suffix (Pythia_1, Pythia_2 etc.), suffixes is a list with elements "_i" where i runs from 0 to nAnn/100000 
    """
    if sets.N_ANN < 100000:
-      suffix=[""]
+      suffix=["_0"]
    else:
       suffix=[]
       for i in range(sets.N_ANN/100000):
@@ -292,7 +297,7 @@ if __name__=="__main__":
       if sets.N_ANN >= 100000:
          suffixes=["_"+str(i) for i in range(1,sets.N_ANN/100000+1)]
       else:
-         suffixes=[""]
+         suffixes=["_1"]
       for s in suffixes:
          for annCh in sets.ANN_CHANNELS:
             for mX in sets.WIMP_MASSES:
