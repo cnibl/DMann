@@ -93,7 +93,7 @@ def write_cmnd_file(nAnn,annCh,sun):
       f.write("Check:mTolWarn = "+str(warnTol)+"\n")            
       f.write("LesHouches:matchInOut = off") #off because MG messes things up with energy-mom in MadSpin decays
       """
-#      f.write("Next:numberShowEvent = 100\n")
+      f.write("Next:numberShowEvent = 1000\n")
 #      f.write("Next:showScaleAndVertex = on\n")
       f.write("\n")
       f.write("# 2) Incoming beam settings\n")
@@ -103,6 +103,9 @@ def write_cmnd_file(nAnn,annCh,sun):
          f.write("LesHouches:idRenameBeams = 9000010\n")
       f.write("PartonLevel:ISR = off\n")
       f.write("PartonLevel:MPI = off\n")
+      f.write("SpaceShower:QEDShowerByL = off\n")
+      f.write("PDF:lepton = off\n\n")
+      
       f.write("\n")
       f.write("# 3) Set stable particles to decay (note: different for Sun/halo)\n")
       
@@ -121,10 +124,17 @@ def write_cmnd_file(nAnn,annCh,sun):
       
       if annCh in ["taLtaL","taRtaR","taLtaR","taRtaL"]:
          f.write("# 4) Settings for tau decay, use SPINUP for external taus (not produced internally in Pythia)\n")
-         f.write("TauDecays:externalMode = 0\n") #suggested as best by Philip Ilten
+         f.write("TauDecays:externalMode = 0\n\n") #suggested as best by Philip Ilten
          #f.write("TauDecays:mode=3\n")
          #f.write("TauDecays:tauPolarization=1\n")     
          #f.write("15:0:meMode = 1531\n") # sometimes needed for sophisticated tau decays 
+         
+      if sets.PYT_EWRAD:
+        f.write("# 5) Settings for EW radiation\n")
+        f.write("TimeShower:weakShower = on\n")
+        if annCh in ("tLtR","tRtL","tLtL","tRtR","muLmuR","muRmuL","muLmuL","muRmuR"):
+          f.write("TimeShower:weakShowerMode = 2 #only include Z branchings for this ann. ch.\n")      
+            
          
    return cmndFileName
    

@@ -11,16 +11,17 @@ Note: if only using one channel, it must be given in the format ANN_CHANNELS=(an
 #              "taLtaL", "taRtaR", "muLmuL", "muRmuR", "ee", 
 #              "uu", "dd", "cc", "ss","tLtL", "tRtR", "bb")
 ANN_CHANNELS=("tLtR","tRtL","bb","WLWL","WTWT","ZLZL","ZTZT","taLtaR","taRtaL")
+#ANN_CHANNELS=("WLWL","WTWT")
 
 """
 The number of annihilations. If below 100k, can be anything. If above 100k, must be multiple of 100k.
 """
-N_ANN=1000
+N_ANN=100000
 
 """
 The WIMP masses to use. Note: if only using one mass, it must be given in the format WIMP_MASSES=(mX,).
 """
-WIMP_MASSES=(10000,1000)
+WIMP_MASSES=(100,)#10000)
 #WIMPMASSES=(3, 4, 5, 6, 8, 10, 15, 20, 25, 35, 
 #            50, 80.3, 91.2, 100, 150, 176, 200, 
 #            250, 350, 500, 750, 1000, 1500, 
@@ -29,7 +30,7 @@ WIMP_MASSES=(10000,1000)
 """
 The run tag, appended to the directory names for all the runs (the directories with LHEF). Cannot contain underscores.
 """
-RUN_TAG="190416-alltest"
+RUN_TAG="190424-QEDtest"
 
 """
 The MadGraph installation directory
@@ -39,7 +40,8 @@ MG_DIR="/Volumes/GoldDrive/MG5_aMC_v2_6_5_DMann_"+RUN_TAG
 """
 The directory to put Pythia and Herwig files in
 """
-DMANN_OUTDIR="/media/carlniblaeus/SimResults/DMann/res_"+RUN_TAG
+DMANN_OUTDIR="/Volumes/GoldDrive/DMann/res_"+RUN_TAG
+#DMANN_OUTDIR="/Volumes/GoldDrive/DMann/res_EWradtest"
 
 """
 Whether to run for solar interior or not (if sun, some particles should not decay)
@@ -78,3 +80,10 @@ HER_EVTGEN=False
 Whether to use a QED radiation handler in Herwig
 """
 HER_QRH=True
+
+"""
+Whether to use EW radiation in Pythia (W boson radiation is not included where it is already included in MG)
+"""
+PYT_EWRAD=False
+
+

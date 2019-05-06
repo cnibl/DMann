@@ -29,8 +29,9 @@ if not os.path.exists(absMGdir):
    sys.exit("ERROR: The MadGraph directory provided does not exist")
 for ann in sets.ANN_CHANNELS:
    for mX in sets.WIMP_MASSES:
-      if not os.path.exists(os.path.join(absMGdir,"DMann_"+sets.RUN_TAG+"_"+ann+"_m"+str(mX))):
-         sys.exit("ERROR: No folder exists for %s, run setupMG.py" % ann)
+      if mgf.annThresholds[ann] < mX:
+         if not os.path.exists(os.path.join(absMGdir,"DMann_"+sets.RUN_TAG+"_"+ann+"_m"+str(mX))):
+            sys.exit("ERROR: No folder exists for %s, run setupMG.py" % ann)
       
 
 def run_MG(annCh,mWimp,runTag,nAnn,nCores,madspin):

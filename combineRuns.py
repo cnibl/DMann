@@ -60,8 +60,8 @@ if __name__=="__main__":
             except:
               pass #not necessary to remove if not in list
       
-        # If there are directories, go through ann channels, masses and yield particles and
-        # read and add together data
+          # If there are directories, go through ann channels, masses and yield particles and
+          # read and add together data
           if len(dataDirs)>0:
             if code=="Herwig":
               try:
@@ -74,49 +74,75 @@ if __name__=="__main__":
               except:
                 pass # don't need to do anything if directory exists
             for y in yieldParticles:
-              dNdx=[]
-              x=[]
-              nFiles=0 #tracks number of events, 100k per increment
-              for dDir in dataDirs:
-                if code=="Herwig":
-                  dataFile=os.path.abspath(os.path.join(resDir,dDir,annCh+"_m"+str(mX),
-                         "da-her7-mx"+str(mX)+"-"+annCh+"-y"+str(y)+".dat"))
-                else:
-                  dataFile=os.path.abspath(os.path.join(resDir,dDir,annCh+"_m"+str(mX),
-                         "da-pyt8-mx"+str(mX)+"-"+annCh+"-y"+str(y)+".dat"))
-                if os.path.exists(dataFile):
-                  with open(dataFile,"r") as f:
-                    data=np.genfromtxt(f,skip_header=8)
-                  binWid=np.diff(data[:,0])[0]
-                  #binWid*=mX #for Herwig runs from before Apr 23
-                  if nFiles==0:
-                    x=data[:,0]/mX #note: Herwig runs from before April 23 have x, not E, in dataFile
-                    dNdx=data[:,1]*mX/binWid
+              for log in ("","-log"):
+                dNdx=[] # =dNdlog10x if log=="-log"
+                x=[]
+                nFiles=0 #tracks number of events, 100k per increment
+                for dDir in dataDirs:
+                  if code=="Herwig":
+                    dataFile=os.path.abspath(os.path.join(resDir,dDir,annCh+"_m"+str(mX),
+                           "da-her7-mx"+str(mX)+"-"+annCh+"-y"+str(y)+log+".dat"))
                   else:
-                    dNdx+=data[:,1]*mX/binWid
-                  nFiles+=1
-              currentDT=datetime.datetime.now()
-              headText="\n".join(("Combined data file for DMann with x=E_kin/mX vs dNdx",
-                                  "Created: "+currentDT.strftime("%Y-%m-%d %H:%M:%S"),
-                                  "Number of events in file: "+str(nFiles*100000),
-                                  "WIMP mass: "+str(mX),
-                                  "Annihilation channel: "+annCh,
-                                  "PDG code of yield particle: "+str(y),
-                                  "",
-                                  "x      dNdx [ann.^-1] "))
-              if code=="Herwig":
-                fileName=os.path.abspath(os.path.join(resDir,"Herwig_combined",annCh+"_m"+str(mX),
-                         "da-her7-mx"+str(mX)+"-"+annCh+"-y"+str(y)+".dat"))
-              else:
-                fileName=os.path.abspath(os.path.join(resDir,"Pythia_combined",annCh+"_m"+str(mX),
-                         "da-pyt8-mx"+str(mX)+"-"+annCh+"-y"+str(y)+".dat"))
-              if nFiles!=0:
-                dNdx/=nFiles #normalize to total no. of annihilations
-                with open(fileName,"w") as f:
-                  np.savetxt(fname=f,X=np.array(zip(x,dNdx)),fmt="%-4.3f    %-12.5e",header=headText)
-              # if desired, make plots
-              if plot:
-                ax.plot(x,dNdx,lineStyle[code],color=yieldColors[y],label="y="+str(y)+", "+code[0])
+                    dataFile=os.path.abspath(os.path.join(resDir,dDir,annCh+"_m"+str(mX),
+                           "da-pyt8-mx"+str(mX)+"-"+annCh+"-y"+str(y)+log+".dat"))
+                  if os.path.exists(dataFile):
+                    with open(dataFile,"r") as f:
+                      if code=="Herwig" and log=="-log":
+                        data=np.genfromtxt(f,skip_header=10)
+                      else:
+                        data=np.genfromtxt(f,skip_header=8)
+                    
+                    if log!="-log":
+                      binWid=np.diff(data[:,0])[0]
+                      #binWid*=mX #for Herwig runs from before Apr 23
+                      if nFiles==0:
+                        x=data[:,0]/mX #note: Herwig runs from before April 23 have x, not E, in dataFile
+                        dNdx=data[:,1]*mX/binWid
+                      else:
+                        dNdx+=data[:,1]*mX/binWid
+
+                    else: #logarithmic file
+                      xEdges=np.logspace(-10,0,251) # in x
+                      binWidths=np.diff(xEdges)
+                      if code=="Herwig": #columns are binLow-binHigh-norm-counts/nAnn 
+                        xCenters=(data[:,0]+data[:,1])/2./mX
+                      else:
+                        xCenters=[(xEdges[i+1]+xEdges[i])/2. for i in range(len(xEdges)-1)]
+                      if nFiles==0:
+                        x=xCenters
+                        if code=="Herwig":
+                          dNdx=np.divide(data[:,3],binWidths)*mX/np.log(10.)
+                        else:
+                          dNdx=np.divide(data[:,1],binWidths)*mX/np.log(10.)
+                      else:
+                        if code=="Herwig":
+                          dNdx+=np.divide(data[:,3],binWidths)*mX/np.log(10.)
+                        else:
+                          dNdx+=np.divide(data[:,1],binWidths)*mX/np.log(10.)
+                    nFiles+=1
+                currentDT=datetime.datetime.now()
+                headText="\n".join(("Combined data file for DMann with x=E_kin/mX vs dNdx",
+                                    "Created: "+currentDT.strftime("%Y-%m-%d %H:%M:%S"),
+                                    "Number of events in file: "+str(nFiles*100000),
+                                    "WIMP mass: "+str(mX),
+                                    "Annihilation channel: "+annCh,
+                                    "PDG code of yield particle: "+str(y),
+                                    "",
+                                    "x             dNdx [ann.^-1] "))
+                if code=="Herwig":
+                  fileName=os.path.abspath(os.path.join(resDir,"Herwig_combined",annCh+"_m"+str(mX),
+                           "da-her7-mx"+str(mX)+"-"+annCh+"-y"+str(y)+log+".dat"))
+                else:
+                  fileName=os.path.abspath(os.path.join(resDir,"Pythia_combined",annCh+"_m"+str(mX),
+                           "da-pyt8-mx"+str(mX)+"-"+annCh+"-y"+str(y)+log+".dat"))
+                if nFiles!=0:
+                  dNdx/=nFiles #normalize to total no. of annihilations
+                  with open(fileName,"w") as f:
+                    np.savetxt(fname=f,X=np.array(zip(x,dNdx)),fmt="%-12.5e    %-12.5e",header=headText)
+                # if desired, make plots
+                if plot:
+                  ax.plot(x,dNdx,lineStyle[code],color=yieldColors[y],label="y="+str(y)+", "+code[0])
+                
         if plot:      
           ax.legend(ncol=2)
           ax.set_xlim(0,1)
