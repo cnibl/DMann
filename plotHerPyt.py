@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 # parameters deciding what to plot and how
 annChannels=("tLtR","tRtL","bb","WLWL","WTWT","ZLZL","ZTZT","taLtaR","taRtaL")
 WIMPMasses=(10,100,1000,10000)
-yieldParticles=(-11,11,-14,14)#,-12,12,-14,14,-16,16,22,-2212)
+yieldParticles=(-11,11,-14,14,22)#,-12,12,-14,14,-16,16,22,-2212)
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
                "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, 
                "muLmuL" : 0.11, "muRmuR" : 0.11, "muLmuR" : 0.11, "muRmuL" : 0.11, "ee" : 5.2e-6, 
@@ -57,8 +57,12 @@ if __name__=="__main__":
             for y in yieldParticles:
               dNdx=[]
               x=[]
-              dataFile=os.path.abspath(os.path.join(inDir[code],annCh+"_m"+str(mX),
-                       "da-her7-mx"+str(mX)+"-"+annCh+"-y"+str(y)+".dat"))
+              if code=="Herwig":
+                dataFile=os.path.abspath(os.path.join(inDir[code],annCh+"_m"+str(mX),
+                         "da-her7-mx"+str(mX)+"-"+annCh+"-y"+str(y)+".dat"))
+              elif code=="Pythia":
+                dataFile=os.path.abspath(os.path.join(inDir[code],annCh+"_m"+str(mX),
+                         "da-pyt8-mx"+str(mX)+"-"+annCh+"-y"+str(y)+".dat"))
               if os.path.exists(dataFile):
                 with open(dataFile,"r") as f:
                   data=np.genfromtxt(f,skip_header=8)
