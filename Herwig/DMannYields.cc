@@ -129,7 +129,7 @@ void DMannYields::dofinish() {
     std::vector<double> binEntries = _histograms[(*idPtr)].dumpBins(); //note:first bin is underflow, last overflow
     double deltaBin = 1./_histograms[(*idPtr)].numberOfBins();
     for (unsigned int i=1; i != _histograms[(*idPtr)].numberOfBins()+1; ++i) { 
-      outfile << 1./_histograms[(*idPtr)].numberOfBins()/2.+(i-1)*deltaBin << "\t\t" << binEntries[i] << endl;
+      outfile << _massdm*(1./_histograms[(*idPtr)].numberOfBins()/2.+(i-1)*deltaBin) << "\t\t" << binEntries[i] << endl;
     }
     //_histograms[(*idPtr)].simpleOutput(outfile, false, false);
     outfile.close();

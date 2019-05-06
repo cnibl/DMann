@@ -80,9 +80,8 @@ def write_infile(nAnn,fileDir,resDir,mwimp,annCh,seed,sun=False):
 		f.write("set EventHandler:Cuts:MHatMin 0.0*GeV\n")
 		f.write("set /Herwig/Particles/e-:PDF /Herwig/Partons/NoPDF\n") # Turn off ISR for e+ e- collision
 		f.write("set /Herwig/Particles/e+:PDF /Herwig/Partons/NoPDF\n")
-		f.write("cd /Herwig/FRModel\n")
-		f.write("set FRModel:gSe 1.0\n")
-		f.write("set FRModel:gPe 0.0\n\n")
+		#f.write("set /Herwig/Particles/e-:LongitudinalPolarization -1\n") # set beam polarization
+		#f.write("set /Herwig/Particles/e+:LongitudinalPolarization -1\n")
 		f.write("# Set up process and final state polarisation\n")
 		f.write("cd /Herwig/NewPhysics\n")
 		f.write("insert ResConstructor:Incoming 0 /Herwig/Particles/e+\n")
@@ -90,8 +89,18 @@ def write_infile(nAnn,fileDir,resDir,mwimp,annCh,seed,sun=False):
 		if annCh in ("WLWL", "WTWT", "ZLZL", "ZTZT", "tLtL", "tRtR", "bb", "taLtaL", "taRtaR", 
 			          "muLmuL", "muRmuR", "ee", "hh","uu", "dd", "cc", "ss"):
 			f.write("insert ResConstructor:Intermediates 0 /Herwig/FRModel/Particles/Y0\n")
+			f.write("set /Herwig/FRModel/FRModel:gSe 1.0\n")
+			f.write("set /Herwig/FRModel/FRModel:gPe 0.0\n")
+			f.write("set /Herwig/FRModel/FRModel:gVe 0.0\n")
+			f.write("set /Herwig/FRModel/FRModel:gAe 0.0\n\n")
 		elif annCh in ("taLtaR","taRtaL","tLtR","tRtL","muLmuR","muRmuL"):
 			f.write("insert ResConstructor:Intermediates 0 /Herwig/FRModel/Particles/Y1\n")
+			f.write("set /Herwig/FRModel/FRModel:gSe 0.0\n")
+			f.write("set /Herwig/FRModel/FRModel:gPe 0.0\n")
+			f.write("set /Herwig/FRModel/FRModel:gVe 0.0\n")
+			f.write("set /Herwig/FRModel/FRModel:gAe 1.0\n\n")
+
+		#f.write("set /Herwig/NewPhysics/ResConstructor:Processes TwoParticleInclusive\n")
 		# Set final state and couplings 
 		if annCh=="uu":
 			f.write("insert ResConstructor:Outgoing 0 /Herwig/Particles/u\n")
@@ -153,22 +162,30 @@ def write_infile(nAnn,fileDir,resDir,mwimp,annCh,seed,sun=False):
 			f.write("cd /Herwig/FRModel\n")
 			f.write("set FRModel:gSta 1.0 \n")
 			f.write("set FRModel:gPta -1.0\n")
+			f.write("set FRModel:gVta 0.0 \n")
+			f.write("set FRModel:gAta 0.0\n")
 		elif annCh=="taRtaR":
 			f.write("insert ResConstructor:Outgoing 0 /Herwig/Particles/tau+\n")
 			f.write("insert ResConstructor:Outgoing 0 /Herwig/Particles/tau-\n")
 			f.write("cd /Herwig/FRModel\n")
 			f.write("set FRModel:gSta 1.0 \n")
 			f.write("set FRModel:gPta 1.0\n")
+			f.write("set FRModel:gVta 0.0 \n")
+			f.write("set FRModel:gAta 0.0\n")
 		elif annCh=="taLtaR":
 			f.write("insert ResConstructor:Outgoing 0 /Herwig/Particles/tau+\n")
 			f.write("insert ResConstructor:Outgoing 0 /Herwig/Particles/tau-\n")
 			f.write("cd /Herwig/FRModel\n")
+			f.write("set FRModel:gSta 0.0 \n")
+			f.write("set FRModel:gPta 0.0\n")
 			f.write("set FRModel:gVta 1.0 \n")
 			f.write("set FRModel:gAta -1.0\n")
 		elif annCh=="taRtaL":
 			f.write("insert ResConstructor:Outgoing 0 /Herwig/Particles/tau+\n")
 			f.write("insert ResConstructor:Outgoing 0 /Herwig/Particles/tau-\n")
 			f.write("cd /Herwig/FRModel\n")
+			f.write("set FRModel:gSta 0.0 \n")
+			f.write("set FRModel:gPta 0.0\n")
 			f.write("set FRModel:gVta 1.0 \n")
 			f.write("set FRModel:gAta 1.0\n")
 		elif annCh=="muLmuL":
@@ -256,6 +273,11 @@ def write_infile(nAnn,fileDir,resDir,mwimp,annCh,seed,sun=False):
 		f.write("read Matchbox/OnShellZProduction.in\n")
 		f.write("read Matchbox/OnShellHProduction.in\n\n")
 
+		#f.write("set /Herwig/Decays/Tau2Leptons:PolarizationOption 1\n")
+		#f.write("set /Herwig/Decays/Tau2Leptons:TauMinusPolarization -1\n")
+		#f.write("set /Herwig/Decays/Tau2Leptons:TauPlusPolarization 1\n\n")
+
+
 		#print "Trying to turn off EvtGen by commenting out line 32 in ~/Herwig7/share/Herwig/defaults/Decays.in ... check if works"
 		if sets.HER_EVTGEN==False:
 			f.write("## Reinitialise decays to turn off EvtGen usage\n")
@@ -300,7 +322,7 @@ def write_infile(nAnn,fileDir,resDir,mwimp,annCh,seed,sun=False):
 				f.write("insert /Herwig/QEDRadiation/QEDRadiationHandler:DecayingParticles[0] 9000006\n")
 			else:
 				f.write("insert /Herwig/QEDRadiation/QEDRadiationHandler:DecayingParticles[0] 9000007\n")
-			f.write("set /Herwig/Shower/ShowerHandler:Interactions QCD\n") 
+			#f.write("set /Herwig/Shower/ShowerHandler:Interactions QCD\n") 
 		else:
 			f.write("set /Herwig/Shower/ShowerHandler:Interactions QCDandQED\n")
 		
@@ -336,6 +358,8 @@ def write_infile(nAnn,fileDir,resDir,mwimp,annCh,seed,sun=False):
 		f.write("set EventGenerator:NumberOfEvents "+str(nAnn)+"\n")
 		f.write("set EventGenerator:RandomNumberGenerator:Seed "+str(seed)+"\n")
 		f.write("set EventGenerator:Path "+fileDir+"\n")
+		#f.write("set EventGenerator:DebugLevel 5\n")
+		#f.write("set EventGenerator:PrintEvent 100\n")
 		f.write("run "+os.path.split(fileName)[1][:-3]+" EventGenerator")
 	return fileName
 
@@ -394,8 +418,8 @@ if __name__=="__main__":
 					if os.path.exists(testFile):
 						continue
 					else:
-						#seed=random.randint(1,100000)
-						seed=i
+						seed=random.randint(1,100000)
+						#seed=i
 						resDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),"Herwig_"+str(i),annCh+"_m"+str(mWIMP))
 						mkdir_p(resDir)
 						if sets.N_ANN < 100000:
