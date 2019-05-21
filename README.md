@@ -14,7 +14,7 @@ There are two scripts that set up and run MadGraph for the chosen combinations o
 
 First set the desired annihilation channels, WIMP masses and number of annihilations in `simSettings.py`. If the number of events to generate is above 100000, it must be a multiple of 100000. If below 100000, it can be any number. You must also set the `MG_DIR` variable, that is the directory of the MadGraph installation you want to use. In the directory corresponding to `MG_DIR` the DMann UFO model must be in the `models` subdirectory, with the folder name `DMann` (so that it can be imported in MadGraph with `import model DMann`). 
 
-Make sure that you have set the variable `automatic_html_opening = False` in the `input/mg5_configuration.txt` file in the MadGraph installation, in order to avoid the automatic opening of browser tabs for each separate MadGraph run. 
+**Important**: Make sure that you have set the variable `automatic_html_opening = False` in the `input/mg5_configuration.txt` file in the MadGraph installation, in order to avoid the automatic opening of browser tabs for each separate MadGraph run. 
 
 The `RUN_TAG` variable is a tag that is used to identify the folders belonging to this run, you can for example set it to today's date and some extra identifying tag. Note that you may not use underscores in the `RUN_TAG` variable (then it will not work to run).
 
@@ -39,3 +39,14 @@ For less than 100000 events, one output folder called `Pythia` is created in the
 
 # To run Herwig7
 To be added...
+
+
+# How to run Herwig on mac with the docker image 
+1. Download Docker for Mac
+2. Go to a terminal and type "docker pull jmcornell/herwig-bootstrap". This downloads the Herwig docker image and will take some time.
+3. To run a container, type "docker run -i -t jmcornell/herwig-bootstrap". To be able to access local files, see below.
+4. The container contains a Herwig installation, so once in the container, Herwig can be run with the usual commands like `read`, `run`, etc. Notably you can run the `runHerwig.py` and `runHerLHE.py` scripts if you mount the `DMann` directory in the container.
+
+# General tips
+* Go to the Docker settings and under Preferences->Advanced, increase the number of CPU:s and memory available to the container. The default is rather low.
+* To mount a directory, use the `-v` flag. For example: `docker run -v dir/on/local:dir/on/container -i -t jmcornell/herwig-bootstrap` will mount the directory `dir/on/local` from the local computer to the directory `dir/in/container` in the container. You can mount several directories by using the `-v` flag multiple times.
