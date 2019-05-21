@@ -15,7 +15,9 @@ import matplotlib.pyplot as plt
 # parameters deciding what to plot and how
 annChannels=("tLtR","tRtL","bb","WLWL","WTWT","ZLZL","ZTZT","taLtaR","taRtaL")
 WIMPMasses=(10,100,1000,10000)
-yieldParticles=(-11,11,-14,14,22)#,-12,12,-14,14,-16,16,22,-2212)
+#annChannels=("taRtaL","taLtaR","taLtaL","taRtaR")
+#WIMPMasses=(1000,)
+yieldParticles=(-11,11,-14,14,22,-12,12,-14,14,-16,16,22,-2212)
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
                "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, 
                "muLmuL" : 0.11, "muRmuR" : 0.11, "muLmuR" : 0.11, "muRmuL" : 0.11, "ee" : 5.2e-6, 
@@ -24,7 +26,29 @@ annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" 
 colors=plt.cm.rainbow(np.linspace(0,1,len(yieldParticles)))
 yieldColors={y: colors[i] for (y,i) in zip(yieldParticles,range(len(yieldParticles)))}
 lineStyle={"Herwig": "--", "Pythia": "-"}
-
+  
+def reBin(x,y,factor):
+  """
+  Rebins input arrays x,y to fewer bins, the new number of bins is the old number divided by input factor. Assumes linear bins, not log.
+  """
+  if len(x)!=len(y):
+    print "Error in reBin: input x and y have different lengths"
+    return -1
+  nBinsOld=len(x)
+  nBinsNew=nBinsOld/factor
+  if nBinsNew-np.floor(nBinsNew)!=0:
+    print "Error in reBin: input factor results in non-integer number of new bins"
+    return -1
+  xNew=np.zeros(nBinsNew)
+  yNew=np.zeros(nBinsNew)
+  for i in range(0,nBinsNew):
+    xNew[i]=0
+    yNew[i]=0
+    for j in range(0,factor):
+      xNew[i]+=x[factor*i+j]/factor
+      yNew[i]+=y[factor*i+j]/factor
+  return (xNew,yNew)
+  
 if __name__=="__main__":
 
   #input checks and assigning some directory variables
@@ -53,8 +77,8 @@ if __name__=="__main__":
       for mX in WIMPMasses: 
         if annThresholds[annCh] < mX: 
           fig,ax=plt.subplots() 
-          for code in ("Herwig","Pythia"):  
-            for y in yieldParticles:
+          for y in yieldParticles:
+            for code in ("Herwig","Pythia"):  
               dNdx=[]
               x=[]
               if code=="Herwig":
@@ -68,8 +92,14 @@ if __name__=="__main__":
                   data=np.genfromtxt(f,skip_header=8)
                 x=data[:,0] #assumed to be x=E_kin/mX
                 dNdx=data[:,1] #assumed to be dNdx [ann^-1]
+                (x,dNdx)=reBin(x,dNdx,4)
                 ax.plot(x,dNdx,lineStyle[code],color=yieldColors[y],label="y="+str(y)+", "+code[0])
-
+                
+                if code=="Herwig":
+                  dNdxH=dNdx
+                elif code=="Pythia":
+                  dNdxP=dNdx  
+            ax.fill_between(x,dNdxH,dNdxP,color=yieldColors[y],alpha=0.5)  
           ax.legend(ncol=2)
           ax.set_xlim(0,1)
           ax.set_ylim(1e-3,1e2)

@@ -9,7 +9,7 @@ import subprocess
 # The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
                "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "muLmuR" : 0.11, "muRmuL" : 0.11, "ee" : 5.2e-6, 
-               "tLtL" : 173., "tRtR" : 173., "tLtR" : 173., "tRtL" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3}
+               "tLtL" : 173., "tRtR" : 173., "tLtR" : 173., "tRtL" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3, "qq": 0.1}
                
                
 def annch_to_MGFinState(annch,madspin):
@@ -46,6 +46,8 @@ def annch_to_MGFinState(annch,madspin):
       return "u u~"
    elif annch=="dd":
       return "d d~"
+   elif annch=="qq":
+      return ""
    else:
       sys.exit("ERROR: unknown annihilation channel provided")
       
@@ -58,8 +60,12 @@ def write_MG_setupscript(annch,mx,runTag,madspin):
    with open(fileName,"w") as f:
       f.write("import model DMann\n")
       f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~\n")
-      if annch not in ["taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR"]:
+      if annch not in ["taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR"] and annch!="qq":
          f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch,madspin)+"\n")
+      elif annch=="qq":
+        f.write("define q = u d s\n")
+        f.write("define q~ = u~ d~ s~\n")
+        f.write("generate xr xr > y0 > q q~\n")
       else:
          f.write("generate xd xd~ > y1 > "+annch_to_MGFinState(annch,madspin)+"\n")
       f.write("output "+folderName+"\n")
@@ -192,7 +198,11 @@ def set_couplings(annch):
       newcard_content = re.sub(searchExpr+r" # gSu11",r"\1 1.000000e+00 # gSu11",newcard_content) 
    if annch=="dd":
       newcard_content = re.sub(searchExpr+r" # gSd11",r"\1 1.000000e+00 # gSd11",newcard_content) 
-   
+   if annch=="qq": # equal mixture of u d s
+      newcard_content = re.sub(searchExpr+r" # gSd11",r"\1 1.000000e+00 # gSd11",newcard_content) 
+      newcard_content = re.sub(searchExpr+r" # gSu11",r"\1 1.000000e+00 # gSu11",newcard_content) 
+      newcard_content = re.sub(searchExpr+r" # gSd22",r"\1 1.000000e+00 # gSd22",newcard_content)
+      
    # Write new card content to file
    with open(os.path.abspath(os.path.join("Cards","param_card.dat")),"w") as f:
       f.write(newcard_content)

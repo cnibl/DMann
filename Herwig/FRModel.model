@@ -38,7 +38,8 @@ create ThePEG::ParticleData Y1
 setup Y1 9000007 Y1 1000.0 10.0 100.0 1.973269631e-14 0 0 3 0
 insert /Herwig/NewPhysics/NewModel:DecayParticles 0 Y1
 insert /Herwig/Shower/ShowerHandler:DecayInShower 0 9000007 #  Y1
-create ThePEG::ParticleData Xr
+
+create ThePEG::BeamParticleData Xr
 # values set to 999999 are recalculated later from other model parameters
 setup Xr 9000008 Xr 1.0 999999.0 999999.0 999999.0 0 0 1 0
 insert /Herwig/NewPhysics/NewModel:DecayParticles 0 Xr
@@ -62,14 +63,14 @@ makeanti Xc Xc~
 insert /Herwig/FRModel/V_GenericHPP:Bosons 0 Xc~
 insert /Herwig/FRModel/V_GenericHGG:Bosons 0 Xc~
 
-create ThePEG::ParticleData Xd
+create ThePEG::BeamParticleData Xd
 # values set to 999999 are recalculated later from other model parameters
-setup Xd 9000010 Xd 499.0 999999.0 999999.0 999999.0 0 0 2 0
+setup Xd 9000010 Xd 1.0 999999.0 999999.0 999999.0 0 0 2 0
 insert /Herwig/NewPhysics/NewModel:DecayParticles 0 Xd
 insert /Herwig/Shower/ShowerHandler:DecayInShower 0 9000010 #  Xd
-create ThePEG::ParticleData Xd~
+create ThePEG::BeamParticleData Xd~
 # values set to 999999 are recalculated later from other model parameters
-setup Xd~ -9000010 Xd~ 499.0 999999.0 999999.0 999999.0 0 0 2 0
+setup Xd~ -9000010 Xd~ 1.0 999999.0 999999.0 999999.0 0 0 2 0
 makeanti Xd Xd~
 
 

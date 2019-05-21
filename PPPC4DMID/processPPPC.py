@@ -10,20 +10,70 @@ import os
 import sys
 
 
-def annChColumn(annCh):
+def annChColumn(annCh,ew):
   """
   returns column in PPPC data file corresponding to input annCh
   """
+  if annCh=="ee":
+    if ew:
+      return 4
+    else:
+      return 2
+  if annCh=="mumu":
+    if ew:
+      return 7
+    else:
+      return 3
   if annCh=="tata":
-    return 4
+    if ew:
+      return 10
+    else:
+      return 4
+  elif annCh=="qq":
+    if ew:
+      return 11
+    else:
+      return 5
+  elif annCh=="cc":
+    if ew:
+      return 12
+    else:
+      return 6
   elif annCh=="bb":
-    return 7
+    if ew:
+      return 13
+    else:
+      return 7
   elif annCh=="tt":
-    return 8
+    if ew:
+      return 14
+    else:
+      return 8
   elif annCh=="WW":
-    return 9
+    if ew:
+      return 17
+    else:
+      return 9
   elif annCh=="ZZ":
-    return 10
+    if ew:
+      return 20
+    else:
+      return 10
+  elif annCh=="gg":
+    if ew:
+      return 21
+    else:
+      return 11
+  elif annCh=="gaga":
+    if ew:
+      return 22
+    else:
+      return 12
+  elif annCh=="hh":
+    if ew:
+      return 23
+    else:
+      return 13
   else:
     sys.exit("Error: incorrect annCh in annChColumn function")
   
@@ -32,11 +82,10 @@ if __name__=="__main__":
   
   yields=("gammas","antiprotons","neutrinos_e","neutrinos_mu",
           "neutrinos_tau","positrons","antideuterons")
-  annChannels=("tata","bb","tt","WW","ZZ")
-  xVals=np.array([10.**expo for expo in np.arange(-8.95,0.05,0.05)])
+  annChannels=("tata","bb","tt","WW","ZZ","qq","cc")
   masses=(5,6,8,10,15,20,25,30,40,50,60,70,80,90,100,110,120,
           130,140,150,160,180,200,220,240,260,280,300,330,360,
-          400,450,500,550,600650,700,750,800,900,1000,1100,1200,
+          400,450,500,550,600,650,700,750,800,900,1000,1100,1200,
           1300,1500,1700,2000,2500,3000,4000,5000,6000,7000,
           8000,9000,10000,12000,15000,20000,30000,50000,100000)
   
@@ -57,30 +106,31 @@ if __name__=="__main__":
   #  sys.exit("Error: function called incorrectly, maximum one argument allowed.")
     
   
+  xVals={True: np.array([10.**expo for expo in np.arange(-8.9,0.05,0.05)]),
+         False: np.array([10.**expo for expo in np.arange(-8.95,0.05,0.05)])}
+  ewStr={True: "", False: "NoEW"}
+  maxIndex={True: 179, False: 180}
+  PPPC_all={}
   
-  PPPC_all={"xVals": xVals}
-  for y in yields:
-    for annCh in annChannels:
-      for ew in ("","NoEW"):
-      # Read in PPPC data 
-        with open(os.path.expanduser("~/DMann/PPPC4DMID/AtProduction"+ew+"_all/AtProduction"+ew+"_"+y+".dat"),"r") as f:
-          PPPCdata=np.genfromtxt(f,skip_header=1)
-        
-        # Make out directory for yield particle
-        #try:
-        #  os.makedirs(os.path.join(outDir,ew+"_"+y))
-        #except:
-        #  pass #if folder already exists, do nothing
-        #
-        for i in range(len(masses)):
+  for ew in (True,False):
+    PPPC_all["xVals"+ewStr[ew]]=xVals[ew]
+    for y in yields:
+      for annCh in annChannels:
+          # Read in PPPC data (not the EW corrected)
+          with open(os.path.expanduser("~/DMann/PPPC4DMID/AtProduction"
+                                       +ewStr[ew]+"_all/AtProduction"
+                                       +ewStr[ew]+"_"+y+".dat"),"r") as f:
+            PPPCdata=np.genfromtxt(f,skip_header=1)
           
-          dNdlogx=PPPCdata[i*180:(i+1)*180,annChColumn(annCh)]
-          PPPC_all["dNdlog10x_"+str(masses[i])+"_"+y+"_"+annCh]=dNdlogx
+          for i in range(len(masses)):    
+            dNdlogx=PPPCdata[i*maxIndex[ew]:(i+1)*maxIndex[ew],annChColumn(annCh,ew)]
+            PPPC_all["dNdlog10x"+ewStr[ew]+"_"+str(masses[i])+"_"+y+"_"+annCh]=dNdlogx
+
   
   with open("PPPCdata.pickle","w") as f:
     pickle.dump(PPPC_all,f)
   
-  
+  """
   import matplotlib.pyplot as plt
   
   with open("PPPCdata.pickle","r") as f:
@@ -94,6 +144,6 @@ if __name__=="__main__":
   ax.set_ylim(1e-5,100)
   #ax.set_xlim(0,1)
   plt.show()
-  
+  """
 
   
