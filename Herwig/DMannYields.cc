@@ -31,8 +31,9 @@ _yieldpdg(0),
 _massdm(0.0),
 _annpdg(0),
 _annstate(""),
+_nevt(0),
 _evtFile(true),
-_done(false)
+_lastEvt(false)
 {}
 
 DMannYields::~DMannYields() {}
@@ -55,11 +56,13 @@ void DMannYields::analyze(tEventPtr event, long ieve, int loop, int state) {
   ParticleVector outPtr = sub->outgoing(); 
   _annpdg = abs((*(outPtr[0])).id());
   //sub->printMe(cout); // print out hard process
-
   if (_evtFile==true) {
     string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
     ofstream eventfile(eventfilename.c_str(),std::fstream::app);
     long nEvtCur = generator()->currentEventNumber();
+    if (nEvtCur==_nevt) {
+      _lastEvt=true;
+    }
     eventfile << "# Event " << nEvtCur << endl;
     eventfile.close();
   }
@@ -162,12 +165,11 @@ void DMannYields::dofinish() {
     //delete outFile;  
 
     
-    if (_evtFile==true && _done==false) {
+    if (_evtFile==true && _lastEvt==true) {
       string eventfilename = _outdir+"/da-her7-mx"+std::to_string((int)_massdm)+"-"+_annstate+"-events.dat";
       ofstream eventfile(eventfilename.c_str(),std::fstream::app);
       eventfile << "#END" << endl;
       eventfile.close();
-      _done==true;
     }
 
     AnalysisHandler::dofinish();

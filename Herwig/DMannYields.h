@@ -227,7 +227,7 @@ private:
    *  Whether to use event files (default is to not use) and whether file writing is done or not
    */
   bool _evtFile;  
-  bool _done;
+  bool _lastEvt;
 
 };
 
