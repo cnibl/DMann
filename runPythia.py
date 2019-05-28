@@ -9,6 +9,7 @@ import multiprocessing as mp
 import time
 import math
 import os
+import subprocess
 
 import simSettings as sets
 import MGfunctions as mgf

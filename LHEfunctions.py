@@ -105,7 +105,7 @@ def mk_outdir(lhef,code,suffix=None):
       codeDir=code
    else:
       codeDir=code+"_"+str(int(suffix[1:])+1)
-   outDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),codeDir,annch+"_mx"+str(mWIMP))
+   outDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),codeDir,annch+"_m"+str(mWIMP))
    if not os.path.exists(outDir):
       subprocess.call(["mkdir","-p",get_abspath(outDir)])
    return get_abspath(outDir) 

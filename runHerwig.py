@@ -418,8 +418,8 @@ if __name__=="__main__":
 					if os.path.exists(testFile):
 						continue
 					else:
-						seed=random.randint(1,100000)
-						#seed=i
+						#seed=random.randint(1,100000)
+					   seed=i
 						resDir=os.path.join(get_abspath(sets.DMANN_OUTDIR),"Herwig_"+str(i),annCh+"_m"+str(mWIMP))
 						mkdir_p(resDir)
 						if sets.N_ANN < 100000:
