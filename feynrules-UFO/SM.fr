@@ -282,7 +282,7 @@ M$ClassesDescription = {
     FlavorIndex      -> Generation,
     SelfConjugate    -> False,
     Mass             -> {Ml, {Me,5.11*^-4}, {MMU,0.10566}, {MTA,1.777}},
-    Width            -> {Wl, {WE,0.}, {WMU, 0.}, {WTA, 2.27*^-12}},
+    Width            -> {Wl, {WE,0.}, {WMU, 3.00*10^-19}, {WTA, 2.27*^-12}},
     QuantumNumbers   -> {Q -> -1, LeptonNumber -> 1},
     PropagatorLabel  -> {"l", "e", "mu", "ta"},
     PropagatorType   -> Straight,

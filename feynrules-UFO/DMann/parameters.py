@@ -1,6 +1,6 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Fri 16 Nov 2018 17:25:51
+# Date: Tue 9 Apr 2019 14:23:53
 
 
 
@@ -25,93 +25,429 @@ cabi = Parameter(name = 'cabi',
                  lhablock = 'CKMBLOCK',
                  lhacode = [ 1 ])
 
-Lambda = Parameter(name = 'Lambda',
-                   nature = 'external',
-                   type = 'real',
-                   value = 1000.,
-                   texname = '\\Lambda',
-                   lhablock = 'DMINPUTS',
-                   lhacode = [ 1 ])
-
 gSh1 = Parameter(name = 'gSh1',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
+                 value = 1.,
                  texname = 'g_{\\text{Sh1}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 2 ])
+                 lhacode = [ 1 ])
 
 gSh2 = Parameter(name = 'gSh2',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
+                 value = 1.,
                  texname = 'g_{\\text{Sh2}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 3 ])
+                 lhacode = [ 2 ])
 
 gSWT = Parameter(name = 'gSWT',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
+                 value = 1.,
                  texname = 'g_{\\text{SWT}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 4 ])
+                 lhacode = [ 3 ])
 
 gPWT = Parameter(name = 'gPWT',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
+                 value = 1.,
                  texname = 'g_{\\text{PWT}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 5 ])
+                 lhacode = [ 4 ])
 
 gPBT = Parameter(name = 'gPBT',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
+                 value = 1.,
                  texname = 'g_{\\text{PBT}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 6 ])
+                 lhacode = [ 5 ])
 
 gSBT = Parameter(name = 'gSBT',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
+                 value = 1.,
                  texname = 'g_{\\text{SBT}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 7 ])
+                 lhacode = [ 6 ])
 
 gSWL = Parameter(name = 'gSWL',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
+                 value = 1.,
                  texname = 'g_{\\text{SWL}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 8 ])
+                 lhacode = [ 7 ])
 
-gSZL = Parameter(name = 'gSZL',
+gSBL = Parameter(name = 'gSBL',
                  nature = 'external',
                  type = 'real',
-                 value = 0.,
-                 texname = 'g_{\\text{SZL}}',
+                 value = 1.,
+                 texname = 'g_{\\text{SBL}}',
                  lhablock = 'DMINPUTS',
-                 lhacode = [ 9 ])
+                 lhacode = [ 8 ])
 
 gSg = Parameter(name = 'gSg',
                 nature = 'external',
                 type = 'real',
-                value = 0.,
+                value = 1.,
                 texname = 'g_{\\text{Sg}}',
                 lhablock = 'DMINPUTS',
-                lhacode = [ 10 ])
+                lhacode = [ 9 ])
 
 gPg = Parameter(name = 'gPg',
                 nature = 'external',
                 type = 'real',
-                value = 0.,
+                value = 1.,
                 texname = 'g_{\\text{Pg}}',
                 lhablock = 'DMINPUTS',
-                lhacode = [ 11 ])
+                lhacode = [ 10 ])
+
+gSd11 = Parameter(name = 'gSd11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Sd11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 11 ])
+
+gSu11 = Parameter(name = 'gSu11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Su11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 12 ])
+
+gSd22 = Parameter(name = 'gSd22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Sd22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 13 ])
+
+gSu22 = Parameter(name = 'gSu22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Su22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 14 ])
+
+gSd33 = Parameter(name = 'gSd33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Sd33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 15 ])
+
+gSu33 = Parameter(name = 'gSu33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Su33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 16 ])
+
+gPd11 = Parameter(name = 'gPd11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pd11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 17 ])
+
+gPu11 = Parameter(name = 'gPu11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pu11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 18 ])
+
+gPd22 = Parameter(name = 'gPd22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pd22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 19 ])
+
+gPu22 = Parameter(name = 'gPu22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pu22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 20 ])
+
+gPd33 = Parameter(name = 'gPd33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pd33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 21 ])
+
+gPu33 = Parameter(name = 'gPu33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pu33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 22 ])
+
+gSe = Parameter(name = 'gSe',
+                nature = 'external',
+                type = 'real',
+                value = 1.,
+                texname = 'g_{\\text{Pu33}}',
+                lhablock = 'DMINPUTS',
+                lhacode = [ 23 ])
+
+gPe = Parameter(name = 'gPe',
+                nature = 'external',
+                type = 'real',
+                value = 1.,
+                texname = 'g_{\\text{Pu33}}',
+                lhablock = 'DMINPUTS',
+                lhacode = [ 24 ])
+
+gSmm = Parameter(name = 'gSmm',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 25 ])
+
+gPmm = Parameter(name = 'gPmm',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 26 ])
+
+gSta = Parameter(name = 'gSta',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 27 ])
+
+gPta = Parameter(name = 'gPta',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 28 ])
+
+gVd11 = Parameter(name = 'gVd11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Sd11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 29 ])
+
+gVu11 = Parameter(name = 'gVu11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Su11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 30 ])
+
+gVd22 = Parameter(name = 'gVd22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Sd22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 31 ])
+
+gVu22 = Parameter(name = 'gVu22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Su22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 32 ])
+
+gVd33 = Parameter(name = 'gVd33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Sd33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 33 ])
+
+gVu33 = Parameter(name = 'gVu33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Su33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 34 ])
+
+gAd11 = Parameter(name = 'gAd11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pd11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 35 ])
+
+gAu11 = Parameter(name = 'gAu11',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pu11}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 36 ])
+
+gAd22 = Parameter(name = 'gAd22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pd22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 37 ])
+
+gAu22 = Parameter(name = 'gAu22',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pu22}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 38 ])
+
+gAd33 = Parameter(name = 'gAd33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pd33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 39 ])
+
+gAu33 = Parameter(name = 'gAu33',
+                  nature = 'external',
+                  type = 'real',
+                  value = 1.,
+                  texname = 'g_{\\text{Pu33}}',
+                  lhablock = 'DMINPUTS',
+                  lhacode = [ 40 ])
+
+gVe = Parameter(name = 'gVe',
+                nature = 'external',
+                type = 'real',
+                value = 1.,
+                texname = 'g_{\\text{Pu33}}',
+                lhablock = 'DMINPUTS',
+                lhacode = [ 41 ])
+
+gAe = Parameter(name = 'gAe',
+                nature = 'external',
+                type = 'real',
+                value = 1.,
+                texname = 'g_{\\text{Pu33}}',
+                lhablock = 'DMINPUTS',
+                lhacode = [ 42 ])
+
+gVmm = Parameter(name = 'gVmm',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 43 ])
+
+gAmm = Parameter(name = 'gAmm',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 44 ])
+
+gVta = Parameter(name = 'gVta',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 45 ])
+
+gAta = Parameter(name = 'gAta',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{Pu33}}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 46 ])
+
+gSXr = Parameter(name = 'gSXr',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{SX}_r}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 47 ])
+
+gSXc = Parameter(name = 'gSXc',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{SX}_c}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 48 ])
+
+gSXd = Parameter(name = 'gSXd',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{SX}_d}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 49 ])
+
+gPXd = Parameter(name = 'gPXd',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{PX}_d}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 50 ])
+
+gVXd = Parameter(name = 'gVXd',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{VX}_d}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 51 ])
+
+gAXd = Parameter(name = 'gAXd',
+                 nature = 'external',
+                 type = 'real',
+                 value = 1.,
+                 texname = 'g_{\\text{AX}_d}',
+                 lhablock = 'DMINPUTS',
+                 lhacode = [ 52 ])
+
+Lambda = Parameter(name = 'Lambda',
+                   nature = 'external',
+                   type = 'real',
+                   value = 1.,
+                   texname = '\\Lambda',
+                   lhablock = 'DMINPUTS',
+                   lhacode = [ 53 ])
 
 aEWM1 = Parameter(name = 'aEWM1',
                   nature = 'external',
@@ -132,7 +468,7 @@ Gf = Parameter(name = 'Gf',
 aS = Parameter(name = 'aS',
                nature = 'external',
                type = 'real',
-               value = 0.1184,
+               value = 0.1181,
                texname = '\\alpha _s',
                lhablock = 'SMINPUTS',
                lhacode = [ 3 ])
@@ -156,7 +492,7 @@ ymup = Parameter(name = 'ymup',
 yms = Parameter(name = 'yms',
                 nature = 'external',
                 type = 'real',
-                value = 0.101,
+                value = 0.095,
                 texname = '\\text{yms}',
                 lhablock = 'YUKAWA',
                 lhacode = [ 3 ])
@@ -172,7 +508,7 @@ ymc = Parameter(name = 'ymc',
 ymb = Parameter(name = 'ymb',
                 nature = 'external',
                 type = 'real',
-                value = 4.7,
+                value = 4.78,
                 texname = '\\text{ymb}',
                 lhablock = 'YUKAWA',
                 lhacode = [ 5 ])
@@ -180,7 +516,7 @@ ymb = Parameter(name = 'ymb',
 ymt = Parameter(name = 'ymt',
                 nature = 'external',
                 type = 'real',
-                value = 172,
+                value = 173,
                 texname = '\\text{ymt}',
                 lhablock = 'YUKAWA',
                 lhacode = [ 6 ])
@@ -260,7 +596,7 @@ MC = Parameter(name = 'MC',
 MT = Parameter(name = 'MT',
                nature = 'external',
                type = 'real',
-               value = 172,
+               value = 173,
                texname = '\\text{MT}',
                lhablock = 'MASS',
                lhacode = [ 6 ])
@@ -276,7 +612,7 @@ MD = Parameter(name = 'MD',
 MS = Parameter(name = 'MS',
                nature = 'external',
                type = 'real',
-               value = 0.101,
+               value = 0.095,
                texname = '\\text{MS}',
                lhablock = 'MASS',
                lhacode = [ 3 ])
@@ -284,7 +620,7 @@ MS = Parameter(name = 'MS',
 MB = Parameter(name = 'MB',
                nature = 'external',
                type = 'real',
-               value = 4.7,
+               value = 4.78,
                texname = '\\text{MB}',
                lhablock = 'MASS',
                lhacode = [ 5 ])
@@ -292,7 +628,7 @@ MB = Parameter(name = 'MB',
 MH = Parameter(name = 'MH',
                nature = 'external',
                type = 'real',
-               value = 125,
+               value = 125.18,
                texname = '\\text{MH}',
                lhablock = 'MASS',
                lhacode = [ 25 ])
@@ -303,7 +639,39 @@ MD0 = Parameter(name = 'MD0',
                 value = 1000.,
                 texname = '\\text{MD0}',
                 lhablock = 'MASS',
-                lhacode = [ 54 ])
+                lhacode = [ 9000006 ])
+
+MD1 = Parameter(name = 'MD1',
+                nature = 'external',
+                type = 'real',
+                value = 1000.,
+                texname = '\\text{MD1}',
+                lhablock = 'MASS',
+                lhacode = [ 9000007 ])
+
+MXr = Parameter(name = 'MXr',
+                nature = 'external',
+                type = 'real',
+                value = 1.,
+                texname = '\\text{MXr}',
+                lhablock = 'MASS',
+                lhacode = [ 9000008 ])
+
+MXc = Parameter(name = 'MXc',
+                nature = 'external',
+                type = 'real',
+                value = 499.,
+                texname = '\\text{MXc}',
+                lhablock = 'MASS',
+                lhacode = [ 9000009 ])
+
+MXd = Parameter(name = 'MXd',
+                nature = 'external',
+                type = 'real',
+                value = 499.,
+                texname = '\\text{MXd}',
+                lhablock = 'MASS',
+                lhacode = [ 9000010 ])
 
 WZ = Parameter(name = 'WZ',
                nature = 'external',
@@ -321,10 +689,34 @@ WW = Parameter(name = 'WW',
                lhablock = 'DECAY',
                lhacode = [ 24 ])
 
+WE = Parameter(name = 'WE',
+               nature = 'external',
+               type = 'real',
+               value = 0.,
+               texname = '\\text{WE}',
+               lhablock = 'DECAY',
+               lhacode = [ 11 ])
+
+WMU = Parameter(name = 'WMU',
+                nature = 'external',
+                type = 'real',
+                value = 3.e-19,
+                texname = '\\text{WMU}',
+                lhablock = 'DECAY',
+                lhacode = [ 13 ])
+
+WTA = Parameter(name = 'WTA',
+                nature = 'external',
+                type = 'real',
+                value = 2.27e-12,
+                texname = '\\text{WTA}',
+                lhablock = 'DECAY',
+                lhacode = [ 15 ])
+
 WT = Parameter(name = 'WT',
                nature = 'external',
                type = 'real',
-               value = 1.50833649,
+               value = 1.41,
                texname = '\\text{WT}',
                lhablock = 'DECAY',
                lhacode = [ 6 ])
@@ -343,7 +735,15 @@ WD0 = Parameter(name = 'WD0',
                 value = 10.,
                 texname = '\\text{WD0}',
                 lhablock = 'DECAY',
-                lhacode = [ 54 ])
+                lhacode = [ 9000006 ])
+
+WD1 = Parameter(name = 'WD1',
+                nature = 'external',
+                type = 'real',
+                value = 10.,
+                texname = '\\text{WD1}',
+                lhablock = 'DECAY',
+                lhacode = [ 9000007 ])
 
 aEW = Parameter(name = 'aEW',
                 nature = 'internal',

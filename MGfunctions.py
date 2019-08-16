@@ -8,8 +8,12 @@ import subprocess
 
 # The threshold in GeV that the WIMP mass has to exceed for annihilations to be possible
 annThresholds={"WLWL" : 80.4, "WTWT" : 80.4, "ZLZL" : 91.2, "ZTZT" : 91.2, "hh" : 125.2, 
-               "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, "muLmuL" : 0.11, "muRmuR" : 0.11, "muLmuR" : 0.11, "muRmuL" : 0.11, "ee" : 5.2e-6, 
-               "tLtL" : 173., "tRtR" : 173., "tLtR" : 173., "tRtL" : 173., "bb" : 4.8, "cc" : 1.3, "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3, "qq": 0.1}
+               "taLtaL" : 1.8, "taRtaR" : 1.8, "taLtaR" : 1.8, "taRtaL" : 1.8, 
+               "muLmuL" : 0.11, "muRmuR" : 0.11, "muLmuR" : 0.11, "muRmuL" : 0.11, "ee" : 5.2e-6, 
+               "tLtL" : 173., "tRtR" : 173., "tLtR" : 173., "tRtL" : 173., 
+               "bb" : 4.8, "bLbR" : 4.8, "bRbL" : 4.8, "cc" : 1.3, 
+               "ss" : 0.1, "uu" : 2.6e-3, "dd" : 5.1e-3, "qq": 0.1,
+               "WLWT" : 80.4, "WLWT" : 80.4}
                
                
 def annch_to_MGFinState(annch,madspin):
@@ -18,6 +22,8 @@ def annch_to_MGFinState(annch,madspin):
          return "w+ w-"
       else:
          return "w+ w-, w+ > allsm allsm, w- > allsm allsm"
+   elif annch in ["WLWT","WTWL"]:
+      return "w+ w-, w+ > ve e+, w- > ve~ e-"
    elif annch in ["ZLZL","ZTZT"]:
       if madspin==True:
          return "z z"
@@ -30,13 +36,14 @@ def annch_to_MGFinState(annch,madspin):
          return "t t~"
       else:
          return "t t~, (t > b w+, w+ > allsm allsm), (t~ > b~ w-, w- > allsm allsm)"
+         #return "t t~, (t > b w+, w+ > e+ ve), (t~ > b~ w-, w- > e- ve~)"
    elif annch in ["taLtaL","taRtaR","taLtaR","taRtaL"]:
       return "ta+ ta-"
    elif annch in ["muLmuL","muRmuR","muLmuR","muRmuL"]:
       return "mu+ mu-, mu+ > e+ ve vm~, mu- > e- ve~ vm"
    elif annch=="ee":
       return "e+ e-"
-   elif annch=="bb":
+   elif annch in ["bb","bLbR","bRbL"]:
       return "b b~"
    elif annch=="cc":
       return "c c~"   
@@ -55,12 +62,12 @@ def write_MG_setupscript(annch,mx,runTag,madspin):
    """
    Writes the MadGraph commands for generating the folder corresponding to ann. channel annch and wimp mass mx into a text file.
    """
-   folderName="".join(("DMann_",runTag,"_",annch,"_m",str(mx)))
+   folderName="".join(("DMann_",annch,"_m",str(mx)))
    fileName="".join(("log_DMann/DMann_setupMG_",runTag,"_",annch,"_m",str(mx),".txt"))
    with open(fileName,"w") as f:
       f.write("import model DMann\n")
       f.write("define allsm = u d c s b u~ d~ c~ s~ b~ e+ mu+ ta+ e- mu- ta- ve vm vt ve~ vm~ vt~\n")
-      if annch not in ["taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR"] and annch!="qq":
+      if annch not in ["taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR","bLbR","bRbL","WLWT","WTWL"] and annch!="qq":
          f.write("generate xr xr > y0 > "+annch_to_MGFinState(annch,madspin)+"\n")
       elif annch=="qq":
         f.write("define q = u d s\n")
@@ -145,6 +152,13 @@ def set_couplings(annch):
    if annch in ["WTWT","ZTZT"]:
       newcard_content = re.sub(searchExpr+r" # gSWT",r"\1 1.000000e+00 # gSWT",newcard_content) 
       newcard_content = re.sub(searchExpr+r" # gSBT",r"\1 1.000000e+00 # gSBT",newcard_content)
+   #pseudoscalar coupling for transverse
+   #if annch in ["WLWL","ZLZL"]:
+   #   newcard_content = re.sub(searchExpr+r" # gPWL",r"\1 1.000000e+00 # gPWL",newcard_content) 
+   #   newcard_content = re.sub(searchExpr+r" # gPBL",r"\1 1.000000e+00 # gPBL",newcard_content) 
+   #if annch in ["WTWT","ZTZT"]:
+   #   newcard_content = re.sub(searchExpr+r" # gPWT",r"\1 1.000000e+00 # gPWT",newcard_content) 
+   #   newcard_content = re.sub(searchExpr+r" # gPBT",r"\1 1.000000e+00 # gPBT",newcard_content)
    if annch=="hh":
       newcard_content = re.sub(searchExpr+r" # gSh1",r"\1 1.000000e+00 # gSh1",newcard_content) 
       newcard_content = re.sub(searchExpr+r" # gSh2",r"\1 1.000000e+00 # gSh2",newcard_content)
@@ -190,6 +204,12 @@ def set_couplings(annch):
          newcard_content = re.sub(searchExpr+r" # gAu33",r"\1 1.000000e+00 # gAu33",newcard_content)  
    if annch=="bb":
       newcard_content = re.sub(searchExpr+r" # gSd33",r"\1 1.000000e+00 # gSd33",newcard_content) 
+   if annch in ["bLbR","bRbL"]: # vector
+      newcard_content = re.sub(searchExpr+r" # gVd33",r"\1 1.000000e+00 # gVd33",newcard_content) 
+      if annch=="bLbR":
+         newcard_content = re.sub(searchExpr+r" # gAd33",r"\1 -1.000000e+00 # gAd33",newcard_content)
+      elif annch=="bRbL":
+         newcard_content = re.sub(searchExpr+r" # gAd33",r"\1 1.000000e+00 # gAd33",newcard_content)  
    if annch=="cc":
       newcard_content = re.sub(searchExpr+r" # gSu22",r"\1 1.000000e+00 # gSu22",newcard_content) 
    if annch=="ss":

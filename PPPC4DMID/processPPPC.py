@@ -106,27 +106,43 @@ if __name__=="__main__":
   #  sys.exit("Error: function called incorrectly, maximum one argument allowed.")
     
   
-  xVals={True: np.array([10.**expo for expo in np.arange(-8.9,0.05,0.05)]),
-         False: np.array([10.**expo for expo in np.arange(-8.95,0.05,0.05)])}
+  xVals={True: np.array([10.**(expo-0.025) for expo in np.arange(-8.9,0.05,0.05)]),
+         False: np.array([10.**(expo-0.025) for expo in np.arange(-8.95,0.05,0.05)])}
+  print xVals[False]
   ewStr={True: "", False: "NoEW"}
   maxIndex={True: 179, False: 180}
   PPPC_all={}
-  
+  for ew in (True,False):
+    for y in yields:
+      for annCh in annChannels:
+         for mX in masses:
+            key="dNdlog10x"+ewStr[ew]+"_"+str(mX)+"_"+y+"_"+annCh
+            PPPC_all[key]=[]
+         
   for ew in (True,False):
     PPPC_all["xVals"+ewStr[ew]]=xVals[ew]
     for y in yields:
       for annCh in annChannels:
-          # Read in PPPC data (not the EW corrected)
+          # Read in PPPC data 
           with open(os.path.expanduser("~/DMann/PPPC4DMID/AtProduction"
                                        +ewStr[ew]+"_all/AtProduction"
                                        +ewStr[ew]+"_"+y+".dat"),"r") as f:
-            PPPCdata=np.genfromtxt(f,skip_header=1)
+            for line in f:
+               entries=line.split()
+               if entries[0]=="mDM":
+                  continue
+               else:
+                  key="dNdlog10x"+ewStr[ew]+"_"+entries[0]+"_"+y+"_"+annCh
+                  yieldVal=float(entries[annChColumn(annCh,ew)])
+                  PPPC_all[key].append(yieldVal)
+            
+            #PPPCdata=np.genfromtxt(f,skip_header=1)
           
-          for i in range(len(masses)):    
-            dNdlogx=PPPCdata[i*maxIndex[ew]:(i+1)*maxIndex[ew],annChColumn(annCh,ew)]
-            PPPC_all["dNdlog10x"+ewStr[ew]+"_"+str(masses[i])+"_"+y+"_"+annCh]=dNdlogx
+          #for i in range(len(masses)):    
+            #dNdlogx=PPPCdata[i*maxIndex[ew]:(i+1)*maxIndex[ew],annChColumn(annCh,ew)]
+            #PPPC_all["dNdlog10x"+ewStr[ew]+"_"+str(masses[i])+"_"+y+"_"+annCh]=dNdlogx
 
-  
+
   with open("PPPCdata.pickle","w") as f:
     pickle.dump(PPPC_all,f)
   

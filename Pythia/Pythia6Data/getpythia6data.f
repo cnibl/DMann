@@ -33,7 +33,7 @@ c      yieldpdg=22               ! PDG code of yield of interest
       yieldpdgs(2)=-2212        ! pbar
       yieldpdgs(3)=14           ! nu_mu
       yieldpdgs(4)=22           ! gamma  
-      mwimp=200.d0              ! WIMP mass (GeV)
+      mwimp=100.d0              ! WIMP mass (GeV)
       hel='0'                   ! helicity state, '0'=unpolarized
       diff=1                    ! differential yields
       decmin=-10.d0             ! lowest energy, 10^-decmin * mwimp
@@ -47,12 +47,13 @@ c      yieldpdg=22               ! PDG code of yield of interest
             write(char_yield,'(I5)') yieldpdgs(k)
             filename='da-pyt6-mx'//trim(adjustl(char_mwimp))
      &               //'-ch'//trim(adjustl(char_ann))
-     &               //'-int'//trim(adjustl(char_yield))//'.dat'
+     &               //'-y'//trim(adjustl(char_yield))//'.dat'
             write(*,*) 'Running wimpyields for filename ',filename
 cc      filename='yield.dat'      
 
 c...Preliminary calculations
             ntot=ndec*(-decmin)
+c            ntot=200
 
 c...Open file and perform calculation      
             open(unit=47,file=filename,status='unknown',form='formatted')
@@ -64,12 +65,13 @@ c...Open file and perform calculation
             
             do i=1,ntot
                e=mwimp*10**(decmin-(dble(i)-0.5d0)/abs(ntot)*decmin)
+c               e=mwimp*(1.d0/dble(ntot)/2.d0+dble(i-1)/dble(ntot))
                yield=dsanyield_sim(mwimp,e,annpdgs(j),hel,yieldpdgs(k),diff,istat)
                write(47,100) i,e,yield
- 100           format(I4,1x,E14.6,1x,E14.6)
             enddo
             close(47)
          enddo
       enddo
-
+      
+100   format(I4,1x,E14.6,1x,E14.6)
       end

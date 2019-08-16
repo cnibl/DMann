@@ -1,10 +1,10 @@
 # This file was automatically created by FeynRules 2.3.31
 # Mathematica version: 11.0.0 for Mac OS X x86 (64-bit) (July 28, 2016)
-# Date: Fri 16 Nov 2018 17:25:03
+# Date: Tue 9 Apr 2019 14:22:26
 
 
 # 
-# This is the logfile for the model DMann_VV
+# This is the logfile for the model DMann_ff
 
 # Authors: C.Niblaeus
 # Model version: 1.0
@@ -24,6 +24,11 @@
    * Assigned PDG number 9000003 to particle ghWp
    * Assigned PDG number 9000004 to particle ghWm
    * Assigned PDG number 9000005 to particle ghG
+   * Assigned PDG number 9000006 to particle Y0
+   * Assigned PDG number 9000007 to particle Y1
+   * Assigned PDG number 9000008 to particle Xr
+   * Assigned PDG number 9000009 to particle Xc
+   * Assigned PDG number 9000010 to particle Xd
 
 
 # Compulsory PDG codes:
@@ -40,8 +45,8 @@
 
 # Vertices
    * Calling FeynmanRules for 1 Lagrangians.
-   * Number of classes vertices: 93
-   * Number of flavored vertices: 163
+   * Number of classes vertices: 163
+   * Number of flavored vertices: 233
    * Saved vertices in InterfaceRun[ 1 ].
    * Checked QNumber conservation.
       - Quantum number GhostNumber conserved in all vertices.
@@ -54,19 +59,19 @@
 # Vertex definitions
 #
 
-   * 225 vertices written.
+   * 233 vertices written.
    * vertices.py written.
 #
 # Lorentz structure definitions
 #
 
-   * 23 lorentz structures written.
+   * 40 lorentz structures written.
    * lorentz.py written.
 #
 # Coupling definitions
 #
 
-   * 184 couplings written.
+   * 226 couplings written.
    * couplings.py written.
 #
 # Coupling order definitions
@@ -78,7 +83,7 @@
 # Decay definitions
 #
 
-   * 12 decays written.
+   * 14 decays written.
    * decay.py not written
 #
 # CTCoupling definitions

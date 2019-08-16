@@ -170,14 +170,14 @@ def setup_LHEF(suffixes,wimpMasses,annChannels,):
                madSpinChannels=("WLWL","WTWT","ZLZL","ZTZT","tRtL","tLtR","tLtL","tRtR")
                if sets.MADSPIN==False or annCh not in madSpinChannels: #all except MadSpin runs
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
-                                 "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
+                                 "DMann_"+annCh+"_m"+str(mx),"Events",
                                  "run_"+sets.RUN_TAG+s,
                                  "unweighted_events.lhe.gz")
                   LHEfiles.append(lhePath)
                   LHEsuffixes[lhePath]=s
                elif sets.MADSPIN==True and annCh in madSpinChannels: #MadSpin runs              
                   lhePath=os.path.join(get_abspath(sets.MG_DIR),
-                                 "DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mx),"Events",
+                                 "DMann_"+annCh+"_m"+str(mx),"Events",
                                  "run_"+sets.RUN_TAG+s+"_decayed_1",
                                  "unweighted_events.lhe.gz")
                   LHEfiles.append(lhePath)
@@ -377,11 +377,11 @@ def write_cmnd_file(nAnn,annCh,sun):
       f.write("Check:mTolWarn = "+str(warnTol)+"\n")            
       f.write("LesHouches:matchInOut = off") #off because MG messes things up with energy-mom in MadSpin decays
       """
-      f.write("Next:numberShowEvent = 1000\n")
+      f.write("Next:numberShowEvent = 10\n")
 #      f.write("Next:showScaleAndVertex = on\n")
       f.write("\n")
       f.write("# 2) Incoming beam settings\n")
-      if annCh not in ("taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR"):
+      if annCh not in ("taLtaR","taRtaL","tRtL","tLtR","muRmuL","muLmuR","bRbL","bLbR"):
          f.write("LesHouches:idRenameBeams = 9000008\n")
       else:
          f.write("LesHouches:idRenameBeams = 9000010\n")

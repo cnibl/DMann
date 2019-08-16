@@ -30,7 +30,7 @@ if not os.path.exists(absMGdir):
 for ann in sets.ANN_CHANNELS:
    for mX in sets.WIMP_MASSES:
       if mgf.annThresholds[ann] < mX:
-         if not os.path.exists(os.path.join(absMGdir,"DMann_"+sets.RUN_TAG+"_"+ann+"_m"+str(mX))):
+         if not os.path.exists(os.path.join(absMGdir,"DMann_"+ann+"_m"+str(mX))):
             sys.exit("ERROR: No folder exists for %s, run setupMG.py" % ann)
       
 
@@ -48,7 +48,7 @@ def run_MG(annCh,mWimp,runTag,nAnn,nCores,madspin):
    """
    Set no. of ann., runtag, WIMP mass, couplings corresponding to polarization in param_card, couplings and properties of beams, reset all cuts and set up madspin_card if necessary
    """
-   os.chdir(os.path.join(absMGdir,"DMann_"+sets.RUN_TAG+"_"+annCh+"_m"+str(mWimp)))   
+   os.chdir(os.path.join(absMGdir,"DMann_"+annCh+"_m"+str(mWimp)))   
    mgf.set_n_ann(nAnn)
    mgf.set_run_tag(runTag)
    mgf.set_couplings(annCh) 
